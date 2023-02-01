@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {useEffect, useContext} from 'react';
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import type {StackScreenProps} from '@react-navigation/stack';
@@ -12,6 +12,8 @@ import {theme} from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import TabHeader from '../components/TabHeader';
 
+import {RootContext} from '../context/RootContext';
+
 type Props = StackScreenProps<RootStackParamList, 'Home'>;
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
@@ -19,11 +21,13 @@ const Tab = createBottomTabNavigator<RootTabParamList>();
 const tabBarStyle = {
   paddingBottom: 10,
   height: 60,
-  borderTopColor: theme.colors.black,
-  borderTopWidth: 2,
+  borderTopColor: theme.colors.gray[300],
+  borderTopWidth: 1,
 };
 
 const RootTab = ({navigation}: Props) => {
+  const {cartItems} = useContext(RootContext);
+
   useEffect(() => {
     navigation.setOptions({
       headerShown: false,
@@ -62,7 +66,7 @@ const RootTab = ({navigation}: Props) => {
         name="Cart"
         component={CartScreen}
         options={{
-          tabBarBadge: 5,
+          tabBarBadge: cartItems.length > 0 ? cartItems.length : undefined,
           tabBarIcon(props) {
             return (
               <Ionicons

@@ -8,14 +8,18 @@ const StackHeader = ({navigation, options, route}: StackHeaderProps) => {
     <Box
       flexDirection="row"
       alignItems="center"
-      borderBottomColor={theme.colors.black}
-      borderBottomWidth={2}
-      padding={3}>
+      borderBottomColor={theme.colors.gray[300]}
+      borderBottomWidth={1}
+      p={3}>
       <Ionicons
         name={'arrow-back'}
         size={32}
         color={theme.colors.black}
-        onPress={() => navigation.goBack()}
+        onPress={() => {
+          if (navigation.canGoBack()) {
+            navigation.goBack();
+          }
+        }}
         style={{marginRight: 10}}
       />
       {route.name === 'Search' ? (

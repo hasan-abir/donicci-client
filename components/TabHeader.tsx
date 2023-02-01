@@ -15,10 +15,10 @@ const TabHeader = () => {
     <Box
       flexDirection="row"
       alignItems="center"
-      borderBottomColor={theme.colors.black}
-      borderBottomWidth={2}
-      padding={3}>
-      <Box flex={1} marginRight={2}>
+      borderBottomColor={theme.colors.gray[300]}
+      borderBottomWidth={1}
+      p={3}>
+      <Box flex={1} mr={2}>
         <SearchForm />
       </Box>
 
