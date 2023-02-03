@@ -1,4 +1,4 @@
-import {Box, Heading, ScrollView} from 'native-base';
+import {Box, FlatList, Heading} from 'native-base';
 import {useState} from 'react';
 import type {Product} from './ProductItem';
 import ProductItem from './ProductItem';
@@ -12,14 +12,14 @@ const ProductList = () => {
 
   return (
     <Box flex={1}>
-      <ScrollView>
-        <Heading mb={5}>Latest Products</Heading>
-        <Box flexDirection="row" flexWrap="wrap" justifyContent="space-between">
-          {products.map(item => (
-            <ProductItem key={item._id} item={item} />
-          ))}
-        </Box>
-      </ScrollView>
+      <FlatList
+        numColumns={2}
+        columnWrapperStyle={{justifyContent: 'space-between'}}
+        data={products}
+        ListHeaderComponent={<Heading my={5}>Latest Products</Heading>}
+        keyExtractor={(item, index) => item._id}
+        renderItem={({item}) => <ProductItem item={item} />}
+      />
     </Box>
   );
 };

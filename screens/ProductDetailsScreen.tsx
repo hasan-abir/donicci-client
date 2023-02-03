@@ -106,26 +106,6 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
             </Text>
             {product.quantity && product.quantity > 0 ? (
               <Box>
-                <HStack space={2} mb={3}>
-                  <Text fontWeight="bold" fontSize={14}>
-                    Quantity -
-                  </Text>
-                  <Ionicons
-                    name={'chevron-back-outline'}
-                    size={24}
-                    color={theme.colors.black}
-                    onPress={() => deductQuantity()}
-                  />
-                  <Text fontSize={14}>
-                    {selectedQuantity} / {product.quantity}
-                  </Text>
-                  <Ionicons
-                    name={'chevron-forward-outline'}
-                    size={24}
-                    color={theme.colors.black}
-                    onPress={() => addQuantity()}
-                  />
-                </HStack>
                 {inCart(product._id) ? (
                   <Button
                     py={2}
@@ -134,14 +114,35 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
                     <Text fontWeight="bold">Remove from Cart</Text>
                   </Button>
                 ) : (
-                  <Button
-                    py={2}
-                    mb={6}
-                    onPress={() =>
-                      addItemToCart({...product, selectedQuantity})
-                    }>
-                    <Text fontWeight="bold">Add to Cart</Text>
-                  </Button>
+                  <Box mb={6}>
+                    <HStack space={2} mb={3}>
+                      <Text fontWeight="bold" fontSize={14}>
+                        Quantity -
+                      </Text>
+                      <Ionicons
+                        name={'chevron-back-outline'}
+                        size={24}
+                        color={theme.colors.black}
+                        onPress={() => deductQuantity()}
+                      />
+                      <Text fontSize={14}>
+                        {selectedQuantity} / {product.quantity}
+                      </Text>
+                      <Ionicons
+                        name={'chevron-forward-outline'}
+                        size={24}
+                        color={theme.colors.black}
+                        onPress={() => addQuantity()}
+                      />
+                    </HStack>
+                    <Button
+                      py={2}
+                      onPress={() =>
+                        addItemToCart({...product, selectedQuantity})
+                      }>
+                      <Text fontWeight="bold">Add to Cart</Text>
+                    </Button>
+                  </Box>
                 )}
               </Box>
             ) : (

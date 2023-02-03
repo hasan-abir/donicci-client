@@ -7,7 +7,7 @@ type CartSum = {
   total: number;
 };
 
-type CartItem = Product & {
+export type CartItem = Product & {
   selectedQuantity: number;
 };
 
@@ -17,6 +17,8 @@ type Value = {
   removeItemFromCart: (id: string) => void;
   inCart: (productId: string) => boolean;
   cartSum: CartSum;
+  updateSelectedQuantity: (productId: string, add: boolean) => void;
+  clearCart: () => void;
 };
 
 export const RootContext = React.createContext<Value>({
@@ -29,6 +31,8 @@ export const RootContext = React.createContext<Value>({
   addItemToCart: () => {},
   removeItemFromCart: () => {},
   inCart: () => false,
+  updateSelectedQuantity: () => {},
+  clearCart: () => {},
 });
 
 type Props = {
@@ -43,35 +47,58 @@ const RootContextProvider = ({children}: Props) => {
     total: 0,
   });
 
-  const calculateTheTotals = () => {
-    const subTotal = cartItems
+  const calculateTheTotals = (items: CartItem[]) => {
+    const subTotal = items
       .map(item => {
-        if (item.quantity) {
-          return item.price * item.quantity;
-        } else {
-          return 0;
-        }
+        return item.price * item.selectedQuantity;
       })
       .reduce((a, b) => a + b, 0);
     const tax = subTotal * 0.05;
 
     setCartSum({
-      subTotal,
-      tax,
-      total: subTotal + tax,
+      subTotal: Math.round((subTotal / 100) * 100) / 100,
+      tax: Math.round((tax / 100) * 100) / 100,
+      total: Math.round(((subTotal + tax) / 100) * 100) / 100,
     });
   };
 
   const addItemToCart = (cartItem: CartItem) => {
-    setCartItems(state => [...state, cartItem]);
+    const updatedCartItems = [...cartItems, cartItem];
+    setCartItems(updatedCartItems);
 
-    calculateTheTotals();
+    calculateTheTotals(updatedCartItems);
   };
 
   const removeItemFromCart = (id: string) => {
-    setCartItems(state => state.filter(item => item._id !== id));
+    const updatedCartItems = cartItems.filter(item => item._id !== id);
 
-    calculateTheTotals();
+    setCartItems(updatedCartItems);
+
+    calculateTheTotals(updatedCartItems);
+  };
+
+  const updateSelectedQuantity = (productId: string, add: boolean) => {
+    const updatedCartItems = cartItems.map(item => {
+      if (item._id === productId && item.quantity) {
+        if (add && item.selectedQuantity < item.quantity) {
+          item.selectedQuantity++;
+        }
+
+        if (!add && item.selectedQuantity > 1) {
+          item.selectedQuantity--;
+        }
+      }
+
+      return item;
+    });
+
+    setCartItems(updatedCartItems);
+    calculateTheTotals(updatedCartItems);
+  };
+
+  const clearCart = () => {
+    setCartItems([]);
+    setCartSum({subTotal: 0, tax: 0, total: 0});
   };
 
   const inCart = (productId: string) => {
@@ -79,7 +106,15 @@ const RootContextProvider = ({children}: Props) => {
   };
   return (
     <RootContext.Provider
-      value={{cartItems, cartSum, addItemToCart, removeItemFromCart, inCart}}>
+      value={{
+        cartItems,
+        cartSum,
+        addItemToCart,
+        removeItemFromCart,
+        inCart,
+        updateSelectedQuantity,
+        clearCart,
+      }}>
       {children}
     </RootContext.Provider>
   );

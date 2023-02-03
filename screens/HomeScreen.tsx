@@ -11,7 +11,7 @@ type Props = BottomTabScreenProps<
 
 const HomeScreen = (props: Props) => {
   return (
-    <Box flex={1} pt={5} px={3}>
+    <Box flex={1} px={3}>
       <ProductList />
     </Box>
   );
