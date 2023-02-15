@@ -15,11 +15,10 @@ import {
 import {useContext, useEffect, useState} from 'react';
 import type {Product} from '../components/ProductItem';
 import type {RootStackParamList} from '../stacks/RootStack';
-// temporary
-import demoProducts from '../components/demoProducts.json';
 import type {ImageType} from '../components/ProductItem';
 import {RootContext} from '../context/RootContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import productController from '../controllers/productController';
 
 type Props = StackScreenProps<RootStackParamList, 'ProductDetails'>;
 
@@ -27,7 +26,7 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
   const {addItemToCart, removeItemFromCart, inCart} = useContext(RootContext);
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<Product | undefined>(undefined);
   const [imageSelected, setImageSelected] = useState<ImageType | null>(null);
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
 
@@ -42,14 +41,19 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
     }
   };
 
-  useEffect(() => {
-    const foundProduct = demoProducts.products.find(
-      item => item._id === route.params.productId,
-    ) as Product;
-    setProduct(foundProduct);
-    if (foundProduct) {
-      setImageSelected(foundProduct.images[0]);
+  const fetchInitialData = async () => {
+    const data = await productController.fetchSingleProduct(
+      route.params.productId,
+    );
+
+    setProduct(data);
+    if (data) {
+      setImageSelected(data.images[0]);
     }
+  };
+
+  useEffect(() => {
+    fetchInitialData();
 
     navigation.setOptions({title: ' '});
   }, [navigation]);
@@ -75,7 +79,7 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
                 />
               </AspectRatio>
             ) : null}
-            <HStack space={2} mt={3} mb={6}>
+            <HStack space={2} mt={3} mb={4} flexWrap="wrap">
               {product.images.map(image => {
                 return (
                   <Pressable
@@ -97,6 +101,22 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
                       alt={product.title}
                     />
                   </Pressable>
+                );
+              })}
+            </HStack>
+            <HStack space={1} mb={6} flexWrap="wrap">
+              {product.categories.map(category => {
+                return (
+                  <Box
+                    key={category._id}
+                    backgroundColor={theme.colors.yellow[200]}
+                    py={1}
+                    px={2}
+                    borderRadius={10}>
+                    <Text fontSize={12} color={theme.colors.yellow[700]}>
+                      {category.name}
+                    </Text>
+                  </Box>
                 );
               })}
             </HStack>

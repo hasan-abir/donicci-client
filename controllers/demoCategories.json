@@ -1,0 +1,44 @@
+{
+  "categories": [
+    {
+      "_id": "1",
+      "name": "Ut"
+    },
+    {
+      "_id": "2",
+      "name": "Sodales"
+    },
+    {
+      "_id": "3",
+      "name": "Sapien"
+    },
+    {
+      "_id": "4",
+      "name": "Tortor"
+    },
+    {
+      "_id": "5",
+      "name": "Cras"
+    },
+    {
+      "_id": "6",
+      "name": "Consequat"
+    },
+    {
+      "_id": "7",
+      "name": "Varius"
+    },
+    {
+      "_id": "8",
+      "name": "Diam"
+    },
+    {
+      "_id": "9",
+      "name": "Amet"
+    },
+    {
+      "_id": "10",
+      "name": "Tincidunt"
+    }
+  ]
+}

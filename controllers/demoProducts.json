@@ -22,7 +22,11 @@
         }
       ],
       "price": 2999,
-      "quantity": 5
+      "quantity": 5,
+      "categories": [
+        {"_id": "1", "name": "Category 1"},
+        {"_id": "3", "name": "Category 3"}
+      ]
     },
     {
       "_id": "2",
@@ -50,7 +54,12 @@
         }
       ],
       "price": 3999,
-      "quantity": 0
+      "quantity": 0,
+      "categories": [
+        {"_id": "2", "name": "Category 2"},
+        {"_id": "5", "name": "Category 5"},
+        {"_id": "6", "name": "Category 6"}
+      ]
     },
     {
       "_id": "4",
@@ -78,7 +87,8 @@
         }
       ],
       "price": 2999,
-      "quantity": 5
+      "quantity": 5,
+      "categories": [{"_id": "1", "name": "Category 1"}]
     },
     {
       "_id": "6",
@@ -92,7 +102,11 @@
         }
       ],
       "price": 5999,
-      "quantity": 15
+      "quantity": 15,
+      "categories": [
+        {"_id": "3", "name": "Category 3"},
+        {"_id": "4", "name": "Category 4"}
+      ]
     },
     {
       "_id": "7",
@@ -106,7 +120,12 @@
         }
       ],
       "price": 999,
-      "quantity": 25
+      "quantity": 25,
+      "categories": [
+        {"_id": "2", "name": "Category 2"},
+        {"_id": "5", "name": "Category 5"},
+        {"_id": "6", "name": "Category 6"}
+      ]
     },
     {
       "_id": "8",
@@ -120,7 +139,8 @@
         }
       ],
       "price": 5999,
-      "quantity": 5
+      "quantity": 5,
+      "categories": [{"_id": "1", "name": "Category 1"}]
     },
     {
       "_id": "9",
@@ -134,7 +154,11 @@
         }
       ],
       "price": 1999,
-      "quantity": 15
+      "quantity": 15,
+      "categories": [
+        {"_id": "3", "name": "Category 3"},
+        {"_id": "4", "name": "Category 4"}
+      ]
     },
     {
       "_id": "10",
@@ -148,7 +172,12 @@
         }
       ],
       "price": 2999,
-      "quantity": 5
+      "quantity": 5,
+      "categories": [
+        {"_id": "2", "name": "Category 2"},
+        {"_id": "5", "name": "Category 5"},
+        {"_id": "6", "name": "Category 6"}
+      ]
     }
   ]
 }
