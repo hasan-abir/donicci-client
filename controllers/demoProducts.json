@@ -40,7 +40,11 @@
         }
       ],
       "price": 1999,
-      "quantity": 10
+      "quantity": 10,
+      "categories": [
+        {"_id": "2", "name": "Category 2"},
+        {"_id": "3", "name": "Category 3"}
+      ]
     },
     {
       "_id": "3",

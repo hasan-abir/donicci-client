@@ -35,7 +35,7 @@ const RootStack = () => {
 export type RootStackParamList = {
   Home: undefined;
   ProductDetails: {productId: string};
-  Search: undefined;
+  Search: {term?: string};
   CategoryProducts: {categoryId: string};
   Login: undefined;
   Register: undefined;
