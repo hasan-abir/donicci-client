@@ -6,6 +6,8 @@ import SearchForm from './SearchForm';
 const StackHeader = ({navigation, options, route}: StackHeaderProps) => {
   return (
     <Box
+      zIndex={10}
+      backgroundColor={theme.colors.white}
       flexDirection="row"
       alignItems="center"
       borderBottomColor={theme.colors.gray[300]}
