@@ -20,11 +20,16 @@ const RootStack = () => {
         },
       }}>
       <Stack.Screen name="Home" component={RootTab} />
-      <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
+      <Stack.Screen
+        name="ProductDetails"
+        component={ProductDetailsScreen}
+        options={{title: ' '}}
+      />
       <Stack.Screen name="Search" component={SearchScreen} />
       <Stack.Screen
         name="CategoryProducts"
         component={CategoryProductsScreen}
+        options={{title: ' '}}
       />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />

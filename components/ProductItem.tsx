@@ -27,7 +27,9 @@ export type Product = {
   images: ImageType[];
   price: number;
   quantity?: number;
-  categories: any[];
+  category_ids?: string[];
+  updated_at: string;
+  created_at: string;
 };
 
 const ProductItem = ({item}: Props) => {

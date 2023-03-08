@@ -11,6 +11,8 @@ type Props = {
 export type Category = {
   _id: string;
   name: string;
+  updated_at: string;
+  created_at: string;
 };
 
 const CategoryItem = ({item}: Props) => {

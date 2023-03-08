@@ -1,4 +1,5 @@
 import type {StackScreenProps} from '@react-navigation/stack';
+import {RefreshControl} from 'react-native';
 import {
   AspectRatio,
   Button,
@@ -12,23 +13,41 @@ import {
   Text,
   theme,
 } from 'native-base';
-import {useContext, useEffect, useState} from 'react';
+import {useCallback, useContext, useEffect, useState} from 'react';
 import type {Product} from '../components/ProductItem';
 import type {RootStackParamList} from '../stacks/RootStack';
 import type {ImageType} from '../components/ProductItem';
 import {RootContext} from '../context/RootContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import productController from '../controllers/productController';
+import categoryController from '../controllers/categoryController';
+import type {Category} from '../components/CategoryItem';
 
 type Props = StackScreenProps<RootStackParamList, 'ProductDetails'>;
+
+const truncate = (str: string, n: number, useWordBoundary?: boolean) => {
+  if (str.length <= n) {
+    return str;
+  }
+  const subString = str.slice(0, n - 1);
+  return (
+    (useWordBoundary
+      ? subString.slice(0, subString.lastIndexOf(' '))
+      : subString) + '...'
+  );
+};
 
 const ProductDetailsScreen = ({route, navigation}: Props) => {
   const {addItemToCart, removeItemFromCart, inCart} = useContext(RootContext);
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [product, setProduct] = useState<Product | undefined>(undefined);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoryPage, setCategoryPage] = useState<number>(1);
   const [imageSelected, setImageSelected] = useState<ImageType | null>(null);
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const addQuantity = () => {
     if (product && product.quantity && selectedQuantity < product.quantity) {
@@ -41,31 +60,68 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
     }
   };
 
-  const fetchInitialData = async () => {
-    const data = await productController.fetchSingleProduct(
-      route.params.productId,
-    );
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
+  }, []);
 
-    setProduct(data);
-    if (data) {
-      setImageSelected(data.images[0]);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setErrorMsg(null);
+
+      const productData = await productController.fetchSingleProduct(
+        route.params.productId,
+      );
+      setProduct(productData);
+
+      if (productData) {
+        navigation.setOptions({title: truncate(productData.title, 30, true)});
+
+        setImageSelected(productData.images[0]);
+        if (productData.category_ids) {
+          const categoriesData = await categoryController.fetchCategories(
+            categoryPage,
+            productData.category_ids,
+          );
+          setCategories(categoriesData);
+        }
+      }
+    } catch (error: any) {
+      const status = error.response.status;
+      const data = error.response.data;
+
+      setErrorMsg(data.msg);
+
+      if (status === 500) {
+        setErrorMsg('Something went wrong, try refreshing');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchInitialData();
-
-    navigation.setOptions({title: ' '});
-  }, [navigation]);
+    fetchData();
+  }, []);
   return (
     <Box flex={1} py={5} px={3}>
-      <ScrollView>
-        {loading ? (
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
+        {errorMsg ? (
+          <Text my={3} color={theme.colors.red[600]} fontWeight="bold">
+            {errorMsg}
+          </Text>
+        ) : null}
+
+        {loading && !refreshing ? (
           <Box justifyContent="center">
             <Spinner color={theme.colors.gray[300]} size="lg" />
           </Box>
-        ) : null}
-        {product ? (
+        ) : product ? (
           <Box>
             {imageSelected ? (
               <AspectRatio
@@ -105,7 +161,7 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
               })}
             </HStack>
             <HStack space={1} mb={6} flexWrap="wrap">
-              {product.categories.map(category => {
+              {categories.map(category => {
                 return (
                   <Box
                     key={category._id}
