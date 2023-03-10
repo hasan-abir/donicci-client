@@ -1,9 +1,8 @@
 import type {StackScreenProps} from '@react-navigation/stack';
-import {RefreshControl} from 'react-native';
 import {
   AspectRatio,
-  Button,
   Box,
+  Button,
   Heading,
   HStack,
   Image,
@@ -14,14 +13,13 @@ import {
   theme,
 } from 'native-base';
 import {useCallback, useContext, useEffect, useState} from 'react';
-import type {Product} from '../components/ProductItem';
-import type {RootStackParamList} from '../stacks/RootStack';
-import type {ImageType} from '../components/ProductItem';
-import {RootContext} from '../context/RootContext';
+import {RefreshControl} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import type {ImageType, Product} from '../components/ProductItem';
+import StarRating from '../components/StarRating';
+import {RootContext} from '../context/RootContext';
 import productController from '../controllers/productController';
-import categoryController from '../controllers/categoryController';
-import type {Category} from '../components/CategoryItem';
+import type {RootStackParamList} from '../stacks/RootStack';
 
 type Props = StackScreenProps<RootStackParamList, 'ProductDetails'>;
 
@@ -43,8 +41,6 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [product, setProduct] = useState<Product | undefined>(undefined);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [categoryPage, setCategoryPage] = useState<number>(1);
   const [imageSelected, setImageSelected] = useState<ImageType | null>(null);
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -80,13 +76,6 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
         navigation.setOptions({title: truncate(productData.title, 30, true)});
 
         setImageSelected(productData.images[0]);
-        if (productData.category_ids) {
-          const categoriesData = await categoryController.fetchCategories(
-            categoryPage,
-            productData.category_ids,
-          );
-          setCategories(categoriesData);
-        }
       }
     } catch (error: any) {
       const status = error.response.status;
@@ -106,7 +95,7 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
     fetchData();
   }, []);
   return (
-    <Box flex={1} py={5} px={3}>
+    <Box flex={1} px={3}>
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -119,10 +108,10 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
 
         {loading && !refreshing ? (
           <Box justifyContent="center">
-            <Spinner color={theme.colors.gray[300]} size="lg" />
+            <Spinner py={3} color={theme.colors.gray[300]} size="lg" />
           </Box>
         ) : product ? (
-          <Box>
+          <Box py={5}>
             {imageSelected ? (
               <AspectRatio
                 backgroundColor={theme.colors.yellow[50]}
@@ -160,8 +149,9 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
                 );
               })}
             </HStack>
+            <StarRating productId={product._id} />
             <HStack space={1} mb={6} flexWrap="wrap">
-              {categories.map(category => {
+              {product.categories_list.map(category => {
                 return (
                   <Box
                     key={category._id}

@@ -10,22 +10,20 @@ const fetchProducts = (
     let data: Product[] = [];
     const error: boolean = false;
 
-    const termFilter = demoProducts.products.filter(product => {
+    const termFilter = (demoProducts.products as Product[]).filter(product => {
       const title = product.title.toLowerCase();
       return term && title.includes(term.toLowerCase());
     });
 
-    const categoryFilter = demoProducts.products.filter(product => {
-      return (
-        categoryId &&
-        product.category_ids &&
-        product.category_ids.includes(categoryId)
-      );
-    });
+    const categoryFilter = (demoProducts.products as Product[]).filter(
+      product => {
+        return categoryId && product.category_ids.includes(categoryId);
+      },
+    );
 
     switch (page) {
       case 1:
-        data = demoProducts.products;
+        data = demoProducts.products as Product[];
         if (term) {
           data = termFilter;
         }
@@ -35,7 +33,7 @@ const fetchProducts = (
         data = data.slice(0, 5);
         break;
       case 2:
-        data = demoProducts.products;
+        data = demoProducts.products as Product[];
         if (term) {
           data = termFilter;
         }

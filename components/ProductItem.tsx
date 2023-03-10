@@ -13,6 +13,7 @@ import {
 } from 'native-base';
 import type {RootStackParamList} from '../stacks/RootStack';
 import type {RootTabParamList} from '../tabs/RootTab';
+import type {Category} from './CategoryItem';
 
 type Props = {
   item: Product;
@@ -27,7 +28,8 @@ export type Product = {
   images: ImageType[];
   price: number;
   quantity?: number;
-  category_ids?: string[];
+  categories_list: Category[];
+  category_ids: string[];
   updated_at: string;
   created_at: string;
 };
