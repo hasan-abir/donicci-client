@@ -1,25 +1,26 @@
 import type {StackScreenProps} from '@react-navigation/stack';
 import {
-  AspectRatio,
   Box,
   Button,
+  FlatList,
   Heading,
   HStack,
-  Image,
-  Pressable,
-  ScrollView,
   Spinner,
   Text,
   theme,
 } from 'native-base';
-import {useCallback, useContext, useEffect, useState} from 'react';
-import {RefreshControl} from 'react-native';
+import {useContext, useEffect, useState} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import type {ImageType, Product} from '../components/ProductItem';
+import ImageGallery from '../components/ImageGallery';
+import type {Product} from '../components/ProductItem';
 import StarRating from '../components/StarRating';
+import UserReview from '../components/UserReview';
+import type {Review} from '../components/UserReview';
 import {RootContext} from '../context/RootContext';
 import productController from '../controllers/productController';
+import reviewController from '../controllers/reviewController';
 import type {RootStackParamList} from '../stacks/RootStack';
+import PostReview from '../components/PostReview';
 
 type Props = StackScreenProps<RootStackParamList, 'ProductDetails'>;
 
@@ -38,11 +39,14 @@ const truncate = (str: string, n: number, useWordBoundary?: boolean) => {
 const ProductDetailsScreen = ({route, navigation}: Props) => {
   const {addItemToCart, removeItemFromCart, inCart} = useContext(RootContext);
 
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingReviews, setLoadingReviews] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [product, setProduct] = useState<Product | undefined>(undefined);
-  const [imageSelected, setImageSelected] = useState<ImageType | null>(null);
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
+  const [endOfDataList, setEndOfDataList] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const addQuantity = () => {
@@ -56,33 +60,104 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
     }
   };
 
-  const onRefresh = useCallback(async () => {
+  const onRefresh = async () => {
     setRefreshing(true);
-    await fetchData();
+    await fetchReviews(currentPage, route.params.productId, true);
     setRefreshing(false);
-  }, []);
+  };
 
-  const fetchData = async () => {
+  const onEndReached = async () => {
+    if (
+      !loadingReviews &&
+      !endOfDataList &&
+      !refreshing &&
+      !errorMsg &&
+      product
+    ) {
+      const page = currentPage + 1;
+      setCurrentPage(page);
+
+      await fetchReviews(page, product._id);
+    }
+  };
+
+  const fetchReviews = async (
+    page: number,
+    productId: string,
+    reset?: boolean,
+  ) => {
+    try {
+      setLoadingReviews(true);
+      setErrorMsg(null);
+
+      let prevReviews = [...reviews];
+
+      if (reset) {
+        prevReviews = [];
+        page = 1;
+
+        setReviews(prevReviews);
+        setCurrentPage(page);
+        setEndOfDataList(false);
+      }
+
+      console.log(prevReviews, page);
+
+      const data = await reviewController.fetchReviews(page, productId);
+      setReviews([...prevReviews, ...data]);
+
+      if (data.length === 0) {
+        setEndOfDataList(true);
+      }
+    } catch (error: any) {
+      const status = error.response.status;
+      const data = error.response.data;
+      setErrorMsg(data.msg);
+
+      if (status === 500) {
+        setErrorMsg('Something went wrong, try refreshing');
+      }
+    } finally {
+      setLoadingReviews(false);
+    }
+  };
+
+  const postReview = async (description: string) => {
+    try {
+      await reviewController.postReview(description);
+
+      await fetchReviews(currentPage, route.params.productId, true);
+    } catch (error: any) {
+      const status = error.response.status;
+      const data = error.response.data;
+      setErrorMsg(data.msg);
+
+      if (status === 500) {
+        setErrorMsg('Something went wrong, try refreshing');
+      }
+    }
+  };
+
+  const fetchProduct = async () => {
     try {
       setLoading(true);
       setErrorMsg(null);
 
-      const productData = await productController.fetchSingleProduct(
+      const data = await productController.fetchSingleProduct(
         route.params.productId,
       );
-      setProduct(productData);
+      setProduct(data);
 
-      if (productData) {
-        navigation.setOptions({title: truncate(productData.title, 30, true)});
+      if (data) {
+        navigation.setOptions({title: truncate(data.title, 30, true)});
 
-        setImageSelected(productData.images[0]);
+        await fetchReviews(currentPage, data._id, true);
       }
     } catch (error: any) {
       const status = error.response.status;
       const data = error.response.data;
 
       setErrorMsg(data.msg);
-
       if (status === 500) {
         setErrorMsg('Something went wrong, try refreshing');
       }
@@ -92,141 +167,122 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
   };
 
   useEffect(() => {
-    fetchData();
+    fetchProduct();
   }, []);
   return (
     <Box flex={1} px={3}>
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }>
-        {errorMsg ? (
-          <Text my={3} color={theme.colors.red[600]} fontWeight="bold">
-            {errorMsg}
-          </Text>
-        ) : null}
-
-        {loading && !refreshing ? (
-          <Box justifyContent="center">
-            <Spinner py={3} color={theme.colors.gray[300]} size="lg" />
-          </Box>
-        ) : product ? (
-          <Box py={5}>
-            {imageSelected ? (
-              <AspectRatio
-                backgroundColor={theme.colors.yellow[50]}
-                borderRadius={5}
-                ratio={{base: 1 / 1}}>
-                <Image
-                  resizeMode="contain"
-                  source={{uri: imageSelected.url}}
-                  alt={product.title}
-                />
-              </AspectRatio>
-            ) : null}
-            <HStack space={2} mt={3} mb={4} flexWrap="wrap">
-              {product.images.map(image => {
-                return (
-                  <Pressable
-                    key={image.url}
-                    borderColor={
-                      imageSelected && image.url === imageSelected.url
-                        ? 'yellow.400'
-                        : null
-                    }
-                    borderWidth={
-                      imageSelected && image.url === imageSelected.url
-                        ? 2
-                        : null
-                    }
-                    onPress={() => setImageSelected(image)}>
-                    <Image
-                      size="sm"
-                      source={{uri: image.url}}
-                      alt={product.title}
-                    />
-                  </Pressable>
-                );
-              })}
-            </HStack>
-            <StarRating productId={product._id} />
-            <HStack space={1} mb={6} flexWrap="wrap">
-              {product.categories_list.map(category => {
-                return (
-                  <Box
-                    key={category._id}
-                    backgroundColor={theme.colors.yellow[200]}
-                    py={1}
-                    px={2}
-                    borderRadius={10}>
-                    <Text fontSize={12} color={theme.colors.yellow[700]}>
-                      {category.name}
-                    </Text>
-                  </Box>
-                );
-              })}
-            </HStack>
-            <Heading mb={6}>{product.title}</Heading>
-            <Text fontWeight="bold" fontSize={14} mb={3}>
-              Price - ${product.price / 100}
+      <FlatList
+        onEndReachedThreshold={0.5}
+        onEndReached={onEndReached}
+        onRefresh={onRefresh}
+        refreshing={refreshing}
+        data={reviews}
+        ListHeaderComponent={() => {
+          return loading && !refreshing ? (
+            <Box justifyContent="center">
+              <Spinner py={3} color={theme.colors.gray[300]} size="lg" />
+            </Box>
+          ) : errorMsg ? (
+            <Text my={3} color={theme.colors.red[600]} fontWeight="bold">
+              {errorMsg}
             </Text>
-            {product.quantity && product.quantity > 0 ? (
-              <Box>
-                {inCart(product._id) ? (
-                  <Button
-                    py={2}
-                    mb={6}
-                    onPress={() => removeItemFromCart(product._id)}>
-                    <Text fontWeight="bold">Remove from Cart</Text>
-                  </Button>
-                ) : (
-                  <Box mb={6}>
-                    <HStack space={2} mb={3}>
-                      <Text fontWeight="bold" fontSize={14}>
-                        Quantity -
+          ) : product ? (
+            <Box py={5}>
+              <ImageGallery alt={product.title} images={product.images} />
+              <StarRating productId={product._id} />
+              <HStack space={1} mb={6} flexWrap="wrap">
+                {product.categories_list.map(category => {
+                  return (
+                    <Box
+                      key={category._id}
+                      backgroundColor={theme.colors.yellow[200]}
+                      py={1}
+                      px={2}
+                      borderRadius={10}>
+                      <Text fontSize={12} color={theme.colors.yellow[700]}>
+                        {category.name}
                       </Text>
-                      <Ionicons
-                        name={'chevron-back-outline'}
-                        size={24}
-                        color={theme.colors.black}
-                        onPress={() => deductQuantity()}
-                      />
-                      <Text fontSize={14}>
-                        {selectedQuantity} / {product.quantity}
-                      </Text>
-                      <Ionicons
-                        name={'chevron-forward-outline'}
-                        size={24}
-                        color={theme.colors.black}
-                        onPress={() => addQuantity()}
-                      />
-                    </HStack>
+                    </Box>
+                  );
+                })}
+              </HStack>
+              <Heading mb={6}>{product.title}</Heading>
+              <Text fontWeight="bold" fontSize={14} mb={3}>
+                Price - ${product.price / 100}
+              </Text>
+              {product.quantity && product.quantity > 0 ? (
+                <Box>
+                  {inCart(product._id) ? (
                     <Button
                       py={2}
-                      onPress={() =>
-                        addItemToCart({...product, selectedQuantity})
-                      }>
-                      <Text fontWeight="bold">Add to Cart</Text>
+                      mb={6}
+                      onPress={() => removeItemFromCart(product._id)}>
+                      <Text fontWeight="bold">Remove from Cart</Text>
                     </Button>
-                  </Box>
-                )}
-              </Box>
-            ) : (
-              <Heading
-                mb={3}
-                fontSize={14}
-                style={{color: theme.colors.red[500]}}>
-                Out of stock
-              </Heading>
-            )}
+                  ) : (
+                    <Box mb={6}>
+                      <HStack space={2} mb={3}>
+                        <Text fontWeight="bold" fontSize={14}>
+                          Quantity -
+                        </Text>
+                        <Ionicons
+                          name={'chevron-back-outline'}
+                          size={24}
+                          color={theme.colors.black}
+                          onPress={() => deductQuantity()}
+                        />
+                        <Text fontSize={14}>
+                          {selectedQuantity} / {product.quantity}
+                        </Text>
+                        <Ionicons
+                          name={'chevron-forward-outline'}
+                          size={24}
+                          color={theme.colors.black}
+                          onPress={() => addQuantity()}
+                        />
+                      </HStack>
+                      <Button
+                        py={2}
+                        onPress={() =>
+                          addItemToCart({...product, selectedQuantity})
+                        }>
+                        <Text fontWeight="bold">Add to Cart</Text>
+                      </Button>
+                    </Box>
+                  )}
+                </Box>
+              ) : (
+                <Heading
+                  mb={3}
+                  fontSize={14}
+                  style={{color: theme.colors.red[500]}}>
+                  Out of stock
+                </Heading>
+              )}
 
-            <Heading mb={1} fontSize={14}>
-              Description
-            </Heading>
-            <Text>{product.description}</Text>
+              <Heading mb={1} fontSize={14}>
+                Description
+              </Heading>
+              <Text mb={10}>{product.description}</Text>
+              <PostReview postReview={postReview} disabled={loadingReviews} />
+              <Heading fontSize={20}>Product Reviews</Heading>
+            </Box>
+          ) : null;
+        }}
+        ListFooterComponent={
+          <Box justifyContent="center">
+            {endOfDataList ? (
+              <Text pb={3} textAlign="center">
+                You have reached the end of the list...
+              </Text>
+            ) : loadingReviews && !refreshing ? (
+              <Spinner py={3} color={theme.colors.gray[300]} size="lg" />
+            ) : null}
           </Box>
-        ) : null}
-      </ScrollView>
+        }
+        keyExtractor={(item, index) => item._id}
+        renderItem={({item}) => <UserReview review={item} />}
+      />
     </Box>
   );
 };

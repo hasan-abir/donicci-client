@@ -76,11 +76,6 @@ const CategoryListScreen = ({navigation}: Props) => {
   }, []);
   return (
     <Box flex={1} px={3}>
-      {errorMsg ? (
-        <Text my={3} color={theme.colors.red[600]} fontWeight="bold">
-          {errorMsg}
-        </Text>
-      ) : null}
       <FlatList
         onEndReachedThreshold={0.5}
         onEndReached={onEndReached}
@@ -96,6 +91,10 @@ const CategoryListScreen = ({navigation}: Props) => {
               </Text>
             ) : loading && !refreshing ? (
               <Spinner py={3} color={theme.colors.gray[300]} size="lg" />
+            ) : errorMsg ? (
+              <Text my={3} color={theme.colors.red[600]} fontWeight="bold">
+                {errorMsg}
+              </Text>
             ) : null}
           </Box>
         }

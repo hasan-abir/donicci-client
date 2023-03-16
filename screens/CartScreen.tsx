@@ -55,41 +55,6 @@ const CartScreen = (props: Props) => {
           );
         }}
       />
-      {/* <ScrollView>
-        <Heading mb={5}>Cart</Heading>
-        <VStack space={2}>
-          {cartItems.map(item => {
-            return <CartItemDetails key={item._id} item={item} />;
-          })}
-        </VStack>
-
-        {cartItems.length > 0 ? (
-          <Box>
-            <Button
-              colorScheme="danger"
-              onPress={() => clearCart()}
-              mt={8}
-              mb={3}>
-              Clear Cart
-            </Button>
-            <Text style={{textTransform: 'uppercase'}} mb={3}>
-              Subtotal: <Text fontWeight="bold">${cartSum.subTotal}</Text>
-            </Text>
-            <Text style={{textTransform: 'uppercase'}}>
-              Tax: <Text fontWeight="bold">${cartSum.tax}</Text>
-            </Text>
-            <Divider my={3} />
-            <Text mb={3} style={{textTransform: 'uppercase'}}>
-              Total: <Text fontWeight="bold">${cartSum.total}</Text>
-            </Text>
-            <Button py={2} onPress={() => clearCart()}>
-              <Text fontWeight="bold">Purchase</Text>
-            </Button>
-          </Box>
-        ) : (
-          <Text>No items added yet</Text>
-        )}
-      </ScrollView> */}
     </Box>
   );
 };
