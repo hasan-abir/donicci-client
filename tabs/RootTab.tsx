@@ -1,4 +1,4 @@
-import {useEffect, useContext} from 'react';
+import {useContext, useEffect} from 'react';
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import type {StackScreenProps} from '@react-navigation/stack';
@@ -8,27 +8,46 @@ import CartScreen from '../screens/CartScreen';
 import CategoryListScreen from '../screens/CategoryListScreen';
 import HomeScreen from '../screens/HomeScreen';
 
-import {theme} from 'native-base';
+import {useTheme} from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import TabHeader from '../components/TabHeader';
 
 import {RootContext} from '../context/RootContext';
 
-type Props = StackScreenProps<RootStackParamList, 'Home'>;
+interface Props extends StackScreenProps<RootStackParamList, 'Home'> {}
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
-const tabBarStyle = {
-  paddingBottom: 10,
-  height: 60,
-  borderTopColor: theme.colors.gray[300],
-  borderTopWidth: 1,
+const TabBarIcon = (props: {
+  focused: boolean;
+  color: string;
+  size: number;
+  icon: string;
+}) => {
+  const {colors} = useTheme();
+
+  return (
+    <Ionicons
+      name={props.focused ? props.icon : props.icon + '-outline'}
+      size={24}
+      color={colors.black}
+    />
+  );
 };
 
 const RootTab = ({navigation}: Props) => {
   const {cartItems} = useContext(RootContext);
+  const {colors} = useTheme();
+
+  const tabBarStyle = {
+    paddingBottom: 10,
+    height: 60,
+    borderTopColor: colors.gray[300],
+    borderTopWidth: 1,
+  };
 
   useEffect(() => {
+    // Remove stack header
     navigation.setOptions({
       headerShown: false,
     });
@@ -39,11 +58,11 @@ const RootTab = ({navigation}: Props) => {
       screenOptions={{
         tabBarStyle,
         tabBarIconStyle: {marginTop: 10},
-        tabBarInactiveTintColor: theme.colors.gray[600],
-        tabBarActiveTintColor: theme.colors.black,
-        tabBarBadgeStyle: {backgroundColor: theme.colors.yellow[400]},
-        header() {
-          return <TabHeader />;
+        tabBarInactiveTintColor: colors.gray[600],
+        tabBarActiveTintColor: colors.black,
+        tabBarBadgeStyle: {backgroundColor: colors.primary[400]},
+        header(props) {
+          return <TabHeader {...props} />;
         },
       }}>
       <Tab.Screen
@@ -52,13 +71,7 @@ const RootTab = ({navigation}: Props) => {
         options={{
           tabBarLabel: 'Home',
           tabBarIcon(props) {
-            return (
-              <Ionicons
-                name={props.focused ? 'home' : 'home-outline'}
-                size={24}
-                color={theme.colors.black}
-              />
-            );
+            return <TabBarIcon {...props} icon="home" />;
           },
         }}
       />
@@ -68,13 +81,7 @@ const RootTab = ({navigation}: Props) => {
         options={{
           tabBarBadge: cartItems.length > 0 ? cartItems.length : undefined,
           tabBarIcon(props) {
-            return (
-              <Ionicons
-                name={props.focused ? 'cart' : 'cart-outline'}
-                size={24}
-                color={theme.colors.black}
-              />
-            );
+            return <TabBarIcon {...props} icon="cart" />;
           },
         }}
       />
@@ -83,13 +90,7 @@ const RootTab = ({navigation}: Props) => {
         component={CategoryListScreen}
         options={{
           tabBarIcon(props) {
-            return (
-              <Ionicons
-                name={props.focused ? 'list' : 'list-outline'}
-                size={24}
-                color={theme.colors.black}
-              />
-            );
+            return <TabBarIcon {...props} icon="list" />;
           },
         }}
       />

@@ -1,10 +1,10 @@
 import {Box, Button, FormControl, Heading, Input, Text} from 'native-base';
 import {useState} from 'react';
 
-type Props = {
+interface Props {
   postReview: (description: string) => Promise<void>;
   disabled?: boolean;
-};
+}
 
 interface PostReviewFormData {
   description?: string;
@@ -41,7 +41,7 @@ const PostReview = ({postReview, disabled}: Props) => {
 
   return (
     <Box mb={8}>
-      <Heading mb={2} fontSize={20}>
+      <Heading mb={2} fontSize="md">
         Post a Review
       </Heading>
       <FormControl isRequired isInvalid={'description' in errors}>
@@ -61,7 +61,9 @@ const PostReview = ({postReview, disabled}: Props) => {
         ) : null}
       </FormControl>
       <Button onPress={onSubmit} mt="5" isDisabled={loading || disabled}>
-        <Text>Post</Text>
+        <Text fontWeight="bold" fontSize="md">
+          Post
+        </Text>
       </Button>
     </Box>
   );

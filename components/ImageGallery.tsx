@@ -1,4 +1,11 @@
-import {AspectRatio, Box, HStack, Image, Pressable, theme} from 'native-base';
+import {
+  AspectRatio,
+  Box,
+  HStack,
+  Image,
+  Pressable,
+  useTheme,
+} from 'native-base';
 import {useEffect, useState} from 'react';
 import {ImageType} from './ProductItem';
 
@@ -8,6 +15,8 @@ type Props = {
 };
 
 const ImageGallery = ({images, alt}: Props) => {
+  const {colors} = useTheme();
+
   const [selectedImage, setSelectedImage] = useState<ImageType | null>(null);
 
   useEffect(() => {
@@ -19,7 +28,7 @@ const ImageGallery = ({images, alt}: Props) => {
     <Box>
       {selectedImage ? (
         <AspectRatio
-          backgroundColor={theme.colors.yellow[50]}
+          backgroundColor={colors.primary[50]}
           borderRadius={5}
           ratio={{base: 1 / 1}}>
           <Image
@@ -36,7 +45,7 @@ const ImageGallery = ({images, alt}: Props) => {
               key={image.url}
               borderColor={
                 selectedImage && image.url === selectedImage.url
-                  ? 'yellow.400'
+                  ? colors.primary[400]
                   : null
               }
               borderWidth={

@@ -8,22 +8,21 @@ const fetchProducts = (
 ): Promise<Product[]> => {
   return new Promise((resolve, reject) => {
     let data: Product[] = [];
-    const error: boolean = false;
+    const originalData = demoProducts.products;
+    let error: boolean = false;
 
-    const termFilter = (demoProducts.products as Product[]).filter(product => {
+    const termFilter = originalData.filter(product => {
       const title = product.title.toLowerCase();
       return term && title.includes(term.toLowerCase());
     });
 
-    const categoryFilter = (demoProducts.products as Product[]).filter(
-      product => {
-        return categoryId && product.category_ids.includes(categoryId);
-      },
-    );
+    const categoryFilter = originalData.filter(product => {
+      return categoryId && product.category_ids.includes(categoryId);
+    });
 
     switch (page) {
       case 1:
-        data = demoProducts.products as Product[];
+        data = [...originalData];
         if (term) {
           data = termFilter;
         }
@@ -33,7 +32,7 @@ const fetchProducts = (
         data = data.slice(0, 5);
         break;
       case 2:
-        data = demoProducts.products as Product[];
+        data = [...originalData];
         if (term) {
           data = termFilter;
         }
@@ -46,6 +45,10 @@ const fetchProducts = (
         data = [];
     }
 
+    if (Math.floor(Math.random() * 5) === 1) {
+      error = true;
+    }
+
     if (error) {
       const errObj: any = new Error();
       errObj.response = {
@@ -56,15 +59,20 @@ const fetchProducts = (
       reject(errObj);
     }
 
-    setTimeout(() => {
-      resolve(data);
-    }, 3000);
+    resolve(data);
   });
 };
 
 const fetchSingleProduct = (id: string): Promise<Product | undefined> => {
   return new Promise((resolve, reject) => {
-    const error: boolean = false;
+    let error: boolean = false;
+    let data: Product | undefined = undefined;
+
+    data = demoProducts.products.find(item => item._id === id) as Product;
+
+    if (Math.floor(Math.random() * 3) === 1) {
+      error = true;
+    }
 
     if (error) {
       const errObj: any = new Error();
@@ -76,9 +84,7 @@ const fetchSingleProduct = (id: string): Promise<Product | undefined> => {
       reject(errObj);
     }
 
-    setTimeout(() => {
-      resolve(demoProducts.products.find(item => item._id === id) as Product);
-    }, 3000);
+    resolve(data);
   });
 };
 

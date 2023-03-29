@@ -1,12 +1,12 @@
 import {createStackNavigator} from '@react-navigation/stack';
 import RootTab from '../tabs/RootTab';
 
-import ProductDetailsScreen from '../screens/ProductDetailsScreen';
-import SearchScreen from '../screens/SearchScreen';
+import StackHeader from '../components/StackHeader';
 import CategoryProductsScreen from '../screens/CategoryProductsScreen';
 import LoginScreen from '../screens/LoginScreen';
+import ProductDetailsScreen from '../screens/ProductDetailsScreen';
 import RegisterScreen from '../screens/RegisterScreen';
-import StackHeader from '../components/StackHeader';
+import SearchScreen from '../screens/SearchScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 

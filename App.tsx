@@ -5,6 +5,7 @@ import 'react-native-gesture-handler';
 import RootStack from './stacks/RootStack';
 import RootContextProvider from './context/RootContext';
 
+// Overwrite primary theme
 const uiTheme = extendTheme({
   colors: {
     primary: {
@@ -15,15 +16,16 @@ const uiTheme = extendTheme({
       400: theme.colors.yellow[400],
       500: theme.colors.yellow[400],
       600: theme.colors.yellow[400],
-      700: theme.colors.yellow[400],
-      800: theme.colors.yellow[400],
-      900: theme.colors.yellow[400],
+      700: theme.colors.yellow[500],
+      800: theme.colors.yellow[500],
+      900: theme.colors.yellow[900],
     },
   },
 });
 
 const navTheme = {
   ...DefaultTheme,
+  // Change app background
   colors: {...DefaultTheme.colors, background: theme.colors.white},
 };
 

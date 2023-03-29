@@ -4,16 +4,16 @@ import {Box, Divider, Text} from 'native-base';
 import type {RootStackParamList} from '../stacks/RootStack';
 import type {RootTabParamList} from '../tabs/RootTab';
 
-type Props = {
+interface Props {
   item: Category;
-};
+}
 
-export type Category = {
+export interface Category {
   _id: string;
   name: string;
   updated_at: string;
   created_at: string;
-};
+}
 
 const CategoryItem = ({item}: Props) => {
   const navigation =
@@ -26,8 +26,7 @@ const CategoryItem = ({item}: Props) => {
         onPress={() => {
           navigation.navigate('CategoryProducts', {categoryId: item._id});
         }}
-        fontSize={20}
-        fontWeight="bold">
+        fontSize="md">
         {item.name}
       </Text>
     </Box>

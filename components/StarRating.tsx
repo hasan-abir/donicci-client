@@ -1,7 +1,10 @@
-import {useState, useEffect} from 'react';
-import {Box, HStack, Pressable, Spinner, Text, theme} from 'native-base';
+import {RouteProp, useRoute} from '@react-navigation/native';
+import {Box, HStack, Pressable, Spinner, Text, useTheme} from 'native-base';
+import {useContext, useEffect, useState} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {RootContext} from '../context/RootContext';
 import ratingController from '../controllers/ratingController';
+import type {RootStackParamList} from '../stacks/RootStack';
 
 type Props = {
   productId: string;
@@ -17,27 +20,23 @@ export type Rating = {
 };
 
 const Rating = ({productId}: Props) => {
+  const route = useRoute<RouteProp<RootStackParamList>>();
+  const {handleError, clearError} = useContext(RootContext);
+  const {colors} = useTheme();
+
   const [itemRating, setItemRating] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const submitRating = async (score: number) => {
     try {
       setLoading(true);
-      setErrorMsg(null);
+      clearError();
 
       const rating = await ratingController.addRating(productId, score);
 
       setItemRating(rating);
     } catch (error: any) {
-      const status = error.response.status;
-      const data = error.response.data;
-
-      setErrorMsg(data.msg);
-
-      if (status === 500) {
-        setErrorMsg('Something went wrong, try refreshing');
-      }
+      handleError(error, route.name);
     } finally {
       setLoading(false);
     }
@@ -46,20 +45,13 @@ const Rating = ({productId}: Props) => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      setErrorMsg(null);
+      clearError();
 
       const rating = await ratingController.fetchRatings(productId);
 
       setItemRating(rating);
     } catch (error: any) {
-      const status = error.response.status;
-      const data = error.response.data;
-
-      setErrorMsg(data.msg);
-
-      if (status === 500) {
-        setErrorMsg('Something went wrong, try refreshing');
-      }
+      handleError(error, route.name);
     } finally {
       setLoading(false);
     }
@@ -71,14 +63,9 @@ const Rating = ({productId}: Props) => {
 
   return (
     <Box mb={4}>
-      {errorMsg ? (
-        <Text my={3} color={theme.colors.red[600]} fontWeight="bold">
-          {errorMsg}
-        </Text>
-      ) : null}
       {loading ? (
         <Box justifyContent="center">
-          <Spinner color={theme.colors.gray[300]} size="lg" />
+          <Spinner color={colors.gray[300]} size="lg" />
         </Box>
       ) : (
         <Box>
@@ -93,7 +80,7 @@ const Rating = ({productId}: Props) => {
                     : 'star-outline'
                 }
                 size={24}
-                color={theme.colors.yellow[500]}
+                color={colors.primary[500]}
               />
             </Pressable>
             <Pressable onPress={() => submitRating(2)}>
@@ -106,7 +93,7 @@ const Rating = ({productId}: Props) => {
                     : 'star-outline'
                 }
                 size={24}
-                color={theme.colors.yellow[500]}
+                color={colors.primary[500]}
               />
             </Pressable>
             <Pressable onPress={() => submitRating(3)}>
@@ -119,7 +106,7 @@ const Rating = ({productId}: Props) => {
                     : 'star-outline'
                 }
                 size={24}
-                color={theme.colors.yellow[500]}
+                color={colors.primary[500]}
               />
             </Pressable>
             <Pressable onPress={() => submitRating(4)}>
@@ -132,7 +119,7 @@ const Rating = ({productId}: Props) => {
                     : 'star-outline'
                 }
                 size={24}
-                color={theme.colors.yellow[500]}
+                color={colors.primary[500]}
               />
             </Pressable>
             <Pressable onPress={() => submitRating(5)}>
@@ -145,11 +132,11 @@ const Rating = ({productId}: Props) => {
                     : 'star-outline'
                 }
                 size={24}
-                color={theme.colors.yellow[500]}
+                color={colors.primary[500]}
               />
             </Pressable>
           </HStack>
-          <Text color={theme.colors.gray[400]}>Rating - {itemRating}</Text>
+          <Text color={colors.gray[400]}>Rating - {itemRating}</Text>
         </Box>
       )}
     </Box>

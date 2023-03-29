@@ -1,24 +1,31 @@
 import type {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
-import {Box, FlatList, Heading, Spinner, Text, theme} from 'native-base';
-import {useEffect, useState} from 'react';
+import {RouteProp, useRoute} from '@react-navigation/native';
+import {Box, FlatList, Heading, Spinner, Text, useTheme} from 'native-base';
+import {useContext, useEffect, useState} from 'react';
 import type {Category} from '../components/CategoryItem';
 import CategoryItem from '../components/CategoryItem';
+import {RootContext} from '../context/RootContext';
 import categoryController from '../controllers/categoryController';
 import type {RootStackParamList} from '../stacks/RootStack';
 import type {RootTabParamList} from '../tabs/RootTab';
 
-type Props = BottomTabScreenProps<
-  RootTabParamList & RootStackParamList,
-  'Categories'
->;
+interface Props
+  extends BottomTabScreenProps<
+    RootTabParamList & RootStackParamList,
+    'Categories'
+  > {}
 
-const CategoryListScreen = ({navigation}: Props) => {
+const CategoryListScreen = ({}: Props) => {
+  const {colors} = useTheme();
+  const route = useRoute<RouteProp<RootStackParamList & RootTabParamList>>();
+
+  const {error, handleError, clearError} = useContext(RootContext);
+
   const [categories, setCategories] = useState<Category[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [endOfDataList, setEndOfDataList] = useState<boolean>(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -27,7 +34,7 @@ const CategoryListScreen = ({navigation}: Props) => {
   };
 
   const onEndReached = async () => {
-    if (!loading && !endOfDataList && !refreshing && !errorMsg) {
+    if (!loading && !endOfDataList && !refreshing && !error) {
       const page = currentPage + 1;
       setCurrentPage(page);
 
@@ -38,7 +45,7 @@ const CategoryListScreen = ({navigation}: Props) => {
   const fetchData = async (page: number, reset?: boolean) => {
     try {
       setLoading(true);
-      setErrorMsg(null);
+      clearError();
 
       let prevCategories = [...categories];
 
@@ -58,14 +65,7 @@ const CategoryListScreen = ({navigation}: Props) => {
         setEndOfDataList(true);
       }
     } catch (error: any) {
-      const status = error.response.status;
-      const data = error.response.data;
-
-      setErrorMsg(data.msg);
-
-      if (status === 500) {
-        setErrorMsg('Something went wrong, try refreshing');
-      }
+      handleError(error, route.name);
     } finally {
       setLoading(false);
     }
@@ -90,10 +90,10 @@ const CategoryListScreen = ({navigation}: Props) => {
                 You have reached the end of the list...
               </Text>
             ) : loading && !refreshing ? (
-              <Spinner py={3} color={theme.colors.gray[300]} size="lg" />
-            ) : errorMsg ? (
-              <Text my={3} color={theme.colors.red[600]} fontWeight="bold">
-                {errorMsg}
+              <Spinner py={3} color={colors.gray[300]} size="lg" />
+            ) : categories.length < 1 ? (
+              <Text py={3} textAlign="center">
+                No categories found...
               </Text>
             ) : null}
           </Box>

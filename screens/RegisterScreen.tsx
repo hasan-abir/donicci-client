@@ -1,17 +1,19 @@
-import {useState} from 'react';
 import type {StackScreenProps} from '@react-navigation/stack';
-import type {RootStackParamList} from '../stacks/RootStack';
 import {
   Box,
   Button,
   FormControl,
   Heading,
+  HStack,
   Input,
   Pressable,
   Text,
+  useTheme,
   VStack,
 } from 'native-base';
+import {useState} from 'react';
 import userController from '../controllers/userController';
+import type {RootStackParamList} from '../stacks/RootStack';
 
 type Props = StackScreenProps<RootStackParamList, 'Register'>;
 
@@ -22,6 +24,8 @@ interface RegisterFormData {
 }
 
 const RegisterScreen = ({navigation}: Props) => {
+  const {colors} = useTheme();
+
   const [formData, setData] = useState<RegisterFormData>({});
   const [errors, setErrors] = useState<RegisterFormData>({});
 
@@ -133,18 +137,20 @@ const RegisterScreen = ({navigation}: Props) => {
           ) : null}
         </FormControl>
         <Button onPress={onSubmit} mt="5">
-          <Text>Register</Text>
+          <Text fontWeight="bold" fontSize="md">
+            Register
+          </Text>
         </Button>
       </VStack>
 
-      <Text>
+      <HStack>
         <Pressable onPress={() => navigation.navigate('Login')}>
-          <Text underline bold>
+          <Text underline bold color={colors.primary[700]}>
             Login
           </Text>
         </Pressable>
-        , if you already have an account
-      </Text>
+        <Text>, if you already have an account</Text>
+      </HStack>
     </Box>
   );
 };

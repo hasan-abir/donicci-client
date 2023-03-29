@@ -33,9 +33,7 @@ const fetchReviews = (page: number, productId: string): Promise<Review[]> => {
       reject(errObj);
     }
 
-    setTimeout(() => {
-      resolve(data);
-    }, 3000);
+    resolve(data);
   });
 };
 
@@ -53,9 +51,7 @@ const postReview = (description: string): Promise<void> => {
       reject(errObj);
     }
 
-    setTimeout(() => {
-      resolve();
-    }, 3000);
+    resolve();
   });
 };
 

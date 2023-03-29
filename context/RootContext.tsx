@@ -1,17 +1,25 @@
 import React, {useState} from 'react';
 import type {Product} from '../components/ProductItem';
 
-type CartSum = {
+interface CartSum {
   subTotal: number;
   tax: number;
   total: number;
-};
+}
 
-export type CartItem = Product & {
+interface GlobalError {
+  msg: string;
+  name: string;
+}
+
+export interface CartItem extends Product {
   selectedQuantity: number;
-};
+}
 
-type Value = {
+interface Value {
+  error: GlobalError | null;
+  handleError: (errObj: any, screen: string) => void;
+  clearError: () => void;
   cartItems: CartItem[];
   addItemToCart: (cartItem: CartItem) => void;
   removeItemFromCart: (id: string) => void;
@@ -19,9 +27,12 @@ type Value = {
   cartSum: CartSum;
   updateSelectedQuantity: (productId: string, add: boolean) => void;
   clearCart: () => void;
-};
+}
 
 export const RootContext = React.createContext<Value>({
+  error: null,
+  handleError: () => {},
+  clearError: () => {},
   cartItems: [],
   cartSum: {
     subTotal: 0,
@@ -40,6 +51,7 @@ type Props = {
 };
 
 const RootContextProvider = ({children}: Props) => {
+  const [error, setError] = useState<GlobalError | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [cartSum, setCartSum] = useState<CartSum>({
     subTotal: 0,
@@ -47,18 +59,35 @@ const RootContextProvider = ({children}: Props) => {
     total: 0,
   });
 
+  const handleError = (errObj: any, screen: string) => {
+    const status = errObj.response.status;
+    const data = errObj.response.data;
+
+    setError({msg: data.msg, name: screen});
+
+    if (status === 500) {
+      setError({msg: 'Something went wrong, try refreshing', name: screen});
+    }
+  };
+
+  const clearError = () => {
+    setError(null);
+  };
+
   const calculateTheTotals = (items: CartItem[]) => {
-    const subTotal = items
-      .map(item => {
-        return item.price * item.selectedQuantity;
-      })
-      .reduce((a, b) => a + b, 0);
-    const tax = subTotal * 0.05;
+    const subTotal = Math.round(
+      items
+        .map(item => {
+          return item.price * item.selectedQuantity;
+        })
+        .reduce((a, b) => a + b, 0),
+    );
+    const tax = Math.round(subTotal * 0.05);
 
     setCartSum({
-      subTotal: Math.round((subTotal / 100) * 100) / 100,
-      tax: Math.round((tax / 100) * 100) / 100,
-      total: Math.round(((subTotal + tax) / 100) * 100) / 100,
+      subTotal,
+      tax,
+      total: Math.round(subTotal + tax),
     });
   };
 
@@ -107,6 +136,9 @@ const RootContextProvider = ({children}: Props) => {
   return (
     <RootContext.Provider
       value={{
+        error,
+        handleError,
+        clearError,
         cartItems,
         cartSum,
         addItemToCart,

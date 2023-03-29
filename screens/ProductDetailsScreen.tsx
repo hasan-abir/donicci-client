@@ -1,28 +1,18 @@
 import type {StackScreenProps} from '@react-navigation/stack';
-import {
-  Box,
-  Button,
-  FlatList,
-  Heading,
-  HStack,
-  Spinner,
-  Text,
-  theme,
-} from 'native-base';
+import {Box, FlatList, Heading, Spinner, Text, useTheme} from 'native-base';
 import {useContext, useEffect, useState} from 'react';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import ImageGallery from '../components/ImageGallery';
+import PostReview from '../components/PostReview';
+import ProductDetails from '../components/ProductDetails';
 import type {Product} from '../components/ProductItem';
-import StarRating from '../components/StarRating';
-import UserReview from '../components/UserReview';
 import type {Review} from '../components/UserReview';
+import UserReview from '../components/UserReview';
 import {RootContext} from '../context/RootContext';
 import productController from '../controllers/productController';
 import reviewController from '../controllers/reviewController';
 import type {RootStackParamList} from '../stacks/RootStack';
-import PostReview from '../components/PostReview';
 
-type Props = StackScreenProps<RootStackParamList, 'ProductDetails'>;
+interface Props
+  extends StackScreenProps<RootStackParamList, 'ProductDetails'> {}
 
 const truncate = (str: string, n: number, useWordBoundary?: boolean) => {
   if (str.length <= n) {
@@ -37,43 +27,25 @@ const truncate = (str: string, n: number, useWordBoundary?: boolean) => {
 };
 
 const ProductDetailsScreen = ({route, navigation}: Props) => {
-  const {addItemToCart, removeItemFromCart, inCart} = useContext(RootContext);
+  const {error, handleError, clearError} = useContext(RootContext);
+  const {colors} = useTheme();
 
   const [reviews, setReviews] = useState<Review[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loadingProduct, setLoadingProduct] = useState<boolean>(false);
   const [loadingReviews, setLoadingReviews] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [product, setProduct] = useState<Product | undefined>(undefined);
-  const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
   const [endOfDataList, setEndOfDataList] = useState<boolean>(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  const addQuantity = () => {
-    if (product && product.quantity && selectedQuantity < product.quantity) {
-      setSelectedQuantity(selectedQuantity + 1);
-    }
-  };
-  const deductQuantity = () => {
-    if (product && product.quantity && selectedQuantity > 1) {
-      setSelectedQuantity(selectedQuantity - 1);
-    }
-  };
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await fetchReviews(currentPage, route.params.productId, true);
+    await fetchProduct();
     setRefreshing(false);
   };
 
   const onEndReached = async () => {
-    if (
-      !loadingReviews &&
-      !endOfDataList &&
-      !refreshing &&
-      !errorMsg &&
-      product
-    ) {
+    if (!loadingReviews && !endOfDataList && !refreshing && !error && product) {
       const page = currentPage + 1;
       setCurrentPage(page);
 
@@ -88,7 +60,7 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
   ) => {
     try {
       setLoadingReviews(true);
-      setErrorMsg(null);
+      clearError();
 
       let prevReviews = [...reviews];
 
@@ -101,8 +73,6 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
         setEndOfDataList(false);
       }
 
-      console.log(prevReviews, page);
-
       const data = await reviewController.fetchReviews(page, productId);
       setReviews([...prevReviews, ...data]);
 
@@ -110,13 +80,7 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
         setEndOfDataList(true);
       }
     } catch (error: any) {
-      const status = error.response.status;
-      const data = error.response.data;
-      setErrorMsg(data.msg);
-
-      if (status === 500) {
-        setErrorMsg('Something went wrong, try refreshing');
-      }
+      handleError(error, route.name);
     } finally {
       setLoadingReviews(false);
     }
@@ -128,20 +92,14 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
 
       await fetchReviews(currentPage, route.params.productId, true);
     } catch (error: any) {
-      const status = error.response.status;
-      const data = error.response.data;
-      setErrorMsg(data.msg);
-
-      if (status === 500) {
-        setErrorMsg('Something went wrong, try refreshing');
-      }
+      handleError(error, route.name);
     }
   };
 
   const fetchProduct = async () => {
     try {
-      setLoading(true);
-      setErrorMsg(null);
+      setLoadingProduct(true);
+      clearError();
 
       const data = await productController.fetchSingleProduct(
         route.params.productId,
@@ -154,15 +112,9 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
         await fetchReviews(currentPage, data._id, true);
       }
     } catch (error: any) {
-      const status = error.response.status;
-      const data = error.response.data;
-
-      setErrorMsg(data.msg);
-      if (status === 500) {
-        setErrorMsg('Something went wrong, try refreshing');
-      }
+      handleError(error, route.name);
     } finally {
-      setLoading(false);
+      setLoadingProduct(false);
     }
   };
 
@@ -178,94 +130,15 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
         refreshing={refreshing}
         data={reviews}
         ListHeaderComponent={() => {
-          return loading && !refreshing ? (
+          return loadingProduct && !refreshing ? (
             <Box justifyContent="center">
-              <Spinner py={3} color={theme.colors.gray[300]} size="lg" />
+              <Spinner py={3} color={colors.gray[300]} size="lg" />
             </Box>
-          ) : errorMsg ? (
-            <Text my={3} color={theme.colors.red[600]} fontWeight="bold">
-              {errorMsg}
-            </Text>
           ) : product ? (
             <Box py={5}>
-              <ImageGallery alt={product.title} images={product.images} />
-              <StarRating productId={product._id} />
-              <HStack space={1} mb={6} flexWrap="wrap">
-                {product.categories_list.map(category => {
-                  return (
-                    <Box
-                      key={category._id}
-                      backgroundColor={theme.colors.yellow[200]}
-                      py={1}
-                      px={2}
-                      borderRadius={10}>
-                      <Text fontSize={12} color={theme.colors.yellow[700]}>
-                        {category.name}
-                      </Text>
-                    </Box>
-                  );
-                })}
-              </HStack>
-              <Heading mb={6}>{product.title}</Heading>
-              <Text fontWeight="bold" fontSize={14} mb={3}>
-                Price - ${product.price / 100}
-              </Text>
-              {product.quantity && product.quantity > 0 ? (
-                <Box>
-                  {inCart(product._id) ? (
-                    <Button
-                      py={2}
-                      mb={6}
-                      onPress={() => removeItemFromCart(product._id)}>
-                      <Text fontWeight="bold">Remove from Cart</Text>
-                    </Button>
-                  ) : (
-                    <Box mb={6}>
-                      <HStack space={2} mb={3}>
-                        <Text fontWeight="bold" fontSize={14}>
-                          Quantity -
-                        </Text>
-                        <Ionicons
-                          name={'chevron-back-outline'}
-                          size={24}
-                          color={theme.colors.black}
-                          onPress={() => deductQuantity()}
-                        />
-                        <Text fontSize={14}>
-                          {selectedQuantity} / {product.quantity}
-                        </Text>
-                        <Ionicons
-                          name={'chevron-forward-outline'}
-                          size={24}
-                          color={theme.colors.black}
-                          onPress={() => addQuantity()}
-                        />
-                      </HStack>
-                      <Button
-                        py={2}
-                        onPress={() =>
-                          addItemToCart({...product, selectedQuantity})
-                        }>
-                        <Text fontWeight="bold">Add to Cart</Text>
-                      </Button>
-                    </Box>
-                  )}
-                </Box>
-              ) : (
-                <Heading
-                  mb={3}
-                  fontSize={14}
-                  style={{color: theme.colors.red[500]}}>
-                  Out of stock
-                </Heading>
-              )}
-
-              <Heading mb={1} fontSize={14}>
-                Description
-              </Heading>
-              <Text mb={10}>{product.description}</Text>
+              <ProductDetails product={product} />
               <PostReview postReview={postReview} disabled={loadingReviews} />
-              <Heading fontSize={20}>Product Reviews</Heading>
+              <Heading fontSize="md">Product Reviews</Heading>
             </Box>
           ) : null;
         }}
@@ -276,7 +149,7 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
                 You have reached the end of the list...
               </Text>
             ) : loadingReviews && !refreshing ? (
-              <Spinner py={3} color={theme.colors.gray[300]} size="lg" />
+              <Spinner py={3} color={colors.gray[300]} size="lg" />
             ) : null}
           </Box>
         }

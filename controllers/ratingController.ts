@@ -26,9 +26,7 @@ const fetchRatings = (productId: string): Promise<number> => {
       reject(errObj);
     }
 
-    setTimeout(() => {
-      resolve(averageRating);
-    }, 3000);
+    resolve(averageRating);
   });
 };
 
@@ -58,9 +56,7 @@ const addRating = (productId: string, score: number): Promise<number> => {
       reject(errObj);
     }
 
-    setTimeout(() => {
-      resolve(averageRating);
-    }, 3000);
+    resolve(averageRating);
   });
 };
 

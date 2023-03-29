@@ -1,18 +1,9 @@
 import type {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
-import type {RootTabParamList} from '../tabs/RootTab';
-import {
-  Box,
-  Button,
-  Divider,
-  Heading,
-  ScrollView,
-  Text,
-  VStack,
-  FlatList,
-} from 'native-base';
+import {Box, Button, Divider, FlatList, Heading, Text} from 'native-base';
 import {useContext} from 'react';
-import {RootContext} from '../context/RootContext';
 import CartItemDetails from '../components/CartItemDetails';
+import {RootContext} from '../context/RootContext';
+import type {RootTabParamList} from '../tabs/RootTab';
 
 type Props = BottomTabScreenProps<RootTabParamList, 'Cart'>;
 
@@ -36,14 +27,14 @@ const CartScreen = (props: Props) => {
                 mb={3}>
                 Clear Cart
               </Button>
-              <Text style={{textTransform: 'uppercase'}} mb={3}>
+              <Text textTransform="uppercase" mb={3}>
                 Subtotal: <Text fontWeight="bold">${cartSum.subTotal}</Text>
               </Text>
-              <Text style={{textTransform: 'uppercase'}}>
+              <Text textTransform="uppercase">
                 Tax: <Text fontWeight="bold">${cartSum.tax}</Text>
               </Text>
               <Divider my={3} />
-              <Text mb={3} style={{textTransform: 'uppercase'}}>
+              <Text mb={3} textTransform="uppercase">
                 Total: <Text fontWeight="bold">${cartSum.total}</Text>
               </Text>
               <Button py={2} mb={5} onPress={() => clearCart()}>

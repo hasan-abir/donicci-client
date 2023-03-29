@@ -1,27 +1,28 @@
 import {useNavigation} from '@react-navigation/native';
 import type {StackNavigationProp} from '@react-navigation/stack';
 import {
-  Divider,
-  VStack,
+  AspectRatio,
+  Box,
+  HStack,
+  Image,
   Pressable,
   Text,
-  Heading,
-  theme,
-  Image,
-  AspectRatio,
-  HStack,
+  useTheme,
 } from 'native-base';
 import type {RootStackParamList} from '../stacks/RootStack';
 import type {RootTabParamList} from '../tabs/RootTab';
 import type {Category} from './CategoryItem';
 
-type Props = {
+interface Props {
   item: Product;
-};
+}
 
-export type ImageType = {fileId: string; url: string};
+export interface ImageType {
+  fileId: string;
+  url: string;
+}
 
-export type Product = {
+export interface Product {
   _id: string;
   title: string;
   description?: string;
@@ -32,17 +33,18 @@ export type Product = {
   category_ids: string[];
   updated_at: string;
   created_at: string;
-};
+}
 
 const ProductItem = ({item}: Props) => {
+  const {colors} = useTheme();
+
   const navigation =
     useNavigation<StackNavigationProp<RootStackParamList & RootTabParamList>>();
 
   return (
     <Pressable
       display="flex"
-      flexBasis="48%"
-      borderColor={theme.colors.gray[300]}
+      borderColor={colors.gray[300]}
       borderWidth={1}
       borderRadius={20}
       overflow="hidden"
@@ -50,23 +52,27 @@ const ProductItem = ({item}: Props) => {
       onPress={() =>
         navigation.navigate('ProductDetails', {productId: item._id})
       }>
-      <AspectRatio ratio={{base: 1 / 1}}>
+      <AspectRatio ratio={{base: 4 / 3}}>
         <Image
           resizeMode="cover"
           source={{uri: item.images[0].url}}
           alt={item.title}
         />
       </AspectRatio>
-      <VStack flex={1} justifyContent="space-between" p={3}>
-        <Heading fontSize={14} mb={3}>
+      <HStack
+        space={2}
+        justifyContent="space-between"
+        alignItems="center"
+        p={3}>
+        <Text flex={1} fontSize="md" mb={3}>
           {item.title}
-        </Heading>
-        <Divider my={2} />
-        <HStack justifyContent="space-between">
-          <Text>Price</Text>
-          <Text>${item.price / 100}</Text>
-        </HStack>
-      </VStack>
+        </Text>
+        <Box backgroundColor={colors.primary[400]} px={1} borderRadius="md">
+          <Text fontWeight="bold" color={colors.primary[900]}>
+            ${item.price}
+          </Text>
+        </Box>
+      </HStack>
     </Pressable>
   );
 };

@@ -18,7 +18,7 @@
           "fileId": "3"
         }
       ],
-      "price": 2999,
+      "price": 29.99,
       "quantity": 5,
       "category_ids": ["1", "2"],
       "categories_list": [
@@ -48,7 +48,7 @@
           "fileId": "2"
         }
       ],
-      "price": 1999,
+      "price": 19.99,
       "quantity": 10,
       "category_ids": ["2", "3"],
       "categories_list": [
@@ -78,7 +78,7 @@
           "fileId": "3"
         }
       ],
-      "price": 3999,
+      "price": 39.99,
       "quantity": 0,
       "category_ids": ["2", "5", "6"],
       "categories_list": [
@@ -114,7 +114,7 @@
           "fileId": "4"
         }
       ],
-      "price": 4999,
+      "price": 49.99,
       "quantity": 10,
       "category_ids": ["2", "3"],
       "categories_list": [
@@ -144,7 +144,7 @@
           "fileId": "5"
         }
       ],
-      "price": 2999,
+      "price": 29.99,
       "quantity": 5,
       "category_ids": ["1"],
       "categories_list": [
@@ -168,7 +168,7 @@
           "fileId": "6"
         }
       ],
-      "price": 5999,
+      "price": 59.99,
       "quantity": 15,
       "category_ids": ["3", "5"],
       "categories_list": [
@@ -198,7 +198,7 @@
           "fileId": "7"
         }
       ],
-      "price": 999,
+      "price": 9.99,
       "quantity": 25,
       "category_ids": ["2", "5", "6"],
       "categories_list": [
@@ -234,7 +234,7 @@
           "fileId": "8"
         }
       ],
-      "price": 5999,
+      "price": 59.99,
       "category_ids": [],
       "categories_list": [],
       "quantity": 5,
@@ -251,7 +251,7 @@
           "fileId": "9"
         }
       ],
-      "price": 1999,
+      "price": 19.99,
       "quantity": 15,
       "category_ids": ["3", "4"],
       "categories_list": [
@@ -281,7 +281,7 @@
           "fileId": "10"
         }
       ],
-      "price": 2999,
+      "price": 29.99,
       "quantity": 5,
       "category_ids": ["2", "5", "6"],
       "categories_list": [

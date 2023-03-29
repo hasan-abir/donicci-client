@@ -41,9 +41,7 @@ const fetchCategories = (
       reject(errObj);
     }
 
-    setTimeout(() => {
-      resolve(data);
-    }, 3000);
+    resolve(data);
   });
 };
 
