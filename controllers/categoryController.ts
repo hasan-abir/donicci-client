@@ -7,17 +7,12 @@ const fetchCategories = (
 ): Promise<Category[]> => {
   return new Promise((resolve, reject) => {
     let data: Category[] = [];
+    const originalData = [...demoCategories.categories];
     const error: boolean = false;
 
     switch (page) {
       case 1:
-        data = demoCategories.categories.slice(0, 5) as Category[];
-        break;
-      case 2:
-        data = demoCategories.categories.slice(
-          5,
-          demoCategories.categories.length,
-        ) as Category[];
+        data = [...originalData];
         break;
       default:
         data = [];
@@ -26,9 +21,7 @@ const fetchCategories = (
     if (arrOfIds) {
       data = [];
 
-      data = demoCategories.categories.filter(category =>
-        arrOfIds.includes(category._id),
-      );
+      data = originalData.filter(category => arrOfIds.includes(category._id));
     }
 
     if (error) {

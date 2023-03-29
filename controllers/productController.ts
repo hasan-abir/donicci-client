@@ -45,9 +45,9 @@ const fetchProducts = (
         data = [];
     }
 
-    if (Math.floor(Math.random() * 5) === 1) {
-      error = true;
-    }
+    // if (Math.floor(Math.random() * 5) === 1) {
+    //   error = true;
+    // }
 
     if (error) {
       const errObj: any = new Error();
