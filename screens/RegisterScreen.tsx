@@ -11,8 +11,8 @@ import {
   useTheme,
   VStack,
 } from 'native-base';
-import {useState} from 'react';
-import userController from '../controllers/userController';
+import {useContext, useState} from 'react';
+import {RootContext} from '../context/RootContext';
 import type {RootStackParamList} from '../stacks/RootStack';
 
 type Props = StackScreenProps<RootStackParamList, 'Register'>;
@@ -23,7 +23,8 @@ interface RegisterFormData {
   password?: string;
 }
 
-const RegisterScreen = ({navigation}: Props) => {
+const RegisterScreen = ({navigation, route}: Props) => {
+  const {authenticateUser} = useContext(RootContext);
   const {colors} = useTheme();
 
   const [formData, setData] = useState<RegisterFormData>({});
@@ -71,11 +72,14 @@ const RegisterScreen = ({navigation}: Props) => {
 
   const onSubmit = async () => {
     if (validate()) {
-      const success = await userController.register({
-        username: formData.username || '',
-        email: formData.email || '',
-        password: formData.password || '',
-      });
+      const success = await authenticateUser(
+        {
+          username: formData.username || '',
+          email: formData.email || '',
+          password: formData.password || '',
+        },
+        route.name,
+      );
 
       if (success) {
         navigation.navigate('Home');

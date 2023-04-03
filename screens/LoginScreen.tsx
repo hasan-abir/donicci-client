@@ -11,8 +11,8 @@ import {
   useTheme,
   VStack,
 } from 'native-base';
-import {useState} from 'react';
-import userController from '../controllers/userController';
+import {useContext, useState} from 'react';
+import {RootContext} from '../context/RootContext';
 import type {RootStackParamList} from '../stacks/RootStack';
 
 type Props = StackScreenProps<RootStackParamList, 'Login'>;
@@ -22,7 +22,8 @@ interface LoginFormData {
   password?: string;
 }
 
-const LoginScreen = ({navigation}: Props) => {
+const LoginScreen = ({navigation, route}: Props) => {
+  const {authenticateUser} = useContext(RootContext);
   const {colors} = useTheme();
 
   const [formData, setData] = useState<LoginFormData>({});
@@ -62,10 +63,13 @@ const LoginScreen = ({navigation}: Props) => {
 
   const onSubmit = async () => {
     if (validate()) {
-      const success = await userController.login({
-        email: formData.email || '',
-        password: formData.password || '',
-      });
+      const success = await authenticateUser(
+        {
+          email: formData.email || '',
+          password: formData.password || '',
+        },
+        route.name,
+      );
 
       if (success) {
         navigation.navigate('Home');

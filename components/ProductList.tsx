@@ -17,7 +17,7 @@ interface Props {
 const ProductList = ({categoryId, term, headerTitle}: Props) => {
   const route = useRoute<RouteProp<RootStackParamList & RootTabParamList>>();
 
-  const {error, handleError, clearError} = useContext(RootContext);
+  const {error, handleError, clearError, user} = useContext(RootContext);
   const {colors} = useTheme();
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -85,9 +85,18 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
       onRefresh={onRefresh}
       refreshing={refreshing}
       data={products}
-      ListHeaderComponent={
-        <Heading my={5}>{headerTitle || 'Latest Products'}</Heading>
-      }
+      ListHeaderComponent={() => {
+        return (
+          <Box pt={5}>
+            {route.name === 'Products' && user ? (
+              <Text fontSize="md" mb={2}>
+                Welcome, {user.username}!
+              </Text>
+            ) : null}
+            <Heading mb={5}>{headerTitle || 'Latest Products'}</Heading>
+          </Box>
+        );
+      }}
       ListFooterComponent={
         <Box justifyContent="center">
           {endOfDataList ? (

@@ -1,3 +1,4 @@
+import {useEffect, useContext} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import RootTab from '../tabs/RootTab';
 
@@ -7,10 +8,31 @@ import LoginScreen from '../screens/LoginScreen';
 import ProductDetailsScreen from '../screens/ProductDetailsScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import SearchScreen from '../screens/SearchScreen';
+import {RootContext} from '../context/RootContext';
+import {Box, Spinner, useTheme} from 'native-base';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 const RootStack = () => {
+  const {colors} = useTheme();
+  const {verifyCurrentUser, authenticating} = useContext(RootContext);
+
+  const initialCheck = async () => {
+    await verifyCurrentUser();
+  };
+
+  useEffect(() => {
+    initialCheck();
+  }, []);
+
+  if (authenticating) {
+    return (
+      <Box alignItems="center" justifyContent="center" flex={1}>
+        <Spinner py={3} color={colors.gray[300]} size="lg" />
+      </Box>
+    );
+  }
+
   return (
     <Stack.Navigator
       initialRouteName="Home"

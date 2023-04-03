@@ -7,7 +7,7 @@ import {RootContext} from '../context/RootContext';
 import SearchForm from './SearchForm';
 
 const TabHeader = ({navigation, route}: BottomTabHeaderProps) => {
-  const {error} = useContext(RootContext);
+  const {error, user, logOutUser} = useContext(RootContext);
   const {colors} = useTheme();
 
   return (
@@ -32,13 +32,21 @@ const TabHeader = ({navigation, route}: BottomTabHeaderProps) => {
         <Box flex={1} mr={2}>
           <SearchForm />
         </Box>
-
-        <Ionicons
-          name={'person-circle'}
-          size={32}
-          color={colors.black}
-          onPress={() => navigation.navigate('Login')}
-        />
+        {user ? (
+          <Ionicons
+            name={'exit-outline'}
+            size={32}
+            color={colors.black}
+            onPress={() => logOutUser()}
+          />
+        ) : (
+          <Ionicons
+            name={'person-circle'}
+            size={32}
+            color={colors.black}
+            onPress={() => navigation.navigate('Login')}
+          />
+        )}
       </HStack>
     </Box>
   );

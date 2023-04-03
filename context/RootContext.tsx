@@ -1,5 +1,11 @@
 import React, {useState} from 'react';
 import type {Product} from '../components/ProductItem';
+import userController, {
+  LoginInput,
+  RegisterInput,
+  User,
+} from '../controllers/userController';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface CartSum {
   subTotal: number;
@@ -17,6 +23,15 @@ export interface CartItem extends Product {
 }
 
 interface Value {
+  user: User | null;
+  token: string | null;
+  authenticating: boolean;
+  authenticateUser: (
+    input: RegisterInput | LoginInput,
+    screen: string,
+  ) => Promise<boolean>;
+  verifyCurrentUser: () => Promise<void>;
+  logOutUser: () => Promise<void>;
   error: GlobalError | null;
   handleError: (errObj: any, screen: string) => void;
   clearError: () => void;
@@ -30,6 +45,21 @@ interface Value {
 }
 
 export const RootContext = React.createContext<Value>({
+  user: null,
+  token: null,
+  authenticating: false,
+  authenticateUser: () =>
+    new Promise((resolve, reject) => {
+      resolve(false);
+    }),
+  verifyCurrentUser: () =>
+    new Promise((resolve, reject) => {
+      resolve();
+    }),
+  logOutUser: () =>
+    new Promise((resolve, reject) => {
+      resolve();
+    }),
   error: null,
   handleError: () => {},
   clearError: () => {},
@@ -51,6 +81,9 @@ type Props = {
 };
 
 const RootContextProvider = ({children}: Props) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>('123');
+  const [authenticating, setAuthenticating] = useState<boolean>(false);
   const [error, setError] = useState<GlobalError | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [cartSum, setCartSum] = useState<CartSum>({
@@ -58,6 +91,70 @@ const RootContextProvider = ({children}: Props) => {
     tax: 0,
     total: 0,
   });
+
+  const authenticateUser = async (
+    input: RegisterInput | LoginInput,
+    screen: string,
+  ) => {
+    try {
+      clearError();
+
+      let userToken = null;
+
+      if (screen === 'Register') {
+        userToken = await userController.register(input as RegisterInput);
+      } else if (screen === 'Login') {
+        userToken = await userController.login(input as LoginInput);
+      }
+
+      if (userToken) {
+        const currentUser = await userController.getCurrentUser(userToken);
+
+        setUser(currentUser);
+        setToken(userToken);
+
+        await AsyncStorage.setItem('@user_token', userToken);
+      }
+
+      return true;
+    } catch (error: any) {
+      handleError(error, screen);
+      return false;
+    }
+  };
+
+  const verifyCurrentUser = async () => {
+    try {
+      setAuthenticating(true);
+
+      const storedToken = await AsyncStorage.getItem('@user_token');
+
+      if (storedToken !== null) {
+        const currentUser = await userController.getCurrentUser(storedToken);
+
+        setUser(currentUser);
+        setToken(storedToken);
+      }
+    } catch (error: any) {
+      handleError(error, 'Home');
+    } finally {
+      setAuthenticating(false);
+    }
+  };
+
+  const logOutUser = async () => {
+    try {
+      setAuthenticating(true);
+
+      await AsyncStorage.removeItem('@user_token');
+      setUser(null);
+      setToken(null);
+    } catch (error: any) {
+      handleError(error, 'Home');
+    } finally {
+      setAuthenticating(false);
+    }
+  };
 
   const handleError = (errObj: any, screen: string) => {
     const status = errObj.response.status;
@@ -136,6 +233,12 @@ const RootContextProvider = ({children}: Props) => {
   return (
     <RootContext.Provider
       value={{
+        user,
+        token,
+        authenticating,
+        authenticateUser,
+        verifyCurrentUser,
+        logOutUser,
         error,
         handleError,
         clearError,
