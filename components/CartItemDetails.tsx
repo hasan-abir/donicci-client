@@ -2,12 +2,16 @@ import {Box, Button, HStack, Image, Text, useTheme} from 'native-base';
 import {useContext} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {CartItem, RootContext} from '../context/RootContext';
+import {RouteProp, useRoute} from '@react-navigation/native';
+import {RootTabParamList} from '../tabs/RootTab';
 
 type Props = {
   item: CartItem;
 };
 
 const CartItemDetails = ({item}: Props) => {
+  const route = useRoute<RouteProp<RootTabParamList>>();
+
   const {updateSelectedQuantity, removeItemFromCart} = useContext(RootContext);
   const {colors} = useTheme();
 
@@ -22,21 +26,21 @@ const CartItemDetails = ({item}: Props) => {
       <HStack mb={3} alignItems="flex-start">
         <Image
           size="sm"
-          source={{uri: item.images[0].url}}
-          alt={item.title}
+          source={{uri: item.product.images[0].url}}
+          alt={item.product.title}
           borderRadius={100}
         />
         <HStack flex={1} justifyContent="flex-end">
           <Button
             size="xs"
             colorScheme="danger"
-            onPress={() => removeItemFromCart(item._id)}>
+            onPress={() => removeItemFromCart(item.product._id, route.name)}>
             Remove
           </Button>
         </HStack>
       </HStack>
       <Text fontSize="md" mb={5}>
-        {item.title}
+        {item.product.title}
       </Text>
 
       <HStack space={2} mb={3}>
@@ -50,7 +54,7 @@ const CartItemDetails = ({item}: Props) => {
           onPress={() => updateSelectedQuantity(item._id, false)}
         />
         <Text fontSize="sm">
-          {item.selectedQuantity} / {item.quantity}
+          {item.selectedQuantity} / {item.product.quantity}
         </Text>
         <Ionicons
           name={'chevron-forward-outline'}
@@ -61,11 +65,12 @@ const CartItemDetails = ({item}: Props) => {
       </HStack>
       <HStack justifyContent="space-between">
         <Text fontWeight="bold" fontSize="sm">
-          Price - ${item.price}
+          Price - ${item.product.price}
         </Text>
 
         <Text fontWeight="bold" fontSize="sm">
-          Total - ${Math.round(item.price * item.selectedQuantity * 100) / 100}
+          Total - $
+          {Math.round(item.product.price * item.selectedQuantity * 100) / 100}
         </Text>
       </HStack>
     </Box>

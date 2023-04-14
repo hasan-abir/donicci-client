@@ -37,7 +37,7 @@ const fetchReviews = (page: number, productId: string): Promise<Review[]> => {
   });
 };
 
-const postReview = (description: string): Promise<void> => {
+const postReview = (description: string, token: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     const error: boolean = false;
 

@@ -5,12 +5,17 @@ import {RootContext} from '../context/RootContext';
 import ImageGallery from './ImageGallery';
 import type {Product} from './ProductItem';
 import StarRating from './StarRating';
+import {RouteProp, useRoute} from '@react-navigation/native';
+import {RootStackParamList} from '../stacks/RootStack';
+import {RootTabParamList} from '../tabs/RootTab';
 
 interface Props {
   product: Product;
 }
 
 const ProductDetails = ({product}: Props) => {
+  const route = useRoute<RouteProp<RootStackParamList & RootTabParamList>>();
+
   const {colors} = useTheme();
   const {addItemToCart, removeItemFromCart, inCart} = useContext(RootContext);
 
@@ -57,7 +62,7 @@ const ProductDetails = ({product}: Props) => {
             <Button
               py={2}
               mb={6}
-              onPress={() => removeItemFromCart(product._id)}>
+              onPress={() => removeItemFromCart(product._id, route.name)}>
               <Text fontWeight="bold">Remove from Cart</Text>
             </Button>
           ) : (
@@ -84,7 +89,9 @@ const ProductDetails = ({product}: Props) => {
               </HStack>
               <Button
                 py={2}
-                onPress={() => addItemToCart({...product, selectedQuantity})}>
+                onPress={() =>
+                  addItemToCart(product, selectedQuantity, route.name)
+                }>
                 <Text fontWeight="bold" fontSize="md">
                   Add to Cart
                 </Text>

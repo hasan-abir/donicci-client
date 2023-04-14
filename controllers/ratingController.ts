@@ -30,7 +30,11 @@ const fetchRatings = (productId: string): Promise<number> => {
   });
 };
 
-const addRating = (productId: string, score: number): Promise<number> => {
+const addRating = (
+  productId: string,
+  score: number,
+  token: string,
+): Promise<number> => {
   return new Promise((resolve, reject) => {
     const error: boolean = false;
 

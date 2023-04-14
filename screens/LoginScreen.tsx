@@ -72,7 +72,9 @@ const LoginScreen = ({navigation, route}: Props) => {
       );
 
       if (success) {
-        navigation.navigate('Home');
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        }
       }
     }
   };

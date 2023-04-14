@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {Dispatch, SetStateAction, useState} from 'react';
 import type {Product} from '../components/ProductItem';
 import userController, {
   LoginInput,
@@ -6,6 +6,10 @@ import userController, {
   User,
 } from '../controllers/userController';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import type {ImageType} from '../components/ProductItem';
+import 'react-native-get-random-values';
+import {v4 as uuidv4} from 'uuid';
+import cartItemController from '../controllers/cartItemController';
 
 interface CartSum {
   subTotal: number;
@@ -18,8 +22,18 @@ interface GlobalError {
   name: string;
 }
 
-export interface CartItem extends Product {
+export interface CartItem {
+  _id: string;
+  product: {
+    _id: string;
+    title: string;
+    images: ImageType[];
+    price: number;
+    quantity: number;
+  };
   selectedQuantity: number;
+  updated_at?: string;
+  created_at?: string;
 }
 
 interface Value {
@@ -36,8 +50,14 @@ interface Value {
   handleError: (errObj: any, screen: string) => void;
   clearError: () => void;
   cartItems: CartItem[];
-  addItemToCart: (cartItem: CartItem) => void;
-  removeItemFromCart: (id: string) => void;
+  setCartItems: Dispatch<SetStateAction<CartItem[]>>;
+  addItemToCart: (
+    product: Product,
+    selectedQuantity: number,
+    screen: string,
+  ) => Promise<void>;
+  removeItemFromCart: (productId: string, screen: string) => Promise<void>;
+  calculateTheTotals: (items: CartItem[]) => void;
   inCart: (productId: string) => boolean;
   cartSum: CartSum;
   updateSelectedQuantity: (productId: string, add: boolean) => void;
@@ -64,13 +84,21 @@ export const RootContext = React.createContext<Value>({
   handleError: () => {},
   clearError: () => {},
   cartItems: [],
+  setCartItems: () => {},
   cartSum: {
     subTotal: 0,
     tax: 0,
     total: 0,
   },
-  addItemToCart: () => {},
-  removeItemFromCart: () => {},
+  addItemToCart: () =>
+    new Promise((resolve, reject) => {
+      resolve();
+    }),
+  removeItemFromCart: () =>
+    new Promise((resolve, reject) => {
+      resolve();
+    }),
+  calculateTheTotals: () => {},
   inCart: () => false,
   updateSelectedQuantity: () => {},
   clearCart: () => {},
@@ -82,7 +110,7 @@ type Props = {
 
 const RootContextProvider = ({children}: Props) => {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>('123');
+  const [token, setToken] = useState<string | null>(null);
   const [authenticating, setAuthenticating] = useState<boolean>(false);
   const [error, setError] = useState<GlobalError | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -175,7 +203,7 @@ const RootContextProvider = ({children}: Props) => {
     const subTotal = Math.round(
       items
         .map(item => {
-          return item.price * item.selectedQuantity;
+          return item.product.price * item.selectedQuantity;
         })
         .reduce((a, b) => a + b, 0),
     );
@@ -188,25 +216,69 @@ const RootContextProvider = ({children}: Props) => {
     });
   };
 
-  const addItemToCart = (cartItem: CartItem) => {
-    const updatedCartItems = [...cartItems, cartItem];
-    setCartItems(updatedCartItems);
+  const addItemToCart = async (
+    product: Product,
+    selectedQuantity: number,
+    screen: string,
+  ) => {
+    try {
+      let cartItem = null;
 
-    calculateTheTotals(updatedCartItems);
+      if (user && token) {
+        cartItem = await cartItemController.addCartItem(
+          token,
+          product._id,
+          selectedQuantity,
+        );
+      } else {
+        cartItem = {
+          _id: uuidv4(),
+          product: {
+            _id: product._id,
+            title: product.title,
+            images: product.images,
+            quantity: product.quantity as number,
+            price: product.price,
+          },
+          selectedQuantity,
+        };
+      }
+
+      const updatedCartItems = [...cartItems, cartItem as CartItem];
+      setCartItems(updatedCartItems);
+
+      calculateTheTotals(updatedCartItems);
+    } catch (error: any) {
+      handleError(error, screen);
+    }
   };
 
-  const removeItemFromCart = (id: string) => {
-    const updatedCartItems = cartItems.filter(item => item._id !== id);
+  const removeItemFromCart = async (productId: string, screen: string) => {
+    try {
+      const cartItem = cartItems.find(item => item.product._id === productId);
 
-    setCartItems(updatedCartItems);
+      if (!cartItem) return;
 
-    calculateTheTotals(updatedCartItems);
+      if (user && token) {
+        await cartItemController.removeCartItem(token, cartItem._id);
+      }
+
+      const updatedCartItems = cartItems.filter(
+        item => item._id !== cartItem._id,
+      );
+
+      setCartItems(updatedCartItems);
+
+      calculateTheTotals(updatedCartItems);
+    } catch (error) {
+      handleError(error, screen);
+    }
   };
 
   const updateSelectedQuantity = (productId: string, add: boolean) => {
     const updatedCartItems = cartItems.map(item => {
-      if (item._id === productId && item.quantity) {
-        if (add && item.selectedQuantity < item.quantity) {
+      if (item._id === productId && item.product.quantity) {
+        if (add && item.selectedQuantity < item.product.quantity) {
           item.selectedQuantity++;
         }
 
@@ -228,7 +300,7 @@ const RootContextProvider = ({children}: Props) => {
   };
 
   const inCart = (productId: string) => {
-    return cartItems.map(item => item._id).includes(productId);
+    return cartItems.map(item => item.product._id).includes(productId);
   };
   return (
     <RootContext.Provider
@@ -243,9 +315,11 @@ const RootContextProvider = ({children}: Props) => {
         handleError,
         clearError,
         cartItems,
+        setCartItems,
         cartSum,
         addItemToCart,
         removeItemFromCart,
+        calculateTheTotals,
         inCart,
         updateSelectedQuantity,
         clearCart,

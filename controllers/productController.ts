@@ -70,9 +70,9 @@ const fetchSingleProduct = (id: string): Promise<Product | undefined> => {
 
     data = demoProducts.products.find(item => item._id === id) as Product;
 
-    if (Math.floor(Math.random() * 3) === 1) {
-      error = true;
-    }
+    // if (Math.floor(Math.random() * 3) === 1) {
+    //   error = true;
+    // }
 
     if (error) {
       const errObj: any = new Error();

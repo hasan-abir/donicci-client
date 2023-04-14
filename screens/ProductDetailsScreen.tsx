@@ -27,7 +27,7 @@ const truncate = (str: string, n: number, useWordBoundary?: boolean) => {
 };
 
 const ProductDetailsScreen = ({route, navigation}: Props) => {
-  const {error, handleError, clearError} = useContext(RootContext);
+  const {error, handleError, clearError, user, token} = useContext(RootContext);
   const {colors} = useTheme();
 
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -88,9 +88,13 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
 
   const postReview = async (description: string) => {
     try {
-      await reviewController.postReview(description);
+      if (user && token) {
+        await reviewController.postReview(description, token);
 
-      await fetchReviews(currentPage, route.params.productId, true);
+        await fetchReviews(currentPage, route.params.productId, true);
+      } else {
+        navigation.navigate('Login');
+      }
     } catch (error: any) {
       handleError(error, route.name);
     }
