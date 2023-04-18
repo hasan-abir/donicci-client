@@ -24,20 +24,20 @@ const fetchProducts = (
       case 1:
         data = [...originalData];
         if (term) {
-          data = termFilter;
+          data = [...termFilter];
         }
         if (categoryId) {
-          data = categoryFilter;
+          data = [...categoryFilter];
         }
         data = data.slice(0, 5);
         break;
       case 2:
         data = [...originalData];
         if (term) {
-          data = termFilter;
+          data = [...termFilter];
         }
         if (categoryId) {
-          data = categoryFilter;
+          data = [...categoryFilter];
         }
         data = data.slice(5, data.length);
         break;

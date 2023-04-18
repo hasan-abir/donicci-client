@@ -1,6 +1,6 @@
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {Box, FlatList, Heading, Spinner, Text, useTheme} from 'native-base';
-import {useContext, useEffect, useState} from 'react';
+import {memo, useCallback, useContext, useEffect, useState} from 'react';
 import {RootContext} from '../context/RootContext';
 import productController from '../controllers/productController';
 import type {RootStackParamList} from '../stacks/RootStack';
@@ -14,6 +14,10 @@ interface Props {
   headerTitle?: string;
 }
 
+const areEqual = (prevProps: {item: Product}, nextProps: {item: Product}) =>
+  prevProps.item === nextProps.item;
+const PureProductItem = memo(ProductItem, areEqual);
+
 const ProductList = ({categoryId, term, headerTitle}: Props) => {
   const route = useRoute<RouteProp<RootStackParamList & RootTabParamList>>();
 
@@ -26,53 +30,57 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [endOfDataList, setEndOfDataList] = useState<boolean>(false);
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await fetchData(currentPage, true);
     setRefreshing(false);
-  };
+  }, [currentPage]);
 
-  const onEndReached = async () => {
+  const onEndReached = useCallback(async () => {
     if (!loading && !endOfDataList && !refreshing && !error) {
       const page = currentPage + 1;
       setCurrentPage(page);
 
       await fetchData(page);
     }
-  };
+  }, [loading, endOfDataList, refreshing, error, currentPage]);
 
-  const fetchData = async (page: number, reset?: boolean) => {
-    try {
-      setLoading(true);
-      clearError();
+  const fetchData = useCallback(
+    async (page: number, reset?: boolean) => {
+      try {
+        setLoading(true);
+        clearError();
 
-      let prevProducts = [...products];
+        let prevProducts = [...products];
 
-      if (reset) {
-        prevProducts = [];
-        page = 1;
+        if (reset) {
+          prevProducts = [];
+          page = 1;
 
-        setProducts(prevProducts);
-        setCurrentPage(page);
-        setEndOfDataList(false);
+          setProducts(prevProducts);
+          setCurrentPage(page);
+          setEndOfDataList(false);
+        }
+
+        const data = await productController.fetchProducts(
+          page,
+          categoryId,
+          term,
+        );
+
+        setProducts([...prevProducts, ...data]);
+
+        if (data.length === 0) {
+          setEndOfDataList(true);
+        }
+      } catch (error: any) {
+        handleError(error, route.name);
+      } finally {
+        setLoading(false);
       }
-
-      const data = await productController.fetchProducts(
-        page,
-        categoryId,
-        term,
-      );
-      setProducts([...prevProducts, ...data]);
-
-      if (data.length === 0) {
-        setEndOfDataList(true);
-      }
-    } catch (error: any) {
-      handleError(error, route.name);
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [products, term],
+  );
 
   useEffect(() => {
     fetchData(currentPage, true);
@@ -113,7 +121,7 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
         </Box>
       }
       keyExtractor={(item, index) => item._id}
-      renderItem={({item}) => <ProductItem item={item} />}
+      renderItem={({item}) => <PureProductItem item={item} />}
     />
   );
 };

@@ -1,6 +1,6 @@
 import type {StackScreenProps} from '@react-navigation/stack';
 import {Box, FlatList, Heading, Spinner, Text, useTheme} from 'native-base';
-import {useContext, useEffect, useState} from 'react';
+import {memo, useCallback, useContext, useEffect, useState} from 'react';
 import PostReview from '../components/PostReview';
 import ProductDetails from '../components/ProductDetails';
 import type {Product} from '../components/ProductItem';
@@ -26,6 +26,10 @@ const truncate = (str: string, n: number, useWordBoundary?: boolean) => {
   );
 };
 
+const areEqual = (prevProps: {review: Review}, nextProps: {review: Review}) =>
+  prevProps.review === nextProps.review;
+const PureUserReview = memo(UserReview, areEqual);
+
 const ProductDetailsScreen = ({route, navigation}: Props) => {
   const {error, handleError, clearError, user, token} = useContext(RootContext);
   const {colors} = useTheme();
@@ -38,69 +42,71 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
   const [product, setProduct] = useState<Product | undefined>(undefined);
   const [endOfDataList, setEndOfDataList] = useState<boolean>(false);
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await fetchProduct();
     setRefreshing(false);
-  };
+  }, []);
 
-  const onEndReached = async () => {
+  const onEndReached = useCallback(async () => {
     if (!loadingReviews && !endOfDataList && !refreshing && !error && product) {
       const page = currentPage + 1;
       setCurrentPage(page);
 
       await fetchReviews(page, product._id);
     }
-  };
+  }, [loadingReviews, endOfDataList, refreshing, error, product, currentPage]);
 
-  const fetchReviews = async (
-    page: number,
-    productId: string,
-    reset?: boolean,
-  ) => {
-    try {
-      setLoadingReviews(true);
-      clearError();
+  const fetchReviews = useCallback(
+    async (page: number, productId: string, reset?: boolean) => {
+      try {
+        setLoadingReviews(true);
+        clearError();
 
-      let prevReviews = [...reviews];
+        let prevReviews = [...reviews];
 
-      if (reset) {
-        prevReviews = [];
-        page = 1;
+        if (reset) {
+          prevReviews = [];
+          page = 1;
 
-        setReviews(prevReviews);
-        setCurrentPage(page);
-        setEndOfDataList(false);
+          setReviews(prevReviews);
+          setCurrentPage(page);
+          setEndOfDataList(false);
+        }
+
+        const data = await reviewController.fetchReviews(page, productId);
+        setReviews([...prevReviews, ...data]);
+
+        if (data.length === 0) {
+          setEndOfDataList(true);
+        }
+      } catch (error: any) {
+        handleError(error, route.name);
+      } finally {
+        setLoadingReviews(false);
       }
+    },
+    [reviews],
+  );
 
-      const data = await reviewController.fetchReviews(page, productId);
-      setReviews([...prevReviews, ...data]);
+  const postReview = useCallback(
+    async (description: string) => {
+      try {
+        if (user && token) {
+          await reviewController.postReview(description, token);
 
-      if (data.length === 0) {
-        setEndOfDataList(true);
+          await fetchReviews(currentPage, route.params.productId, true);
+        } else {
+          navigation.navigate('Login');
+        }
+      } catch (error: any) {
+        handleError(error, route.name);
       }
-    } catch (error: any) {
-      handleError(error, route.name);
-    } finally {
-      setLoadingReviews(false);
-    }
-  };
+    },
+    [user, token, currentPage],
+  );
 
-  const postReview = async (description: string) => {
-    try {
-      if (user && token) {
-        await reviewController.postReview(description, token);
-
-        await fetchReviews(currentPage, route.params.productId, true);
-      } else {
-        navigation.navigate('Login');
-      }
-    } catch (error: any) {
-      handleError(error, route.name);
-    }
-  };
-
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     try {
       setLoadingProduct(true);
       clearError();
@@ -120,7 +126,7 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
     } finally {
       setLoadingProduct(false);
     }
-  };
+  }, [currentPage]);
 
   useEffect(() => {
     fetchProduct();
@@ -158,7 +164,7 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
           </Box>
         }
         keyExtractor={(item, index) => item._id}
-        renderItem={({item}) => <UserReview review={item} />}
+        renderItem={({item}) => <PureUserReview review={item} />}
       />
     </Box>
   );

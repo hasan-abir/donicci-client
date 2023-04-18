@@ -9,13 +9,17 @@ import {
   Text,
   useTheme,
 } from 'native-base';
-import {useContext, useEffect, useState} from 'react';
+import {useContext, useEffect, useState, useCallback, memo} from 'react';
 import CartItemDetails from '../components/CartItemDetails';
-import {RootContext} from '../context/RootContext';
+import {CartItem, RootContext} from '../context/RootContext';
 import type {RootTabParamList} from '../tabs/RootTab';
 import cartItemController from '../controllers/cartItemController';
 
 type Props = BottomTabScreenProps<RootTabParamList, 'Cart'>;
+
+const areEqual = (prevProps: {item: CartItem}, nextProps: {item: CartItem}) =>
+  prevProps.item === nextProps.item;
+const PureCartItemDetails = memo(CartItemDetails, areEqual);
 
 const CartScreen = ({route}: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -31,7 +35,7 @@ const CartScreen = ({route}: Props) => {
   } = useContext(RootContext);
   const {colors} = useTheme();
 
-  const fetchUserCartItems = async () => {
+  const fetchUserCartItems = useCallback(async () => {
     if (user && token) {
       try {
         setLoading(true);
@@ -47,17 +51,17 @@ const CartScreen = ({route}: Props) => {
         setLoading(false);
       }
     }
-  };
+  }, [user, token]);
 
   useEffect(() => {
     fetchUserCartItems();
-  }, [user]);
+  }, [user, token]);
   return (
     <Box flex={1} px={3}>
       <FlatList
         data={cartItems}
         keyExtractor={(item, index) => item._id}
-        renderItem={({item}) => <CartItemDetails item={item} />}
+        renderItem={({item}) => <PureCartItemDetails item={item} />}
         ListHeaderComponent={<Heading my={5}>Cart</Heading>}
         ListFooterComponent={() => {
           if (loading) {

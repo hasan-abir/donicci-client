@@ -1,5 +1,5 @@
 import {Box, Button, FormControl, Heading, Input, Text} from 'native-base';
-import {useState} from 'react';
+import {useState, useCallback} from 'react';
 
 interface Props {
   postReview: (description: string) => Promise<void>;
@@ -15,7 +15,7 @@ const PostReview = ({postReview, disabled}: Props) => {
   const [errors, setErrors] = useState<PostReviewFormData>({});
   const [loading, setLoading] = useState<boolean>(false);
 
-  const validate = () => {
+  const validate = useCallback(() => {
     setErrors({});
 
     if (formData.description === undefined || formData.description === '') {
@@ -27,9 +27,9 @@ const PostReview = ({postReview, disabled}: Props) => {
     }
 
     return true;
-  };
+  }, [formData]);
 
-  const onSubmit = async () => {
+  const onSubmit = useCallback(async () => {
     if (validate()) {
       setLoading(true);
       setErrors({});
@@ -37,7 +37,7 @@ const PostReview = ({postReview, disabled}: Props) => {
       await postReview(formData.description as string);
       setLoading(false);
     }
-  };
+  }, [formData]);
 
   return (
     <Box mb={8}>

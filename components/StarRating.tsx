@@ -1,6 +1,6 @@
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {Box, HStack, Pressable, Spinner, Text, useTheme} from 'native-base';
-import {useContext, useEffect, useState} from 'react';
+import {useContext, useEffect, useState, useCallback} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {RootContext} from '../context/RootContext';
 import ratingController from '../controllers/ratingController';
@@ -29,30 +29,33 @@ const Rating = ({productId}: Props) => {
   const [itemRating, setItemRating] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const submitRating = async (score: number) => {
-    try {
-      setLoading(true);
-      clearError();
+  const submitRating = useCallback(
+    async (score: number) => {
+      try {
+        setLoading(true);
+        clearError();
 
-      if (user && token) {
-        const rating = await ratingController.addRating(
-          productId,
-          score,
-          token,
-        );
+        if (user && token) {
+          const rating = await ratingController.addRating(
+            productId,
+            score,
+            token,
+          );
 
-        setItemRating(rating);
-      } else {
-        navigation.navigate('Login');
+          setItemRating(rating);
+        } else {
+          navigation.navigate('Login');
+        }
+      } catch (error: any) {
+        handleError(error, route.name);
+      } finally {
+        setLoading(false);
       }
-    } catch (error: any) {
-      handleError(error, route.name);
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [user, token],
+  );
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       clearError();
@@ -65,7 +68,7 @@ const Rating = ({productId}: Props) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchData();

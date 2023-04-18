@@ -11,7 +11,7 @@ import {
   useTheme,
   VStack,
 } from 'native-base';
-import {useContext, useState} from 'react';
+import {useContext, useState, useCallback} from 'react';
 import {RootContext} from '../context/RootContext';
 import type {RootStackParamList} from '../stacks/RootStack';
 
@@ -29,7 +29,7 @@ const LoginScreen = ({navigation, route}: Props) => {
   const [formData, setData] = useState<LoginFormData>({});
   const [errors, setErrors] = useState<LoginFormData>({});
 
-  const validate = () => {
+  const validate = useCallback(() => {
     setErrors({});
 
     if (formData.email === undefined || formData.email === '') {
@@ -59,9 +59,9 @@ const LoginScreen = ({navigation, route}: Props) => {
     }
 
     return true;
-  };
+  }, [formData]);
 
-  const onSubmit = async () => {
+  const onSubmit = useCallback(async () => {
     if (validate()) {
       const success = await authenticateUser(
         {
@@ -77,7 +77,7 @@ const LoginScreen = ({navigation, route}: Props) => {
         }
       }
     }
-  };
+  }, [formData]);
 
   return (
     <Box flex={1} justifyContent="center" alignItems="center" px={3}>

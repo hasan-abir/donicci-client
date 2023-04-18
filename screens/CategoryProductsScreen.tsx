@@ -1,6 +1,6 @@
 import type {StackScreenProps} from '@react-navigation/stack';
 import {Box, Button, Text, VStack} from 'native-base';
-import {useContext, useEffect, useState} from 'react';
+import {useContext, useEffect, useState, useCallback} from 'react';
 import type {Category} from '../components/CategoryItem';
 import ProductList from '../components/ProductList';
 import {RootContext} from '../context/RootContext';
@@ -18,7 +18,7 @@ const CategoryProductsScreen = ({navigation, route}: Props) => {
 
   const [category, setCategory] = useState<Category | null | undefined>(null);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       clearError();
 
@@ -33,7 +33,7 @@ const CategoryProductsScreen = ({navigation, route}: Props) => {
     } catch (error: any) {
       handleError(error, route.name);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchData();

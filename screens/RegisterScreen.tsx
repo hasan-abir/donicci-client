@@ -11,7 +11,7 @@ import {
   useTheme,
   VStack,
 } from 'native-base';
-import {useContext, useState} from 'react';
+import {useContext, useState, useCallback} from 'react';
 import {RootContext} from '../context/RootContext';
 import type {RootStackParamList} from '../stacks/RootStack';
 
@@ -30,7 +30,7 @@ const RegisterScreen = ({navigation, route}: Props) => {
   const [formData, setData] = useState<RegisterFormData>({});
   const [errors, setErrors] = useState<RegisterFormData>({});
 
-  const validate = () => {
+  const validate = useCallback(() => {
     setErrors({});
 
     if (formData.username === undefined || formData.username === '') {
@@ -68,9 +68,9 @@ const RegisterScreen = ({navigation, route}: Props) => {
     }
 
     return true;
-  };
+  }, [formData]);
 
-  const onSubmit = async () => {
+  const onSubmit = useCallback(async () => {
     if (validate()) {
       const success = await authenticateUser(
         {
@@ -85,7 +85,7 @@ const RegisterScreen = ({navigation, route}: Props) => {
         navigation.navigate('Home');
       }
     }
-  };
+  }, [formData]);
 
   return (
     <Box flex={1} justifyContent="center" alignItems="center" px={3}>

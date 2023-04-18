@@ -2,7 +2,7 @@ import type {RouteProp} from '@react-navigation/native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import type {StackNavigationProp} from '@react-navigation/stack';
 import {Box, Input, Pressable, useTheme} from 'native-base';
-import {useState} from 'react';
+import {useState, useCallback, useMemo} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import type {RootStackParamList} from '../stacks/RootStack';
@@ -17,13 +17,13 @@ const SearchForm = () => {
   const navigation =
     useNavigation<StackNavigationProp<RootStackParamList & RootTabParamList>>();
 
-  const inSearchScreen = route.name === 'Search';
+  const inSearchScreen = useMemo(() => route.name === 'Search', [route]);
 
-  const onPress = () => {
+  const onPress = useCallback(() => {
     if (!inSearchScreen) {
       navigation.navigate('Search', {});
     }
-  };
+  }, []);
 
   return (
     <Pressable onPress={onPress}>
