@@ -72,6 +72,7 @@ const ProductDetails = ({product}: Props) => {
                   Quantity -
                 </Text>
                 <Ionicons
+                  testID="decrease-quantity"
                   name={'chevron-back-outline'}
                   size={24}
                   color={colors.black}
@@ -81,6 +82,7 @@ const ProductDetails = ({product}: Props) => {
                   {selectedQuantity} / {product.quantity}
                 </Text>
                 <Ionicons
+                  testID="increase-quantity"
                   name={'chevron-forward-outline'}
                   size={24}
                   color={colors.black}

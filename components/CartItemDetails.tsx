@@ -48,6 +48,7 @@ const CartItemDetails = ({item}: Props) => {
           Quantity -
         </Text>
         <Ionicons
+          testID="decrease-quantity"
           name={'chevron-back-outline'}
           size={24}
           color={colors.black}
@@ -57,6 +58,7 @@ const CartItemDetails = ({item}: Props) => {
           {item.selectedQuantity} / {item.product.quantity}
         </Text>
         <Ionicons
+          testID="increase-quantity"
           name={'chevron-forward-outline'}
           size={24}
           color={colors.black}

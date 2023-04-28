@@ -43,6 +43,7 @@ const ProductItem = ({item}: Props) => {
 
   return (
     <Pressable
+      testID="card"
       display="flex"
       borderColor={colors.gray[300]}
       borderWidth={1}

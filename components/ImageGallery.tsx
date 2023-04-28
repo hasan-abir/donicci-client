@@ -32,6 +32,7 @@ const ImageGallery = ({images, alt}: Props) => {
           borderRadius={5}
           ratio={{base: 1 / 1}}>
           <Image
+            testID="gallery-image-main"
             resizeMode="contain"
             source={{uri: selectedImage.url}}
             alt={alt}
@@ -39,9 +40,10 @@ const ImageGallery = ({images, alt}: Props) => {
         </AspectRatio>
       ) : null}
       <HStack space={2} mt={3} mb={4} flexWrap="wrap">
-        {images.map(image => {
+        {images.map((image, index) => {
           return (
             <Pressable
+              testID={'gallery-image-' + (index + 1)}
               key={image.url}
               borderColor={
                 selectedImage && image.url === selectedImage.url

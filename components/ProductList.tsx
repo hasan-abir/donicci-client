@@ -107,15 +107,15 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
       }}
       ListFooterComponent={
         <Box justifyContent="center">
-          {endOfDataList ? (
-            <Text py={3} textAlign="center">
-              You have reached the end of the list...
-            </Text>
-          ) : loading && !refreshing ? (
+          {loading && !refreshing ? (
             <Spinner py={3} color={colors.gray[300]} size="lg" />
           ) : products.length < 1 ? (
             <Text py={3} textAlign="center">
               No products found...
+            </Text>
+          ) : endOfDataList ? (
+            <Text py={3} textAlign="center">
+              You have reached the end of the list...
             </Text>
           ) : null}
         </Box>

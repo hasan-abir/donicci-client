@@ -32,6 +32,7 @@ const StackHeader = ({navigation, options, route}: StackHeaderProps) => {
           name={'arrow-back'}
           size={32}
           color={colors.black}
+          testID="back-btn"
           onPress={() => {
             if (navigation.canGoBack()) {
               navigation.goBack();

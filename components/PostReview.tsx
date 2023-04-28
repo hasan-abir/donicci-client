@@ -1,5 +1,5 @@
 import {Box, Button, FormControl, Heading, Input, Text} from 'native-base';
-import {useState, useCallback} from 'react';
+import {useCallback, useState} from 'react';
 
 interface Props {
   postReview: (description: string) => Promise<void>;
@@ -53,6 +53,7 @@ const PostReview = ({postReview, disabled}: Props) => {
         </FormControl.Label>
         <Input
           onChangeText={value => setData({...formData, description: value})}
+          placeholder="Review description..."
         />
         {'description' in errors ? (
           <FormControl.ErrorMessage>

@@ -34,6 +34,7 @@ const TabHeader = ({navigation, route}: BottomTabHeaderProps) => {
         </Box>
         {user ? (
           <Ionicons
+            testID="logout-btn"
             name={'exit-outline'}
             size={32}
             color={colors.black}
@@ -41,6 +42,7 @@ const TabHeader = ({navigation, route}: BottomTabHeaderProps) => {
           />
         ) : (
           <Ionicons
+            testID="login-btn"
             name={'person-circle'}
             size={32}
             color={colors.black}

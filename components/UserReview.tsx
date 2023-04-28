@@ -18,7 +18,8 @@ const UserReview = ({review}: Props) => {
   return (
     <Box mb={3}>
       <Heading fontSize={16} mb={2} mr={2}>
-        • {review.author} <Text fontWeight="normal">says</Text>,
+        <Text>• {review.author} </Text>
+        <Text fontWeight="normal">says,</Text>
       </Heading>
       <Text>{review.description}</Text>
     </Box>

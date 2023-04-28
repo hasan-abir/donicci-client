@@ -111,6 +111,7 @@ const Rating = ({productId}: Props) => {
             </Pressable>
             <Pressable onPress={() => submitRating(3)}>
               <Ionicons
+                testID="star"
                 name={
                   itemRating >= 2.5
                     ? itemRating >= 3
