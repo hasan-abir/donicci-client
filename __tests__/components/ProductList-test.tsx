@@ -8,7 +8,12 @@ import ProductList from '../../components/ProductList';
 import demoProducts from '../../controllers/demoProducts.json';
 import UIProvider from '../setup/UIProvider';
 
-import {render, screen, waitFor} from '@testing-library/react-native';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react-native';
 import {RootContext} from '../../context/RootContext';
 import productController from '../../controllers/productController';
 
@@ -18,7 +23,9 @@ jest.mock('@react-navigation/native', () => ({
     ...mockedRoute,
   }),
 }));
+
 jest.mock('../../components/ProductItem', () => 'ProductItem');
+
 jest.spyOn(productController, 'fetchProducts');
 
 describe('ProductList', () => {
@@ -27,8 +34,10 @@ describe('ProductList', () => {
     mockedRoute.name = 'Products';
   });
   it('renders correctly', async () => {
+    const productsList = demoProducts.products;
+
     (productController.fetchProducts as jest.Mock).mockImplementation(() =>
-      Promise.resolve(demoProducts.products),
+      Promise.resolve(productsList),
     );
 
     render(
@@ -44,8 +53,41 @@ describe('ProductList', () => {
         undefined,
         undefined,
       );
-      expect(screen.queryByText('Latest Products')).toBeOnTheScreen();
     });
+    expect(screen.queryByText('Latest Products')).toBeOnTheScreen();
+    expect(screen.queryAllByTestId('flat-list-item').length).toBe(
+      productsList.length,
+    );
+  });
+
+  it('loads with appropriate params correctly', async () => {
+    (productController.fetchProducts as jest.Mock).mockImplementation(() =>
+      Promise.resolve(demoProducts.products),
+    );
+
+    const categoryId = '123';
+    const term = 'Nulla';
+    const headerTitle = 'Lorem';
+
+    render(
+      <UIProvider>
+        <ProductList
+          categoryId={categoryId}
+          term={term}
+          headerTitle={headerTitle}
+        />
+      </UIProvider>,
+    );
+
+    await waitFor(() => {
+      expect(productController.fetchProducts).toBeCalledTimes(1);
+      expect(productController.fetchProducts).toBeCalledWith(
+        1,
+        categoryId,
+        term,
+      );
+    });
+    expect(screen.queryByText(headerTitle)).toBeOnTheScreen();
   });
 
   it('renders no products correctly', async () => {
@@ -61,8 +103,9 @@ describe('ProductList', () => {
 
     await waitFor(() => {
       expect(productController.fetchProducts).toBeCalledTimes(1);
-      expect(screen.queryByText('No products found...')).toBeOnTheScreen();
     });
+    expect(screen.queryByText('No products found...')).toBeOnTheScreen();
+    expect(screen.queryAllByTestId('flat-list-item').length).toBe(0);
   });
 
   it('renders username correctly', async () => {
@@ -90,10 +133,11 @@ describe('ProductList', () => {
 
     await waitFor(() => {
       expect(productController.fetchProducts).toBeCalledTimes(1);
-      expect(
-        screen.queryByText('Welcome, ' + user.username + '!'),
-      ).toBeOnTheScreen();
     });
+
+    expect(
+      screen.queryByText('Welcome, ' + user.username + '!'),
+    ).toBeOnTheScreen();
   });
   it('does not render username correctly when in a different route', async () => {
     (productController.fetchProducts as jest.Mock).mockImplementation(() =>
@@ -121,9 +165,56 @@ describe('ProductList', () => {
 
     await waitFor(() => {
       expect(productController.fetchProducts).toBeCalledTimes(1);
-      expect(
-        screen.queryByText('Welcome, ' + user.username + '!'),
-      ).not.toBeOnTheScreen();
+    });
+
+    expect(
+      screen.queryByText('Welcome, ' + user.username + '!'),
+    ).not.toBeOnTheScreen();
+  });
+  it('loads more products correctly', async () => {
+    const firstResult = Promise.resolve(demoProducts.products.slice(0, 5));
+    const secondResult = Promise.resolve(demoProducts.products.slice(6, 10));
+
+    (productController.fetchProducts as jest.Mock)
+      .mockReturnValueOnce(firstResult)
+      .mockReturnValueOnce(secondResult);
+
+    render(
+      <UIProvider>
+        <ProductList />
+      </UIProvider>,
+    );
+
+    await waitFor(() => {
+      expect(productController.fetchProducts).toBeCalledTimes(1);
+      expect(productController.fetchProducts).toHaveReturnedWith(firstResult);
+    });
+
+    expect(screen.queryAllByTestId('flat-list-item').length).toBe(5);
+
+    const eventData = {
+      nativeEvent: {
+        contentOffset: {
+          y: 500,
+        },
+        contentSize: {
+          // Dimensions of the scrollable content
+          height: 500,
+          width: 100,
+        },
+        layoutMeasurement: {
+          // Dimensions of the device
+          height: 100,
+          width: 100,
+        },
+      },
+    };
+
+    fireEvent.scroll(screen.getByTestId('flat-list'), eventData);
+
+    await waitFor(() => {
+      expect(productController.fetchProducts).toBeCalledTimes(1);
+      expect(productController.fetchProducts).toHaveReturnedWith(secondResult);
     });
   });
 });

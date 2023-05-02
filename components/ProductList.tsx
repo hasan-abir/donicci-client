@@ -93,6 +93,7 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
       onRefresh={onRefresh}
       refreshing={refreshing}
       data={products}
+      testID="flat-list"
       ListHeaderComponent={() => {
         return (
           <Box pt={5}>
@@ -121,7 +122,11 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
         </Box>
       }
       keyExtractor={(item, index) => item._id}
-      renderItem={({item}) => <PureProductItem item={item} />}
+      renderItem={({item}: {item: Product}) => (
+        <Box testID="flat-list-item">
+          <PureProductItem item={item} />
+        </Box>
+      )}
     />
   );
 };
