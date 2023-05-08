@@ -71,10 +71,8 @@ const LoginScreen = ({navigation, route}: Props) => {
         route.name,
       );
 
-      if (success) {
-        if (navigation.canGoBack()) {
-          navigation.goBack();
-        }
+      if (success && navigation.canGoBack()) {
+        navigation.goBack();
       }
     }
   }, [formData]);
@@ -90,7 +88,10 @@ const LoginScreen = ({navigation, route}: Props) => {
             }}>
             Email
           </FormControl.Label>
-          <Input onChangeText={value => setData({...formData, email: value})} />
+          <Input
+            onChangeText={value => setData({...formData, email: value})}
+            testID="email"
+          />
           {'email' in errors ? (
             <FormControl.ErrorMessage>{errors.email}</FormControl.ErrorMessage>
           ) : null}
@@ -105,6 +106,7 @@ const LoginScreen = ({navigation, route}: Props) => {
           <Input
             type="password"
             onChangeText={value => setData({...formData, password: value})}
+            testID="password"
           />
           {'password' in errors ? (
             <FormControl.ErrorMessage>

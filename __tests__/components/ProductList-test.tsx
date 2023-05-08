@@ -36,7 +36,7 @@ describe('ProductList', () => {
   it('renders correctly', async () => {
     const productsList = demoProducts.products;
 
-    (productController.fetchProducts as jest.Mock).mockImplementation(() =>
+    (productController.fetchProducts as jest.Mock).mockReturnValue(
       Promise.resolve(productsList),
     );
 
@@ -61,7 +61,7 @@ describe('ProductList', () => {
   });
 
   it('loads with appropriate params correctly', async () => {
-    (productController.fetchProducts as jest.Mock).mockImplementation(() =>
+    (productController.fetchProducts as jest.Mock).mockReturnValue(
       Promise.resolve(demoProducts.products),
     );
 
@@ -91,7 +91,7 @@ describe('ProductList', () => {
   });
 
   it('renders no products correctly', async () => {
-    (productController.fetchProducts as jest.Mock).mockImplementation(() =>
+    (productController.fetchProducts as jest.Mock).mockReturnValue(
       Promise.resolve([]),
     );
 
@@ -109,7 +109,7 @@ describe('ProductList', () => {
   });
 
   it('renders username correctly', async () => {
-    (productController.fetchProducts as jest.Mock).mockImplementation(() =>
+    (productController.fetchProducts as jest.Mock).mockReturnValue(
       Promise.resolve([]),
     );
     const user = {username: 'Hasan Abir'};
@@ -140,7 +140,7 @@ describe('ProductList', () => {
     ).toBeOnTheScreen();
   });
   it('does not render username correctly when in a different route', async () => {
-    (productController.fetchProducts as jest.Mock).mockImplementation(() =>
+    (productController.fetchProducts as jest.Mock).mockReturnValue(
       Promise.resolve([]),
     );
     mockedRoute.name = 'Search';

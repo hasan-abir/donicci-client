@@ -36,7 +36,7 @@ describe('StarRating', () => {
   it('renders correctly', async () => {
     const rating = 2.5;
     const productId = '123';
-    (ratingController.fetchRatings as jest.Mock).mockImplementation(() =>
+    (ratingController.fetchRatings as jest.Mock).mockReturnValue(
       Promise.resolve(rating),
     );
 
@@ -58,10 +58,10 @@ describe('StarRating', () => {
   it('when unauthorized, navigates correctly', async () => {
     const rating = 2.5;
     const productId = '123';
-    (ratingController.fetchRatings as jest.Mock).mockImplementation(() =>
+    (ratingController.fetchRatings as jest.Mock).mockReturnValue(
       Promise.resolve(rating),
     );
-    (ratingController.addRating as jest.Mock).mockImplementation(() =>
+    (ratingController.addRating as jest.Mock).mockReturnValue(
       Promise.resolve(rating),
     );
 
@@ -91,10 +91,10 @@ describe('StarRating', () => {
     const updatedRating = 3;
     const productId = '123';
     const token = '456';
-    (ratingController.fetchRatings as jest.Mock).mockImplementation(() =>
+    (ratingController.fetchRatings as jest.Mock).mockReturnValue(
       Promise.resolve(rating),
     );
-    (ratingController.addRating as jest.Mock).mockImplementation(() =>
+    (ratingController.addRating as jest.Mock).mockReturnValue(
       Promise.resolve(updatedRating),
     );
 

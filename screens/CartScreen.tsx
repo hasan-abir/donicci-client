@@ -81,14 +81,17 @@ const CartScreen = ({route}: Props) => {
                   Clear Cart
                 </Button>
                 <Text textTransform="uppercase" mb={3}>
-                  Subtotal: <Text fontWeight="bold">${cartSum.subTotal}</Text>
+                  <Text>Subtotal: </Text>
+                  <Text fontWeight="bold">${cartSum.subTotal}</Text>
                 </Text>
                 <Text textTransform="uppercase">
-                  Tax: <Text fontWeight="bold">${cartSum.tax}</Text>
+                  <Text>Tax: </Text>
+                  <Text fontWeight="bold">${cartSum.tax}</Text>
                 </Text>
                 <Divider my={3} />
                 <Text mb={3} textTransform="uppercase">
-                  Total: <Text fontWeight="bold">${cartSum.total}</Text>
+                  <Text>Total: </Text>
+                  <Text fontWeight="bold">${cartSum.total}</Text>
                 </Text>
                 <Button py={2} mb={5} onPress={() => clearCart()}>
                   <Text fontWeight="bold">Purchase</Text>

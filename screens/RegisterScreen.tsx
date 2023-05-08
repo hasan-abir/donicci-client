@@ -101,6 +101,7 @@ const RegisterScreen = ({navigation, route}: Props) => {
           <Input
             placeholder="John"
             onChangeText={value => setData({...formData, username: value})}
+            testID="username"
           />
           {'username' in errors ? (
             <FormControl.ErrorMessage>
@@ -118,6 +119,7 @@ const RegisterScreen = ({navigation, route}: Props) => {
           <Input
             placeholder="example@test.com"
             onChangeText={value => setData({...formData, email: value})}
+            testID="email"
           />
           {'email' in errors ? (
             <FormControl.ErrorMessage>{errors.email}</FormControl.ErrorMessage>
@@ -133,6 +135,7 @@ const RegisterScreen = ({navigation, route}: Props) => {
           <Input
             type="password"
             onChangeText={value => setData({...formData, password: value})}
+            testID="password"
           />
           {'password' in errors ? (
             <FormControl.ErrorMessage>

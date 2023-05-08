@@ -9,7 +9,7 @@ type Props = BottomTabScreenProps<
   'Products'
 >;
 
-const HomeScreen = (props: Props) => {
+const HomeScreen = () => {
   return (
     <Box flex={1} px={3}>
       <ProductList />

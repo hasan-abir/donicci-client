@@ -19,7 +19,7 @@ const areEqual = (prevProps: {item: Category}, nextProps: {item: Category}) =>
   prevProps.item === nextProps.item;
 const PureCategoryItem = memo(CategoryItem, areEqual);
 
-const CategoryListScreen = ({}: Props) => {
+const CategoryListScreen = () => {
   const {colors} = useTheme();
   const route = useRoute<RouteProp<RootStackParamList & RootTabParamList>>();
 
@@ -89,24 +89,29 @@ const CategoryListScreen = ({}: Props) => {
         onRefresh={onRefresh}
         refreshing={refreshing}
         data={categories}
+        testID="flat-list"
         ListHeaderComponent={<Heading my={5}>Latest Categories</Heading>}
         ListFooterComponent={
           <Box justifyContent="center">
-            {endOfDataList ? (
-              <Text py={3} textAlign="center">
-                You have reached the end of the list...
-              </Text>
-            ) : loading && !refreshing ? (
+            {loading && !refreshing ? (
               <Spinner py={3} color={colors.gray[300]} size="lg" />
             ) : categories.length < 1 ? (
               <Text py={3} textAlign="center">
                 No categories found...
               </Text>
+            ) : endOfDataList ? (
+              <Text py={3} textAlign="center">
+                You have reached the end of the list...
+              </Text>
             ) : null}
           </Box>
         }
         keyExtractor={(item, index) => item._id}
-        renderItem={({item}) => <PureCategoryItem item={item} />}
+        renderItem={({item}) => (
+          <Box testID="flat-list-item">
+            <PureCategoryItem item={item} />
+          </Box>
+        )}
       />
     </Box>
   );

@@ -139,6 +139,7 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
         onRefresh={onRefresh}
         refreshing={refreshing}
         data={reviews}
+        testID="flat-list"
         ListHeaderComponent={() => {
           return loadingProduct && !refreshing ? (
             <Box justifyContent="center">
@@ -154,17 +155,25 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
         }}
         ListFooterComponent={
           <Box justifyContent="center">
-            {endOfDataList ? (
-              <Text pb={3} textAlign="center">
+            {loadingReviews && !refreshing ? (
+              <Spinner py={3} color={colors.gray[300]} size="lg" />
+            ) : reviews.length < 1 ? (
+              <Text py={3} textAlign="center">
+                No reviews found...
+              </Text>
+            ) : endOfDataList ? (
+              <Text py={3} textAlign="center">
                 You have reached the end of the list...
               </Text>
-            ) : loadingReviews && !refreshing ? (
-              <Spinner py={3} color={colors.gray[300]} size="lg" />
             ) : null}
           </Box>
         }
         keyExtractor={(item, index) => item._id}
-        renderItem={({item}) => <PureUserReview review={item} />}
+        renderItem={({item}) => (
+          <Box testID="flat-list-item">
+            <PureUserReview review={item} />
+          </Box>
+        )}
       />
     </Box>
   );
