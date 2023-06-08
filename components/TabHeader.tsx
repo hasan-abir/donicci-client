@@ -26,10 +26,10 @@ const TabHeader = ({navigation, route}: BottomTabHeaderProps) => {
         zIndex={10}
         backgroundColor={colors.white}
         alignItems="center"
-        borderBottomColor={colors.gray[300]}
-        borderBottomWidth={1}
-        p={3}>
-        <Box flex={1} mr={2}>
+        borderBottomRadius={20}
+        px={6}
+        py={4}>
+        <Box flex={1} mr={4}>
           <SearchForm />
         </Box>
         {user ? (
@@ -43,7 +43,7 @@ const TabHeader = ({navigation, route}: BottomTabHeaderProps) => {
         ) : (
           <Ionicons
             testID="login-btn"
-            name={'person-circle'}
+            name={'person-outline'}
             size={32}
             color={colors.black}
             onPress={() => navigation.navigate('Login')}

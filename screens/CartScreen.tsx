@@ -4,18 +4,19 @@ import {
   Button,
   Divider,
   FlatList,
-  Heading,
+  HStack,
   Spinner,
   Text,
+  VStack,
   useTheme,
 } from 'native-base';
-import {useContext, useEffect, useState, useCallback, memo} from 'react';
+import {memo, useCallback, useContext, useEffect, useState} from 'react';
 import CartItemDetails from '../components/CartItemDetails';
 import {CartItem, RootContext} from '../context/RootContext';
-import type {RootTabParamList} from '../tabs/RootTab';
 import cartItemController from '../controllers/cartItemController';
+import type {RootTabParamList} from '../tabs/RootTab';
 
-type Props = BottomTabScreenProps<RootTabParamList, 'Cart'>;
+interface Props extends BottomTabScreenProps<RootTabParamList, 'Cart'> {}
 
 const areEqual = (prevProps: {item: CartItem}, nextProps: {item: CartItem}) =>
   prevProps.item === nextProps.item;
@@ -57,51 +58,64 @@ const CartScreen = ({route}: Props) => {
     fetchUserCartItems();
   }, [user, token]);
   return (
-    <Box flex={1} px={3}>
+    <Box flex={1}>
       <FlatList
+        px={6}
+        borderColor="red.500"
+        borderWidth={1}
         data={cartItems}
         keyExtractor={(item, index) => item._id}
         renderItem={({item}) => <PureCartItemDetails item={item} />}
-        ListHeaderComponent={<Heading my={5}>Cart</Heading>}
-        ListFooterComponent={() => {
-          if (loading) {
-            return (
-              <Box alignItems="center" justifyContent="center" flex={1}>
-                <Spinner py={3} color={colors.gray[300]} size="lg" />
-              </Box>
-            );
-          } else if (cartItems.length > 0) {
-            return (
+        ListFooterComponent={() => (
+          <Box justifyContent="center">
+            {loading ? (
+              <Spinner color={colors.gray[300]} size="lg" />
+            ) : cartItems.length > 0 ? (
               <Box>
+                <VStack
+                  backgroundColor={colors.white}
+                  mt={4}
+                  p={5}
+                  borderRadius={10}
+                  space={2}>
+                  <HStack alignItems="center" justifyContent="space-between">
+                    <Text fontFamily="body">Sub Total</Text>
+                    <Text fontFamily="body">${cartSum.subTotal}</Text>
+                  </HStack>
+                  <HStack alignItems="center" justifyContent="space-between">
+                    <Text fontFamily="body">Tax</Text>
+                    <Text fontFamily="body">${cartSum.tax}</Text>
+                  </HStack>
+                  <Divider />
+                  <HStack alignItems="center" justifyContent="space-between">
+                    <Text fontFamily="body">Total</Text>
+                    <Text fontFamily="body" fontSize="xl">
+                      ${cartSum.total}
+                    </Text>
+                  </HStack>
+                </VStack>
                 <Button
+                  py={2}
+                  onPress={() => clearCart()}
+                  mt={6}
+                  mb={3}
+                  bgColor={colors.secondary[500]}
+                  _text={{fontFamily: 'body', fontWeight: 'bold'}}>
+                  Purchase
+                </Button>
+                <Button
+                  mb={6}
                   colorScheme="danger"
                   onPress={() => clearCart()}
-                  mt={8}
-                  mb={3}>
+                  _text={{fontFamily: 'body', fontWeight: 'bold'}}>
                   Clear Cart
                 </Button>
-                <Text textTransform="uppercase" mb={3}>
-                  <Text>Subtotal: </Text>
-                  <Text fontWeight="bold">${cartSum.subTotal}</Text>
-                </Text>
-                <Text textTransform="uppercase">
-                  <Text>Tax: </Text>
-                  <Text fontWeight="bold">${cartSum.tax}</Text>
-                </Text>
-                <Divider my={3} />
-                <Text mb={3} textTransform="uppercase">
-                  <Text>Total: </Text>
-                  <Text fontWeight="bold">${cartSum.total}</Text>
-                </Text>
-                <Button py={2} mb={5} onPress={() => clearCart()}>
-                  <Text fontWeight="bold">Purchase</Text>
-                </Button>
               </Box>
-            );
-          } else {
-            return <Text>No items added yet</Text>;
-          }
-        }}
+            ) : (
+              <Text fontFamily="body">No items added yet</Text>
+            )}
+          </Box>
+        )}
       />
     </Box>
   );

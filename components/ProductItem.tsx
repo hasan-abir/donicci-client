@@ -12,6 +12,7 @@ import {
 import type {RootStackParamList} from '../stacks/RootStack';
 import type {RootTabParamList} from '../tabs/RootTab';
 import type {Category} from './CategoryItem';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 interface Props {
   item: Product;
@@ -28,6 +29,7 @@ export interface Product {
   description?: string;
   images: ImageType[];
   price: number;
+  rating: number;
   quantity?: number;
   categories_list: Category[];
   category_ids: string[];
@@ -45,35 +47,35 @@ const ProductItem = ({item}: Props) => {
     <Pressable
       testID="card"
       display="flex"
-      borderColor={colors.gray[300]}
-      borderWidth={1}
-      borderRadius={20}
       overflow="hidden"
-      mb={3}
+      mb={5}
       onPress={() =>
         navigation.navigate('ProductDetails', {productId: item._id})
       }>
       <AspectRatio ratio={{base: 4 / 3}}>
         <Image
+          borderRadius={20}
+          backgroundColor={colors.primary[100]}
           resizeMode="cover"
+          mb={3}
           source={{uri: item.images[0].url}}
           alt={item.title}
         />
       </AspectRatio>
-      <HStack
-        space={2}
-        justifyContent="space-between"
-        alignItems="center"
-        p={3}>
-        <Text flex={1} fontSize="md" mb={3}>
+      <HStack justifyContent="space-between" alignItems="flex-start" mb={3}>
+        <Text fontFamily="body" fontSize="xl" flex={1}>
           {item.title}
         </Text>
-        <Box backgroundColor={colors.primary[400]} px={1} borderRadius="md">
-          <Text fontWeight="bold" color={colors.primary[900]}>
-            ${item.price}
+        <HStack ml={2} alignItems="center">
+          <Ionicons name="star-sharp" size={24} color={colors.primary[500]} />
+          <Text fontFamily="body" fontWeight="bold" ml={1}>
+            {item.rating}
           </Text>
-        </Box>
+        </HStack>
       </HStack>
+      <Text fontFamily="body" fontWeight="bold">
+        ${item.price}
+      </Text>
     </Pressable>
   );
 };

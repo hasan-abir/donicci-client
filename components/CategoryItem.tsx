@@ -1,11 +1,13 @@
 import {useNavigation} from '@react-navigation/native';
 import type {StackNavigationProp} from '@react-navigation/stack';
-import {Box, Divider, Text} from 'native-base';
+import {Box, Button, Divider, Text, useTheme} from 'native-base';
 import type {RootStackParamList} from '../stacks/RootStack';
 import type {RootTabParamList} from '../tabs/RootTab';
+import {useMemo} from 'react';
 
 interface Props {
   item: Category;
+  index: number;
 }
 
 export interface Category {
@@ -15,21 +17,27 @@ export interface Category {
   created_at: string;
 }
 
-const CategoryItem = ({item}: Props) => {
+const CategoryItem = ({item, index}: Props) => {
+  const {colors} = useTheme();
   const navigation =
     useNavigation<StackNavigationProp<RootStackParamList & RootTabParamList>>();
+  const isOdd = useMemo((): boolean => index % 2 == 1, []);
 
   return (
-    <Box mb={3}>
-      <Divider mb={3} />
-      <Text
-        onPress={() => {
-          navigation.navigate('CategoryProducts', {categoryId: item._id});
-        }}
-        fontSize="md">
-        {item.name}
-      </Text>
-    </Box>
+    <Button
+      borderRadius={100}
+      mb={5}
+      onPress={() => {
+        navigation.navigate('CategoryProducts', {categoryId: item._id});
+      }}
+      bgColor={isOdd ? colors.secondary[100] : colors.primary[100]}
+      _text={{
+        fontFamily: 'body',
+        fontWeight: 'bold',
+        color: isOdd ? colors.secondary[500] : colors.primary[500],
+      }}>
+      {item.name}
+    </Button>
   );
 };
 

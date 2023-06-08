@@ -25,11 +25,12 @@ const StackHeader = ({navigation, options, route}: StackHeaderProps) => {
         zIndex={10}
         backgroundColor={colors.white}
         alignItems="center"
-        borderBottomColor={colors.gray[300]}
-        borderBottomWidth={1}
-        p={3}>
+        justifyContent="space-between"
+        borderBottomRadius={20}
+        px={6}
+        py={4}>
         <Ionicons
-          name={'arrow-back'}
+          name={'chevron-back-outline'}
           size={32}
           color={colors.black}
           testID="back-btn"
@@ -38,14 +39,15 @@ const StackHeader = ({navigation, options, route}: StackHeaderProps) => {
               navigation.goBack();
             }
           }}
-          style={{marginRight: 10}}
         />
         {route.name === 'Search' ? (
-          <Box flex={1}>
+          <Box flex={1} ml={4}>
             <SearchForm />
           </Box>
         ) : (
-          <Text fontSize={18}>{options.title || route.name}</Text>
+          <Text fontSize="md" fontFamily="body" textAlign="right" ml={4}>
+            {options.title || route.name}
+          </Text>
         )}
       </HStack>
     </Box>

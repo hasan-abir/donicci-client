@@ -88,6 +88,7 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
 
   return (
     <FlatList
+      px={6}
       onEndReachedThreshold={0.5}
       onEndReached={onEndReached}
       onRefresh={onRefresh}
@@ -96,31 +97,33 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
       testID="flat-list"
       ListHeaderComponent={() => {
         return (
-          <Box pt={5}>
+          <Box mt={6}>
             {route.name === 'Products' && user ? (
               <Text fontSize="md" mb={2}>
                 Welcome, {user.username}!
               </Text>
             ) : null}
-            <Heading mb={5}>{headerTitle || 'Latest Products'}</Heading>
+            <Heading
+              fontFamily="body"
+              fontWeight="semibold"
+              mb={6}
+              fontSize="3xl">
+              {headerTitle || 'Latest products'}
+            </Heading>
           </Box>
         );
       }}
-      ListFooterComponent={
-        <Box justifyContent="center">
+      ListFooterComponent={() => (
+        <Box justifyContent="center" mb={6}>
           {loading && !refreshing ? (
-            <Spinner py={3} color={colors.gray[300]} size="lg" />
+            <Spinner color={colors.gray[300]} size="lg" />
           ) : products.length < 1 ? (
-            <Text py={3} textAlign="center">
-              No products found...
-            </Text>
+            <Text textAlign="center">No products found...</Text>
           ) : endOfDataList ? (
-            <Text py={3} textAlign="center">
-              You have reached the end of the list...
-            </Text>
+            <Text textAlign="center">That's all for now!</Text>
           ) : null}
         </Box>
-      }
+      )}
       keyExtractor={(item, index) => item._id}
       renderItem={({item}: {item: Product}) => (
         <Box testID="flat-list-item">

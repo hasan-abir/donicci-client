@@ -16,65 +16,70 @@ const CartItemDetails = ({item}: Props) => {
   const {colors} = useTheme();
 
   return (
-    <Box
-      borderColor={colors.gray[300]}
-      borderWidth={1}
-      borderRadius={20}
-      mb={3}
-      p={3}
-      overflow="hidden">
-      <HStack mb={3} alignItems="flex-start">
+    <Box backgroundColor={colors.white} mt={4} p={5} borderRadius={10}>
+      <HStack mb={3} space={3}>
         <Image
           size="sm"
+          backgroundColor={colors.primary[500]}
           source={{uri: item.product.images[0].url}}
           alt={item.product.title}
           borderRadius={100}
         />
-        <HStack flex={1} justifyContent="flex-end">
-          <Button
-            size="xs"
-            colorScheme="danger"
-            onPress={() => removeItemFromCart(item.product._id, route.name)}>
-            Remove
-          </Button>
+
+        <Text flex={1} fontFamily="body">
+          {item.product.title}
+        </Text>
+      </HStack>
+      <HStack justifyContent="space-between" alignItems="center" mb={4}>
+        <HStack space={1} alignItems="center">
+          <Text fontFamily="body">Quantity</Text>
+          <Ionicons
+            testID="decrease-quantity"
+            name={'chevron-back-outline'}
+            size={24}
+            color={colors.black}
+            onPress={() => updateSelectedQuantity(item._id, false)}
+          />
+          <Text>
+            {item.selectedQuantity} of {item.product.quantity}
+          </Text>
+          <Ionicons
+            testID="increase-quantity"
+            name={'chevron-forward-outline'}
+            size={24}
+            color={colors.black}
+            onPress={() => updateSelectedQuantity(item._id, true)}
+          />
+        </HStack>
+        <HStack space={2} alignItems="center">
+          <Text fontFamily="body">Price</Text>
+          <Text fontFamily="body" fontWeight="bold">
+            ${item.product.price}
+          </Text>
         </HStack>
       </HStack>
-      <Text fontSize="md" mb={5}>
-        {item.product.title}
-      </Text>
 
-      <HStack space={2} mb={3}>
-        <Text fontWeight="bold" fontSize="sm">
-          Quantity -
-        </Text>
-        <Ionicons
-          testID="decrease-quantity"
-          name={'chevron-back-outline'}
-          size={24}
-          color={colors.black}
-          onPress={() => updateSelectedQuantity(item._id, false)}
-        />
-        <Text fontSize="sm">
-          {item.selectedQuantity} / {item.product.quantity}
-        </Text>
-        <Ionicons
-          testID="increase-quantity"
-          name={'chevron-forward-outline'}
-          size={24}
-          color={colors.black}
-          onPress={() => updateSelectedQuantity(item._id, true)}
-        />
-      </HStack>
-      <HStack justifyContent="space-between">
-        <Text fontWeight="bold" fontSize="sm">
-          Price - ${item.product.price}
-        </Text>
-
-        <Text fontWeight="bold" fontSize="sm">
-          Total - $
-          {Math.round(item.product.price * item.selectedQuantity * 100) / 100}
+      <HStack space={2} alignItems="center">
+        <Text fontFamily="body">Total</Text>
+        <Text fontFamily="body" fontWeight="bold">
+          ${Math.round(item.product.price * item.selectedQuantity * 100) / 100}
         </Text>
       </HStack>
+      <Button
+        size="sm"
+        position="absolute"
+        bottom={-6}
+        right={2}
+        px={2}
+        py={1}
+        colorScheme="danger"
+        _text={{
+          fontFamily: 'body',
+          fontWeight: 'bold',
+        }}
+        onPress={() => removeItemFromCart(item.product._id, route.name)}>
+        REMOVE
+      </Button>
     </Box>
   );
 };

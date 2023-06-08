@@ -33,14 +33,16 @@ const SearchForm = () => {
           onChangeText={text => setTerm(text)}
           variant="rounded"
           size="sm"
-          height={8}
+          px={2}
+          height={10}
           placeholder="Search"
-          borderColor={colors.black}
+          backgroundColor={colors.gray[100]}
+          borderWidth={0}
           InputLeftElement={
             <Ionicons
               name={'search'}
               size={24}
-              color={colors.black}
+              color={colors.gray[400]}
               style={{marginLeft: 10}}
             />
           }

@@ -54,7 +54,7 @@ describe('ProductList', () => {
         undefined,
       );
     });
-    expect(screen.queryByText('Latest Products')).toBeOnTheScreen();
+    expect(screen.queryByText('Latest products')).toBeOnTheScreen();
     expect(screen.queryAllByTestId('flat-list-item').length).toBe(
       productsList.length,
     );

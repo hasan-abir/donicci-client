@@ -36,19 +36,17 @@ describe('CartItemDetails', () => {
     );
 
     expect(screen.queryByText(cartItem.product.title)).toBeOnTheScreen();
-    expect(
-      screen.queryByText('Price - $' + cartItem.product.price),
-    ).toBeOnTheScreen();
+    expect(screen.queryByText('$' + cartItem.product.price)).toBeOnTheScreen();
     expect(
       screen.queryByText(
-        'Total - $' +
+        '$' +
           Math.round(cartItem.product.price * cartItem.selectedQuantity * 100) /
             100,
       ),
     ).toBeOnTheScreen();
     expect(
       screen.queryByText(
-        cartItem.selectedQuantity + ' / ' + cartItem.product.quantity,
+        cartItem.selectedQuantity + ' of ' + cartItem.product.quantity,
       ),
     ).toBeOnTheScreen();
   });
@@ -121,7 +119,7 @@ describe('CartItemDetails', () => {
       </UIProvider>,
     );
 
-    fireEvent.press(screen.getByText('Remove'));
+    fireEvent.press(screen.getByText('REMOVE'));
 
     expect(removeItemFromCart).toBeCalledTimes(1);
     expect(removeItemFromCart).toBeCalledWith(cartItem._id, mockedRoute.name);
