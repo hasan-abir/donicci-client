@@ -1,4 +1,4 @@
-import {Box, Button, FormControl, Heading, Input, Text} from 'native-base';
+import {Box, Button, FormControl, Text, TextArea, useTheme} from 'native-base';
 import {useCallback, useState} from 'react';
 
 interface Props {
@@ -14,6 +14,8 @@ const PostReview = ({postReview, disabled}: Props) => {
   const [formData, setData] = useState<PostReviewFormData>({});
   const [errors, setErrors] = useState<PostReviewFormData>({});
   const [loading, setLoading] = useState<boolean>(false);
+
+  const {colors} = useTheme();
 
   const validate = useCallback(() => {
     setErrors({});
@@ -41,30 +43,34 @@ const PostReview = ({postReview, disabled}: Props) => {
 
   return (
     <Box mb={8}>
-      <Heading mb={2} fontSize="md">
+      <Text mb={2} fontSize="md" fontFamily="body">
         Post a Review
-      </Heading>
+      </Text>
       <FormControl isRequired isInvalid={'description' in errors}>
-        <FormControl.Label
-          _text={{
-            bold: true,
-          }}>
-          Description
-        </FormControl.Label>
-        <Input
+        <TextArea
+          autoCompleteType={true}
           onChangeText={value => setData({...formData, description: value})}
+          fontFamily="body"
+          borderWidth={0}
+          backgroundColor={colors.white}
           placeholder="Review description..."
         />
         {'description' in errors ? (
-          <FormControl.ErrorMessage>
+          <FormControl.ErrorMessage color={colors.danger[600]}>
             {errors.description}
           </FormControl.ErrorMessage>
         ) : null}
       </FormControl>
-      <Button onPress={onSubmit} mt="5" isDisabled={loading || disabled}>
-        <Text fontWeight="bold" fontSize="md">
-          Post
-        </Text>
+      <Button
+        py={2}
+        px={6}
+        borderRadius={10}
+        onPress={onSubmit}
+        mt="4"
+        isDisabled={loading || disabled}
+        bgColor={colors.secondary[500]}
+        _text={{fontFamily: 'body', fontWeight: 'bold'}}>
+        SUBMIT
       </Button>
     </Box>
   );

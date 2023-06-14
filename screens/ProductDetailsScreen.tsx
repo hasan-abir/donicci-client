@@ -132,8 +132,9 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
     fetchProduct();
   }, []);
   return (
-    <Box flex={1} px={3}>
+    <Box flex={1}>
       <FlatList
+        px={6}
         onEndReachedThreshold={0.5}
         onEndReached={onEndReached}
         onRefresh={onRefresh}
@@ -141,30 +142,35 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
         data={reviews}
         testID="flat-list"
         ListHeaderComponent={() => {
-          return loadingProduct && !refreshing ? (
-            <Box justifyContent="center">
-              <Spinner py={3} color={colors.gray[300]} size="lg" />
+          return (
+            <Box mt={6}>
+              {loadingProduct && !refreshing ? (
+                <Box mt={6} justifyContent="center">
+                  <Spinner py={3} color={colors.gray[300]} size="lg" />
+                </Box>
+              ) : product ? (
+                <Box>
+                  <ProductDetails product={product} />
+                  <PostReview
+                    postReview={postReview}
+                    disabled={loadingReviews}
+                  />
+                  <Text mb={6} fontSize="xl" fontFamily="body">
+                    User Reviews
+                  </Text>
+                </Box>
+              ) : null}
             </Box>
-          ) : product ? (
-            <Box py={5}>
-              <ProductDetails product={product} />
-              <PostReview postReview={postReview} disabled={loadingReviews} />
-              <Heading fontSize="md">Product Reviews</Heading>
-            </Box>
-          ) : null;
+          );
         }}
         ListFooterComponent={
-          <Box justifyContent="center">
+          <Box justifyContent="center" mb={6}>
             {loadingReviews && !refreshing ? (
-              <Spinner py={3} color={colors.gray[300]} size="lg" />
+              <Spinner color={colors.gray[300]} size="lg" />
             ) : reviews.length < 1 ? (
-              <Text py={3} textAlign="center">
-                No reviews found...
-              </Text>
+              <Text textAlign="center">No reviews found...</Text>
             ) : endOfDataList ? (
-              <Text py={3} textAlign="center">
-                You have reached the end of the list...
-              </Text>
+              <Text textAlign="center">That's all for now!</Text>
             ) : null}
           </Box>
         }

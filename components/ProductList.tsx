@@ -99,7 +99,7 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
         return (
           <Box mt={6}>
             {route.name === 'Products' && user ? (
-              <Text fontSize="md" mb={2}>
+              <Text fontFamily="body" fontSize="md" mb={2}>
                 Welcome, {user.username}!
               </Text>
             ) : null}
@@ -118,9 +118,13 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
           {loading && !refreshing ? (
             <Spinner color={colors.gray[300]} size="lg" />
           ) : products.length < 1 ? (
-            <Text textAlign="center">No products found...</Text>
+            <Text fontFamily="body" textAlign="center">
+              No products found...
+            </Text>
           ) : endOfDataList ? (
-            <Text textAlign="center">That's all for now!</Text>
+            <Text fontFamily="body" textAlign="center">
+              That's all for now!
+            </Text>
           ) : null}
         </Box>
       )}

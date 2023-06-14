@@ -81,7 +81,7 @@ const Rating = ({productId}: Props) => {
           <Spinner color={colors.gray[300]} size="lg" />
         </Box>
       ) : (
-        <Box>
+        <HStack space={2} alignItems="center">
           <HStack space={1} mb={2}>
             <Pressable onPress={() => submitRating(1)}>
               <Ionicons
@@ -150,8 +150,10 @@ const Rating = ({productId}: Props) => {
               />
             </Pressable>
           </HStack>
-          <Text color={colors.gray[400]}>Rating - {itemRating}</Text>
-        </Box>
+          <Text fontFamily="body" fontWeight="bold">
+            {itemRating}
+          </Text>
+        </HStack>
       )}
     </Box>
   );

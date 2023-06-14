@@ -1,4 +1,4 @@
-import {Box, Heading, Text} from 'native-base';
+import {Box, Heading, Text, useTheme} from 'native-base';
 
 export type Review = {
   _id: string;
@@ -15,13 +15,16 @@ type Props = {
 };
 
 const UserReview = ({review}: Props) => {
+  const {colors} = useTheme();
+
   return (
     <Box mb={3}>
-      <Heading fontSize={16} mb={2} mr={2}>
-        <Text>• {review.author} </Text>
-        <Text fontWeight="normal">says,</Text>
-      </Heading>
-      <Text>{review.description}</Text>
+      <Text fontFamily="body" fontSize="md" mb={2}>
+        {review.author} says,
+      </Text>
+      <Text color={colors.gray[500]} fontFamily="body">
+        {review.description}
+      </Text>
     </Box>
   );
 };

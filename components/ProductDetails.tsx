@@ -33,44 +33,50 @@ const ProductDetails = ({product}: Props) => {
   };
 
   return (
-    <Box>
+    <Box mb={8}>
       <ImageGallery alt={product.title} images={product.images} />
-      <StarRating productId={product._id} />
-      <HStack space={1} mb={6} flexWrap="wrap">
+      <Text fontWeight="bold" fontFamily="body" fontSize="md" mt={6} mb={3}>
+        ${product.price}
+      </Text>
+      <Text fontFamily="body" mb={6} fontSize="xl">
+        {product.title}
+      </Text>
+      <HStack space={2} mb={6} flexWrap="wrap">
         {product.categories_list.map(category => {
           return (
             <Box
               key={category._id}
-              backgroundColor={colors.primary[400]}
+              backgroundColor={colors.secondary[100]}
               py={1}
-              px={2}
+              px={3}
               borderRadius={10}>
-              <Text fontSize="sm" color={colors.primary[900]} fontWeight="bold">
+              <Text
+                fontSize="sm"
+                color={colors.secondary[500]}
+                fontWeight="bold">
                 {category.name}
               </Text>
             </Box>
           );
         })}
       </HStack>
-      <Heading mb={6}>{product.title}</Heading>
-      <Text fontWeight="bold" fontSize="md" mb={3}>
-        Price - ${product.price}
-      </Text>
+      <StarRating productId={product._id} />
       {product.quantity && product.quantity > 0 ? (
-        <Box>
+        <Box mb={6}>
           {inCart(product._id) ? (
             <Button
               py={2}
-              mb={6}
-              onPress={() => removeItemFromCart(product._id, route.name)}>
-              <Text fontWeight="bold">Remove from Cart</Text>
+              px={6}
+              borderRadius={20}
+              onPress={() => removeItemFromCart(product._id, route.name)}
+              bgColor={colors.secondary[500]}
+              _text={{fontFamily: 'body', fontWeight: 'bold'}}>
+              REMOVE FROM CART
             </Button>
           ) : (
-            <Box mb={6}>
-              <HStack space={2} mb={3}>
-                <Text fontWeight="bold" fontSize="md">
-                  Quantity -
-                </Text>
+            <HStack space={2} justifyContent="space-between">
+              <HStack space={1} alignItems="center">
+                <Text fontFamily="body">Quantity</Text>
                 <Ionicons
                   testID="decrease-quantity"
                   name={'chevron-back-outline'}
@@ -78,8 +84,8 @@ const ProductDetails = ({product}: Props) => {
                   color={colors.black}
                   onPress={() => deductQuantity()}
                 />
-                <Text fontSize="md">
-                  {selectedQuantity} / {product.quantity}
+                <Text fontFamily="body">
+                  {selectedQuantity} of {product.quantity}
                 </Text>
                 <Ionicons
                   testID="increase-quantity"
@@ -91,26 +97,34 @@ const ProductDetails = ({product}: Props) => {
               </HStack>
               <Button
                 py={2}
+                px={6}
+                borderRadius={20}
                 onPress={() =>
                   addItemToCart(product, selectedQuantity, route.name)
-                }>
-                <Text fontWeight="bold" fontSize="md">
-                  Add to Cart
-                </Text>
+                }
+                bgColor={colors.secondary[500]}
+                _text={{fontFamily: 'body', fontWeight: 'bold'}}>
+                ADD TO CART
               </Button>
-            </Box>
+            </HStack>
           )}
         </Box>
       ) : (
-        <Heading mb={3} fontSize="md" style={{color: colors.red[500]}}>
+        <Heading
+          mb={6}
+          fontSize="md"
+          fontFamily="body"
+          style={{color: colors.danger[600]}}>
           Out of stock
         </Heading>
       )}
 
-      <Heading mb={1} fontSize="md">
+      <Text mb={2} fontSize="md" fontFamily="body">
         Description
-      </Heading>
-      <Text mb={10}>{product.description}</Text>
+      </Text>
+      <Text color={colors.gray[500]} fontFamily="body">
+        {product.description}
+      </Text>
     </Box>
   );
 };

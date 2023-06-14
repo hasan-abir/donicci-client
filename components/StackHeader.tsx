@@ -12,10 +12,18 @@ const StackHeader = ({navigation, options, route}: StackHeaderProps) => {
   return (
     <Box>
       {error && error.name === route.name && (
-        <Alert w="100%" py={3} px={6} status="error">
+        <Alert
+          w="100%"
+          py={4}
+          px={6}
+          backgroundColor={colors.danger[100]}
+          borderRadius={0}>
           <HStack space={2} flexShrink={1}>
-            <Alert.Icon />
-            <Text fontSize="md" color={colors.coolGray[800]} lineHeight={20}>
+            <Text
+              fontSize="sm"
+              fontFamily="body"
+              color={colors.danger[600]}
+              lineHeight={20}>
               {error.msg}
             </Text>
           </HStack>

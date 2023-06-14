@@ -40,7 +40,7 @@ const CartItemDetails = ({item}: Props) => {
             color={colors.black}
             onPress={() => updateSelectedQuantity(item._id, false)}
           />
-          <Text>
+          <Text fontFamily="body">
             {item.selectedQuantity} of {item.product.quantity}
           </Text>
           <Ionicons
