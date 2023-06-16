@@ -53,7 +53,7 @@ describe('StarRating', () => {
       expect(ratingController.fetchRatings).toBeCalledTimes(1);
       expect(ratingController.fetchRatings).toBeCalledWith(productId);
     });
-    expect(screen.queryByText('Rating - ' + rating)).toBeOnTheScreen();
+    expect(screen.queryByText(rating.toString())).toBeOnTheScreen();
   });
   it('when unauthorized, navigates correctly', async () => {
     const rating = 2.5;
@@ -79,7 +79,7 @@ describe('StarRating', () => {
       expect(ratingController.fetchRatings).toBeCalledWith(productId);
     });
 
-    expect(screen.queryByText('Rating - ' + rating)).toBeOnTheScreen();
+    expect(screen.queryByText(rating.toString())).toBeOnTheScreen();
 
     fireEvent.press(screen.getByTestId('star'));
 
@@ -119,7 +119,7 @@ describe('StarRating', () => {
       expect(ratingController.fetchRatings).toBeCalledWith(productId);
     });
 
-    expect(screen.queryByText('Rating - ' + rating)).toBeOnTheScreen();
+    expect(screen.queryByText(rating.toString())).toBeOnTheScreen();
 
     fireEvent.press(screen.getByTestId('star'));
 
@@ -128,6 +128,6 @@ describe('StarRating', () => {
       expect(ratingController.addRating).toBeCalledWith(productId, 3, token);
     });
 
-    expect(screen.queryByText('Rating - ' + updatedRating)).toBeOnTheScreen();
+    expect(screen.queryByText(updatedRating.toString())).toBeOnTheScreen();
   });
 });

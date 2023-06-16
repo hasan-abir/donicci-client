@@ -27,7 +27,7 @@ const CategoryProductsScreen = ({navigation, route}: Props) => {
       const data = await categoryController.fetchSingleCategory(
         route.params.categoryId,
       );
-      // setCategory(data);
+      setCategory(data);
 
       if (data) {
         navigation.setOptions({title: data.name});

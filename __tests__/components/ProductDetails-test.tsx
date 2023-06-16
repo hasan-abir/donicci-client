@@ -33,8 +33,8 @@ describe('ProductDetails', () => {
 
     expect(screen.queryByText(product.title)).toBeOnTheScreen();
     expect(screen.queryByText(product.description || '')).toBeOnTheScreen();
-    expect(screen.queryByText('Price - $' + product.price)).toBeOnTheScreen();
-    expect(screen.queryByText('1 / ' + product.quantity)).toBeOnTheScreen();
+    expect(screen.queryByText('$' + product.price)).toBeOnTheScreen();
+    expect(screen.queryByText('1 of ' + product.quantity)).toBeOnTheScreen();
     expect(
       screen.queryByText(product.categories_list[0].name),
     ).toBeOnTheScreen();
@@ -64,7 +64,7 @@ describe('ProductDetails', () => {
 
     fireEvent.press(screen.getByTestId('increase-quantity'));
 
-    expect(screen.queryByText('2 / ' + product.quantity)).toBeOnTheScreen();
+    expect(screen.queryByText('2 of ' + product.quantity)).toBeOnTheScreen();
   });
 
   it('decrease quantity correctly', () => {
@@ -80,7 +80,7 @@ describe('ProductDetails', () => {
     fireEvent.press(screen.getByTestId('increase-quantity'));
     fireEvent.press(screen.getByTestId('decrease-quantity'));
 
-    expect(screen.queryByText('2 / ' + product.quantity)).toBeOnTheScreen();
+    expect(screen.queryByText('2 of ' + product.quantity)).toBeOnTheScreen();
   });
 
   it('avoids decreasing quantity below 1', () => {
@@ -94,7 +94,7 @@ describe('ProductDetails', () => {
 
     fireEvent.press(screen.getByTestId('decrease-quantity'));
 
-    expect(screen.queryByText('1 / ' + product.quantity)).toBeOnTheScreen();
+    expect(screen.queryByText('1 of ' + product.quantity)).toBeOnTheScreen();
   });
 
   it('adds item to cart correctly', () => {
@@ -110,7 +110,7 @@ describe('ProductDetails', () => {
       </UIProvider>,
     );
 
-    fireEvent.press(screen.getByText('Add to Cart'));
+    fireEvent.press(screen.getByText('ADD TO CART'));
 
     expect(addItemToCart).toBeCalledTimes(1);
     expect(addItemToCart).toBeCalledWith(product, 1, mockedRoute.name);
@@ -129,7 +129,7 @@ describe('ProductDetails', () => {
       </UIProvider>,
     );
 
-    fireEvent.press(screen.getByText('Remove from Cart'));
+    fireEvent.press(screen.getByText('REMOVE FROM CART'));
 
     expect(removeItemFromCart).toBeCalledTimes(1);
     expect(removeItemFromCart).toBeCalledWith('1', mockedRoute.name);

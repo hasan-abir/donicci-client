@@ -88,13 +88,15 @@ const RegisterScreen = ({navigation, route}: Props) => {
   }, [formData]);
 
   return (
-    <Box flex={1} justifyContent="center" alignItems="center" px={3}>
-      <Heading mb={8}>Register</Heading>
-      <VStack mb={3} width="full" maxW={300}>
-        <FormControl isRequired isInvalid={'username' in errors}>
+    <Box flex={1} px={6} justifyContent="center">
+      <Text mb={6} fontFamily="body" fontSize="xl" textAlign="center">
+        Register
+      </Text>
+      <Box mb={6}>
+        <FormControl isRequired isInvalid={'username' in errors} mb={2}>
           <FormControl.Label
             _text={{
-              bold: true,
+              fontFamily: 'body',
             }}>
             Username
           </FormControl.Label>
@@ -102,17 +104,21 @@ const RegisterScreen = ({navigation, route}: Props) => {
             placeholder="John"
             onChangeText={value => setData({...formData, username: value})}
             testID="username"
+            fontFamily="body"
+            borderWidth={0}
+            backgroundColor={colors.white}
+            borderRadius={10}
           />
           {'username' in errors ? (
-            <FormControl.ErrorMessage>
+            <FormControl.ErrorMessage colorScheme={colors.danger[600]}>
               {errors.username}
             </FormControl.ErrorMessage>
           ) : null}
         </FormControl>
-        <FormControl isRequired isInvalid={'email' in errors}>
+        <FormControl isRequired isInvalid={'email' in errors} mb={2}>
           <FormControl.Label
             _text={{
-              bold: true,
+              fontFamily: 'body',
             }}>
             Email
           </FormControl.Label>
@@ -120,15 +126,21 @@ const RegisterScreen = ({navigation, route}: Props) => {
             placeholder="example@test.com"
             onChangeText={value => setData({...formData, email: value})}
             testID="email"
+            fontFamily="body"
+            borderWidth={0}
+            backgroundColor={colors.white}
+            borderRadius={10}
           />
           {'email' in errors ? (
-            <FormControl.ErrorMessage>{errors.email}</FormControl.ErrorMessage>
+            <FormControl.ErrorMessage colorScheme={colors.danger[600]}>
+              {errors.email}
+            </FormControl.ErrorMessage>
           ) : null}
         </FormControl>
-        <FormControl isRequired isInvalid={'password' in errors}>
+        <FormControl isRequired isInvalid={'password' in errors} mb={4}>
           <FormControl.Label
             _text={{
-              bold: true,
+              fontFamily: 'body',
             }}>
             Password
           </FormControl.Label>
@@ -136,27 +148,35 @@ const RegisterScreen = ({navigation, route}: Props) => {
             type="password"
             onChangeText={value => setData({...formData, password: value})}
             testID="password"
+            fontFamily="body"
+            borderWidth={0}
+            backgroundColor={colors.white}
+            borderRadius={10}
           />
           {'password' in errors ? (
-            <FormControl.ErrorMessage>
+            <FormControl.ErrorMessage colorScheme={colors.danger[600]}>
               {errors.password}
             </FormControl.ErrorMessage>
           ) : null}
         </FormControl>
-        <Button onPress={onSubmit} mt="5">
-          <Text fontWeight="bold" fontSize="md">
-            Register
-          </Text>
+        <Button
+          py={2}
+          px={6}
+          borderRadius={10}
+          onPress={onSubmit}
+          bgColor={colors.secondary[500]}
+          _text={{fontFamily: 'body', fontWeight: 'bold'}}>
+          REGISTER
         </Button>
-      </VStack>
+      </Box>
 
-      <HStack>
+      <HStack justifyContent="center">
         <Pressable onPress={() => navigation.navigate('Login')}>
-          <Text underline bold color={colors.primary[700]}>
+          <Text fontFamily="body" color={colors.primary[600]}>
             Login
           </Text>
         </Pressable>
-        <Text>, if you already have an account</Text>
+        <Text fontFamily="body">, if you already have an account</Text>
       </HStack>
     </Box>
   );

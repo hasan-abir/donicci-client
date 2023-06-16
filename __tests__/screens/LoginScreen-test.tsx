@@ -39,7 +39,8 @@ describe('LoginScreen', () => {
       </UIProvider>,
     );
 
-    expect(screen.queryAllByText('Login').length).toBe(2);
+    expect(screen.queryAllByText('Login').length).toBe(1);
+    expect(screen.queryAllByText('LOGIN').length).toBe(1);
     expect(screen.queryByText('Email')).toBeOnTheScreen();
     expect(screen.queryByText('Password')).toBeOnTheScreen();
     expect(screen.queryByText('Register')).toBeOnTheScreen();
@@ -96,7 +97,7 @@ describe('LoginScreen', () => {
       </UIProvider>,
     );
 
-    fireEvent.press(screen.getAllByText('Login')[1]);
+    fireEvent.press(screen.getByText('LOGIN'));
 
     expect(screen.queryByText('Email is required')).toBeOnTheScreen();
     expect(authenticateUser).toBeCalledTimes(0);
@@ -126,7 +127,7 @@ describe('LoginScreen', () => {
     );
 
     fireEvent.changeText(screen.getByTestId('email'), 'testtest.com');
-    fireEvent.press(screen.getAllByText('Login')[1]);
+    fireEvent.press(screen.getByText('LOGIN'));
 
     expect(screen.queryByText('Email is not valid')).toBeOnTheScreen();
     expect(authenticateUser).toBeCalledTimes(0);
@@ -156,7 +157,7 @@ describe('LoginScreen', () => {
     );
 
     fireEvent.changeText(screen.getByTestId('email'), 'test@test.com');
-    fireEvent.press(screen.getAllByText('Login')[1]);
+    fireEvent.press(screen.getByText('LOGIN'));
 
     expect(screen.queryByText('Password is required')).toBeOnTheScreen();
     expect(authenticateUser).toBeCalledTimes(0);
@@ -187,7 +188,7 @@ describe('LoginScreen', () => {
 
     fireEvent.changeText(screen.getByTestId('email'), 'test@test.com');
     fireEvent.changeText(screen.getByTestId('password'), 'testtes');
-    fireEvent.press(screen.getAllByText('Login')[1]);
+    fireEvent.press(screen.getByText('LOGIN'));
 
     expect(screen.queryByText('Password is too short')).toBeOnTheScreen();
     expect(authenticateUser).toBeCalledTimes(0);
@@ -220,7 +221,7 @@ describe('LoginScreen', () => {
     fireEvent.changeText(screen.getByTestId('email'), email);
     const password = 'testtest';
     fireEvent.changeText(screen.getByTestId('password'), password);
-    fireEvent.press(screen.getAllByText('Login')[1]);
+    fireEvent.press(screen.getByText('LOGIN'));
 
     await waitFor(() => {
       expect(authenticateUser).toBeCalledTimes(1);

@@ -74,7 +74,7 @@ describe('ProductDetailsScreen', () => {
       expect(reviewController.fetchReviews).toBeCalledTimes(1);
       expect(reviewController.fetchReviews).toBeCalledWith(1, product._id);
     });
-    expect(screen.queryByText('Product Reviews')).toBeOnTheScreen();
+    expect(screen.queryByText('User Reviews')).toBeOnTheScreen();
     expect(screen.queryAllByTestId('flat-list-item').length).toBe(
       reviewsList.length,
     );

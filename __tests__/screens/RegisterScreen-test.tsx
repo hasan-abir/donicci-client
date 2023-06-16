@@ -35,7 +35,8 @@ describe('RegisterScreen', () => {
       </UIProvider>,
     );
 
-    expect(screen.queryAllByText('Register').length).toBe(2);
+    expect(screen.queryAllByText('Register').length).toBe(1);
+    expect(screen.queryAllByText('REGISTER').length).toBe(1);
     expect(screen.queryByText('Username')).toBeOnTheScreen();
     expect(screen.queryByText('Email')).toBeOnTheScreen();
     expect(screen.queryByText('Password')).toBeOnTheScreen();
@@ -85,7 +86,7 @@ describe('RegisterScreen', () => {
       </UIProvider>,
     );
 
-    fireEvent.press(screen.getAllByText('Register')[1]);
+    fireEvent.press(screen.getByText('REGISTER'));
 
     expect(screen.queryByText('Username is required')).toBeOnTheScreen();
     expect(authenticateUser).toBeCalledTimes(0);
@@ -111,7 +112,7 @@ describe('RegisterScreen', () => {
     );
 
     fireEvent.changeText(screen.getByTestId('username'), 'Test');
-    fireEvent.press(screen.getAllByText('Register')[1]);
+    fireEvent.press(screen.getByText('REGISTER'));
 
     expect(screen.queryByText('Email is required')).toBeOnTheScreen();
     expect(authenticateUser).toBeCalledTimes(0);
@@ -138,7 +139,7 @@ describe('RegisterScreen', () => {
 
     fireEvent.changeText(screen.getByTestId('username'), 'Test');
     fireEvent.changeText(screen.getByTestId('email'), 'testtest.com');
-    fireEvent.press(screen.getAllByText('Register')[1]);
+    fireEvent.press(screen.getByText('REGISTER'));
 
     expect(screen.queryByText('Email is not valid')).toBeOnTheScreen();
     expect(authenticateUser).toBeCalledTimes(0);
@@ -165,7 +166,7 @@ describe('RegisterScreen', () => {
 
     fireEvent.changeText(screen.getByTestId('username'), 'Test');
     fireEvent.changeText(screen.getByTestId('email'), 'test@test.com');
-    fireEvent.press(screen.getAllByText('Register')[1]);
+    fireEvent.press(screen.getByText('REGISTER'));
 
     expect(screen.queryByText('Password is required')).toBeOnTheScreen();
     expect(authenticateUser).toBeCalledTimes(0);
@@ -193,7 +194,7 @@ describe('RegisterScreen', () => {
     fireEvent.changeText(screen.getByTestId('username'), 'Test');
     fireEvent.changeText(screen.getByTestId('email'), 'test@test.com');
     fireEvent.changeText(screen.getByTestId('password'), 'testtes');
-    fireEvent.press(screen.getAllByText('Register')[1]);
+    fireEvent.press(screen.getByText('REGISTER'));
 
     expect(screen.queryByText('Password is too short')).toBeOnTheScreen();
     expect(authenticateUser).toBeCalledTimes(0);
@@ -224,7 +225,7 @@ describe('RegisterScreen', () => {
     fireEvent.changeText(screen.getByTestId('email'), email);
     const password = 'testtest';
     fireEvent.changeText(screen.getByTestId('password'), password);
-    fireEvent.press(screen.getAllByText('Register')[1]);
+    fireEvent.press(screen.getByText('REGISTER'));
 
     await waitFor(() => {
       expect(authenticateUser).toBeCalledTimes(1);

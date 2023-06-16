@@ -50,7 +50,7 @@ describe('PostReview', () => {
       screen.getByPlaceholderText('Review description...'),
       description,
     );
-    fireEvent.press(screen.getByText('Post'));
+    fireEvent.press(screen.getByText('SUBMIT'));
 
     await waitFor(() => {
       expect(postReview).toBeCalledTimes(1);
@@ -67,7 +67,7 @@ describe('PostReview', () => {
       </UIProvider>,
     );
 
-    fireEvent.press(screen.getByText('Post'));
+    fireEvent.press(screen.getByText('SUBMIT'));
 
     expect(screen.queryByText('Description is required')).toBeOnTheScreen();
   });

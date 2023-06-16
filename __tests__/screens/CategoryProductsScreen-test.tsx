@@ -107,7 +107,7 @@ describe('CategoryProductsScreen', () => {
 
     expect(screen.queryByText('Category not found')).toBeOnTheScreen();
 
-    fireEvent.press(screen.getByText('Go back to Categories'));
+    fireEvent.press(screen.getByText('BACK TO CATEGORIES'));
 
     expect(navigation.navigate).toBeCalledTimes(1);
     expect(navigation.navigate).toBeCalledWith('Categories');

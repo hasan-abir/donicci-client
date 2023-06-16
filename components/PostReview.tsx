@@ -53,6 +53,7 @@ const PostReview = ({postReview, disabled}: Props) => {
           fontFamily="body"
           borderWidth={0}
           backgroundColor={colors.white}
+          borderRadius={10}
           placeholder="Review description..."
         />
         {'description' in errors ? (

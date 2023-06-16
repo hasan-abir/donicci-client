@@ -27,7 +27,7 @@ describe('UserReview', () => {
       </UIProvider>,
     );
 
-    expect(screen.queryByText('• ' + review.author + ' ')).toBeOnTheScreen();
+    expect(screen.queryByText(review.author + ' says,')).toBeOnTheScreen();
     expect(screen.queryByText(review.description)).toBeOnTheScreen();
   });
 });
