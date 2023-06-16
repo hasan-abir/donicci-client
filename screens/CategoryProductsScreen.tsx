@@ -1,5 +1,5 @@
 import type {StackScreenProps} from '@react-navigation/stack';
-import {Box, Button, Text, VStack} from 'native-base';
+import {Box, Button, Text, VStack, useTheme} from 'native-base';
 import {useContext, useEffect, useState, useCallback} from 'react';
 import type {Category} from '../components/CategoryItem';
 import ProductList from '../components/ProductList';
@@ -16,6 +16,8 @@ type Props = StackScreenProps<
 const CategoryProductsScreen = ({navigation, route}: Props) => {
   const {clearError, handleError} = useContext(RootContext);
 
+  const {colors} = useTheme();
+
   const [category, setCategory] = useState<Category | null | undefined>(null);
 
   const fetchData = useCallback(async () => {
@@ -25,7 +27,7 @@ const CategoryProductsScreen = ({navigation, route}: Props) => {
       const data = await categoryController.fetchSingleCategory(
         route.params.categoryId,
       );
-      setCategory(data);
+      // setCategory(data);
 
       if (data) {
         navigation.setOptions({title: data.name});
@@ -39,23 +41,27 @@ const CategoryProductsScreen = ({navigation, route}: Props) => {
     fetchData();
   }, [navigation]);
   return (
-    <Box flex={1} px={3}>
+    <Box flex={1}>
       {category ? (
         <ProductList
           categoryId={route.params.categoryId}
-          headerTitle={'Products in: ' + category?.name}
+          headerTitle={category?.name}
         />
       ) : (
-        <VStack alignItems="center" mt={6}>
-          <Text mb={3} fontSize="lg">
+        <Box mt={6} mx={6}>
+          <Text mb={3} textAlign="center" fontSize="xl" fontFamily="body">
             Category not found
           </Text>
-          <Button onPress={() => navigation.navigate('Categories')}>
-            <Text fontSize="md" px={4}>
-              Go back to Categories
-            </Text>
+          <Button
+            py={2}
+            px={6}
+            borderRadius={20}
+            onPress={() => navigation.navigate('Categories')}
+            bgColor={colors.secondary[500]}
+            _text={{fontFamily: 'body', fontWeight: 'bold'}}>
+            BACK TO CATEGORIES
           </Button>
-        </VStack>
+        </Box>
       )}
     </Box>
   );
