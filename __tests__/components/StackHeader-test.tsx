@@ -91,7 +91,7 @@ describe('StackHeader', () => {
     render(
       <UIProvider>
         <RootContext.Provider
-          value={{error: {name: route.name, msg: errorMsg}} as any}>
+          value={{error: {name: route.name, msgs: [errorMsg]}} as any}>
           <StackHeader {...(props as any)} />
         </RootContext.Provider>
       </UIProvider>,

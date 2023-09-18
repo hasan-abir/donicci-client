@@ -1,7 +1,7 @@
 import {useContext} from 'react';
 
 import type {BottomTabHeaderProps} from '@react-navigation/bottom-tabs';
-import {Alert, Box, HStack, Text, useTheme} from 'native-base';
+import {Alert, Box, HStack, Text, VStack, useTheme} from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {RootContext} from '../context/RootContext';
 import SearchForm from './SearchForm';
@@ -19,15 +19,20 @@ const TabHeader = ({navigation, route}: BottomTabHeaderProps) => {
           px={6}
           backgroundColor={colors.danger[100]}
           borderRadius={0}>
-          <HStack space={2} flexShrink={1}>
-            <Text
-              fontSize="sm"
-              fontFamily="body"
-              color={colors.danger[600]}
-              lineHeight={20}>
-              {error.msg}
-            </Text>
-          </HStack>
+          <VStack space={2} flexShrink={1}>
+            {error.msgs.map((msg, index) => {
+              return (
+                <Text
+                  key={index}
+                  fontSize="sm"
+                  fontFamily="body"
+                  color={colors.danger[600]}
+                  lineHeight={20}>
+                  {msg}
+                </Text>
+              );
+            })}
+          </VStack>
         </Alert>
       )}
       <HStack

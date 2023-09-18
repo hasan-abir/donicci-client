@@ -1,11 +1,8 @@
+import axios from 'axios';
+import Config from 'react-native-config';
+
 export interface User {
   username: string;
-}
-
-export interface RegisterInput {
-  username: string;
-  email: string;
-  password: string;
 }
 
 export interface LoginInput {
@@ -13,50 +10,30 @@ export interface LoginInput {
   password: string;
 }
 
+export interface RegisterInput extends LoginInput {
+  display_name: string;
+  username: string;
+}
+
+interface AuthResponse {
+  access_token: string;
+  refresh_token: string;
+}
+
+axios.defaults.baseURL = Config.API_URL;
+
 const register = async (input: RegisterInput): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    let error: boolean = false;
-    const token = '123';
-
-    if (Math.floor(Math.random() * 5) === 1) {
-      error = true;
-    }
-
-    if (error) {
-      const errObj: any = new Error();
-      errObj.response = {
-        status: 500,
-        data: {msg: "Sommin'"},
-      };
-
-      reject(errObj);
-    }
-
-    resolve(token);
+  const response = await axios.post<AuthResponse>('/auth/register', {
+    user: input,
   });
+
+  return response.data.access_token;
 };
 
 const login = async (input: LoginInput): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    let error: boolean = false;
-    const token = '123';
+  const response = await axios.post<AuthResponse>('/auth/login', input);
 
-    if (Math.floor(Math.random() * 5) === 1) {
-      error = true;
-    }
-
-    if (error) {
-      const errObj: any = new Error();
-      errObj.response = {
-        status: 500,
-        data: {msg: "Sommin'"},
-      };
-
-      reject(errObj);
-    }
-
-    resolve(token);
-  });
+  return response.data.access_token;
 };
 
 const getCurrentUser = async (token: string): Promise<User> => {
@@ -78,9 +55,7 @@ const getCurrentUser = async (token: string): Promise<User> => {
       reject(errObj);
     }
 
-    setTimeout(() => {
-      resolve(user);
-    }, 3000);
+    resolve(user);
   });
 };
 

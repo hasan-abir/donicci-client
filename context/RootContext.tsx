@@ -18,7 +18,7 @@ interface CartSum {
 }
 
 interface GlobalError {
-  msg: string;
+  msgs: string[];
   name: string;
 }
 
@@ -186,13 +186,22 @@ const RootContextProvider = ({children}: Props) => {
 
   const handleError = (errObj: any, screen: string) => {
     const status = errObj.response.status;
-    const data = errObj.response.data;
+    const data = errObj.response.data || {};
+    let msgs: string[] = [];
 
-    setError({msg: data.msg, name: screen});
+    if (data.msg) {
+      msgs = [data.msg];
+    }
+
+    if (data.msgs) {
+      msgs = data.msgs;
+    }
 
     if (status === 500) {
-      setError({msg: 'Something went wrong, try refreshing', name: screen});
+      msgs = ['Something went wrong, try refreshing'];
     }
+
+    setError({msgs, name: screen});
   };
 
   const clearError = () => {

@@ -1,5 +1,5 @@
 import type {StackHeaderProps} from '@react-navigation/stack';
-import {Alert, Box, HStack, Text, useTheme} from 'native-base';
+import {Alert, Box, HStack, Text, VStack, useTheme} from 'native-base';
 import {useContext} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {RootContext} from '../context/RootContext';
@@ -18,15 +18,20 @@ const StackHeader = ({navigation, options, route}: StackHeaderProps) => {
           px={6}
           backgroundColor={colors.danger[100]}
           borderRadius={0}>
-          <HStack space={2} flexShrink={1}>
-            <Text
-              fontSize="sm"
-              fontFamily="body"
-              color={colors.danger[600]}
-              lineHeight={20}>
-              {error.msg}
-            </Text>
-          </HStack>
+          <VStack space={2} flexShrink={1}>
+            {error.msgs.map((msg, index) => {
+              return (
+                <Text
+                  key={index}
+                  fontSize="sm"
+                  fontFamily="body"
+                  color={colors.danger[600]}
+                  lineHeight={20}>
+                  {msg}
+                </Text>
+              );
+            })}
+          </VStack>
         </Alert>
       )}
       <HStack
