@@ -36,14 +36,19 @@ export interface CartItem {
   created_at?: string;
 }
 
+interface Tokens {
+  access: string | null;
+  refresh: string | null;
+}
+
 interface Value {
   user: User | null;
-  token: string | null;
   authenticating: boolean;
   authenticateUser: (
     input: RegisterInput | LoginInput,
     screen: string,
   ) => Promise<boolean>;
+  attemptRefreshToken: () => Promise<void>;
   verifyCurrentUser: () => Promise<void>;
   logOutUser: () => Promise<void>;
   error: GlobalError | null;
@@ -66,11 +71,14 @@ interface Value {
 
 export const RootContext = React.createContext<Value>({
   user: null,
-  token: null,
-  authenticating: false,
+  authenticating: true,
   authenticateUser: () =>
     new Promise((resolve, reject) => {
       resolve(false);
+    }),
+  attemptRefreshToken: () =>
+    new Promise((resolve, reject) => {
+      resolve();
     }),
   verifyCurrentUser: () =>
     new Promise((resolve, reject) => {
@@ -110,8 +118,7 @@ type Props = {
 
 const RootContextProvider = ({children}: Props) => {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [authenticating, setAuthenticating] = useState<boolean>(false);
+  const [authenticating, setAuthenticating] = useState<boolean>(true);
   const [error, setError] = useState<GlobalError | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [cartSum, setCartSum] = useState<CartSum>({
@@ -120,6 +127,13 @@ const RootContextProvider = ({children}: Props) => {
     total: 0,
   });
 
+  const getTokens = async (): Promise<Tokens> => {
+    const access = await AsyncStorage.getItem('@user_token');
+    const refresh = await AsyncStorage.getItem('@refresh_token');
+
+    return {access, refresh};
+  };
+
   const authenticateUser = async (
     input: RegisterInput | LoginInput,
     screen: string,
@@ -127,80 +141,102 @@ const RootContextProvider = ({children}: Props) => {
     try {
       clearError();
 
-      let userToken = null;
+      let authResponse = null;
 
       if (screen === 'Register') {
-        userToken = await userController.register(input as RegisterInput);
+        authResponse = await userController.register(input as RegisterInput);
       } else if (screen === 'Login') {
-        userToken = await userController.login(input as LoginInput);
+        authResponse = await userController.login(input as LoginInput);
       }
 
-      if (userToken) {
-        const currentUser = await userController.getCurrentUser(userToken);
+      if (authResponse) {
+        const currentUser = await userController.getCurrentUser(
+          authResponse.access_token,
+        );
 
         setUser(currentUser);
-        setToken(userToken);
 
-        await AsyncStorage.setItem('@user_token', userToken);
+        await AsyncStorage.setItem('@user_token', authResponse.access_token);
+        await AsyncStorage.setItem(
+          '@refresh_token',
+          authResponse.refresh_token,
+        );
       }
 
       return true;
-    } catch (error: any) {
-      handleError(error, screen);
+    } catch (err: any) {
+      handleError(err, screen);
       return false;
     }
+  };
+
+  const attemptRefreshToken = async () => {
+    const tokens = await getTokens();
+
+    const authResponse = await userController.refreshToken(tokens.refresh);
+
+    await AsyncStorage.setItem('@user_token', authResponse.access_token);
+    await AsyncStorage.setItem('@refresh_token', authResponse.refresh_token);
   };
 
   const verifyCurrentUser = async () => {
     try {
       setAuthenticating(true);
 
-      const storedToken = await AsyncStorage.getItem('@user_token');
+      const tokens = await getTokens();
 
-      if (storedToken !== null) {
-        const currentUser = await userController.getCurrentUser(storedToken);
+      if (tokens.access && tokens.refresh) {
+        const currentUser = await userController.getCurrentUser(tokens.access);
 
         setUser(currentUser);
-        setToken(storedToken);
       }
-    } catch (error: any) {
-      handleError(error, 'Home');
-    } finally {
-      setAuthenticating(false);
+    } catch (err: any) {
+      handleError(err, 'Products');
     }
+
+    setAuthenticating(false);
   };
 
   const logOutUser = async () => {
     try {
-      setAuthenticating(true);
+      const tokens = await getTokens();
 
-      await AsyncStorage.removeItem('@user_token');
-      setUser(null);
-      setToken(null);
+      setAuthenticating(true);
+      await userController.logout(tokens.access);
     } catch (error: any) {
       handleError(error, 'Home');
     } finally {
+      await AsyncStorage.removeItem('@user_token');
+      await AsyncStorage.removeItem('@refresh_token');
+      setUser(null);
       setAuthenticating(false);
     }
   };
 
   const handleError = (errObj: any, screen: string) => {
-    const status = errObj.response.status;
-    const data = errObj.response.data || {};
-    let msgs: string[] = [];
+    let status = 500;
+    let data: {msg?: string; msgs?: string[]} = {};
 
-    if (data.msg) {
-      msgs = [data.msg];
+    if (errObj.response) {
+      status = errObj.response.status;
+      data = errObj.response.data;
     }
 
-    if (data.msgs) {
-      msgs = data.msgs;
+    let msgs: string[] = [];
+
+    if (data) {
+      if (data.msg) {
+        msgs = [data.msg];
+      }
+
+      if (data.msgs) {
+        msgs = data.msgs;
+      }
     }
 
     if (status === 500) {
       msgs = ['Something went wrong, try refreshing'];
     }
-
     setError({msgs, name: screen});
   };
 
@@ -231,11 +267,11 @@ const RootContextProvider = ({children}: Props) => {
     screen: string,
   ) => {
     try {
+      const tokens = await getTokens();
       let cartItem = null;
-
-      if (user && token) {
+      if (user && tokens.access) {
         cartItem = await cartItemController.addCartItem(
-          token,
+          tokens.access,
           product._id,
           selectedQuantity,
         );
@@ -252,10 +288,8 @@ const RootContextProvider = ({children}: Props) => {
           selectedQuantity,
         };
       }
-
       const updatedCartItems = [...cartItems, cartItem as CartItem];
       setCartItems(updatedCartItems);
-
       calculateTheTotals(updatedCartItems);
     } catch (error: any) {
       handleError(error, screen);
@@ -265,19 +299,17 @@ const RootContextProvider = ({children}: Props) => {
   const removeItemFromCart = async (productId: string, screen: string) => {
     try {
       const cartItem = cartItems.find(item => item.product._id === productId);
-
       if (!cartItem) return;
 
-      if (user && token) {
-        await cartItemController.removeCartItem(token, cartItem._id);
-      }
+      const tokens = await getTokens();
 
+      if (user && tokens.access) {
+        await cartItemController.removeCartItem(tokens.access, cartItem._id);
+      }
       const updatedCartItems = cartItems.filter(
         item => item._id !== cartItem._id,
       );
-
       setCartItems(updatedCartItems);
-
       calculateTheTotals(updatedCartItems);
     } catch (error) {
       handleError(error, screen);
@@ -315,9 +347,9 @@ const RootContextProvider = ({children}: Props) => {
     <RootContext.Provider
       value={{
         user,
-        token,
         authenticating,
         authenticateUser,
+        attemptRefreshToken,
         verifyCurrentUser,
         logOutUser,
         error,

@@ -1,8 +1,9 @@
-import axios from 'axios';
+import axiosInstance from '../axios/instance';
 import Config from 'react-native-config';
 
 export interface User {
   username: string;
+  display_name: string;
 }
 
 export interface LoginInput {
@@ -20,42 +21,44 @@ interface AuthResponse {
   refresh_token: string;
 }
 
-axios.defaults.baseURL = Config.API_URL;
+axiosInstance.defaults.baseURL = Config.API_URL;
 
-const register = async (input: RegisterInput): Promise<string> => {
-  const response = await axios.post<AuthResponse>('/auth/register', {
+const register = async (input: RegisterInput): Promise<AuthResponse> => {
+  const response = await axiosInstance.post<AuthResponse>('/auth/register', {
     user: input,
   });
 
-  return response.data.access_token;
+  return response.data;
 };
 
-const login = async (input: LoginInput): Promise<string> => {
-  const response = await axios.post<AuthResponse>('/auth/login', input);
+const login = async (input: LoginInput): Promise<AuthResponse> => {
+  const response = await axiosInstance.post<AuthResponse>('/auth/login', input);
 
-  return response.data.access_token;
+  return response.data;
 };
 
 const getCurrentUser = async (token: string): Promise<User> => {
-  return new Promise((resolve, reject) => {
-    let error: boolean = false;
-    const user = {username: 'Hasan Abir'};
+  const response = await axiosInstance.get<User>('/auth/currentuser', {
+    headers: {Authorization: 'Bearer ' + token},
+  });
 
-    if (Math.floor(Math.random() * 5) === 1) {
-      error = true;
-    }
+  return response.data;
+};
 
-    if (error) {
-      const errObj: any = new Error();
-      errObj.response = {
-        status: 500,
-        data: {msg: "Sommin'"},
-      };
+const refreshToken = async (token: string | null): Promise<AuthResponse> => {
+  const response = await axiosInstance.post<AuthResponse>(
+    '/auth/refresh-token',
+    {
+      token,
+    },
+  );
 
-      reject(errObj);
-    }
+  return response.data;
+};
 
-    resolve(user);
+const logout = async (token: string | null): Promise<void> => {
+  await axiosInstance.delete<AuthResponse>('/auth/logout', {
+    headers: {Authorization: 'Bearer ' + token},
   });
 };
 
@@ -63,4 +66,6 @@ export default {
   register,
   login,
   getCurrentUser,
+  refreshToken,
+  logout,
 };

@@ -112,7 +112,7 @@ describe('ProductList', () => {
     (productController.fetchProducts as jest.Mock).mockReturnValue(
       Promise.resolve([]),
     );
-    const user = {username: 'Hasan Abir'};
+    const user = {display_name: 'Hasan Abir'};
 
     render(
       <RootContext.Provider
@@ -136,7 +136,7 @@ describe('ProductList', () => {
     });
 
     expect(
-      screen.queryByText('Welcome, ' + user.username + '!'),
+      screen.queryByText('Welcome, ' + user.display_name + '!'),
     ).toBeOnTheScreen();
   });
   it('does not render username correctly when in a different route', async () => {
@@ -144,7 +144,7 @@ describe('ProductList', () => {
       Promise.resolve([]),
     );
     mockedRoute.name = 'Search';
-    const user = {username: 'Hasan Abir'};
+    const user = {display_name: 'Hasan Abir'};
 
     render(
       <RootContext.Provider
@@ -168,7 +168,7 @@ describe('ProductList', () => {
     });
 
     expect(
-      screen.queryByText('Welcome, ' + user.username + '!'),
+      screen.queryByText('Welcome, ' + user.display_name + '!'),
     ).not.toBeOnTheScreen();
   });
   it('loads more products correctly', async () => {

@@ -7,7 +7,7 @@ import {RootContext} from '../context/RootContext';
 import SearchForm from './SearchForm';
 
 const TabHeader = ({navigation, route}: BottomTabHeaderProps) => {
-  const {error, user, logOutUser} = useContext(RootContext);
+  const {error, user, logOutUser, authenticating} = useContext(RootContext);
   const {colors} = useTheme();
 
   return (

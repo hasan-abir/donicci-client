@@ -100,7 +100,7 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
           <Box mt={6}>
             {route.name === 'Products' && user ? (
               <Text fontFamily="body" fontSize="md" mb={2}>
-                Welcome, {user.username}!
+                Welcome, {user.display_name}!
               </Text>
             ) : null}
             <Heading

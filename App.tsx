@@ -1,9 +1,8 @@
-import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
-import {extendTheme, NativeBaseProvider, theme} from 'native-base';
+import {NativeBaseProvider, extendTheme, theme} from 'native-base';
 import {Keyboard, TouchableWithoutFeedback} from 'react-native';
 import 'react-native-gesture-handler';
-import RootStack from './stacks/RootStack';
 import RootContextProvider from './context/RootContext';
+import RootStack from './stacks/RootStack';
 
 // Overwrite primary theme
 const uiTheme = extendTheme({
@@ -43,22 +42,14 @@ const uiTheme = extendTheme({
   },
 });
 
-const navTheme = {
-  ...DefaultTheme,
-  // Change app background
-  colors: {...DefaultTheme.colors, background: theme.colors.gray[100]},
-};
-
 const App = () => {
   return (
     <NativeBaseProvider theme={uiTheme}>
-      <NavigationContainer theme={navTheme}>
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-          <RootContextProvider>
-            <RootStack />
-          </RootContextProvider>
-        </TouchableWithoutFeedback>
-      </NavigationContainer>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <RootContextProvider>
+          <RootStack />
+        </RootContextProvider>
+      </TouchableWithoutFeedback>
     </NativeBaseProvider>
   );
 };

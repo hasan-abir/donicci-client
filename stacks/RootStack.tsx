@@ -1,25 +1,38 @@
-import {useEffect, useContext} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
+import {useCallback, useContext, useEffect} from 'react';
 import RootTab from '../tabs/RootTab';
 
+import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
+import {Box, Spinner, Text, theme, useTheme} from 'native-base';
 import StackHeader from '../components/StackHeader';
+import {RootContext} from '../context/RootContext';
 import CategoryProductsScreen from '../screens/CategoryProductsScreen';
 import LoginScreen from '../screens/LoginScreen';
 import ProductDetailsScreen from '../screens/ProductDetailsScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import SearchScreen from '../screens/SearchScreen';
-import {RootContext} from '../context/RootContext';
-import {Box, Spinner, useTheme} from 'native-base';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 const RootStack = () => {
   const {colors} = useTheme();
-  const {verifyCurrentUser, authenticating} = useContext(RootContext);
+  const {
+    verifyCurrentUser,
+    attemptRefreshToken,
+    logOutUser,
+    authenticating,
+    error,
+  } = useContext(RootContext);
 
-  const initialCheck = async () => {
-    await verifyCurrentUser();
+  const navTheme = {
+    ...DefaultTheme,
+    // Change app background
+    colors: {...DefaultTheme.colors, background: theme.colors.gray[100]},
   };
+
+  const initialCheck = useCallback(async () => {
+    await verifyCurrentUser();
+  }, []);
 
   useEffect(() => {
     initialCheck();
@@ -34,28 +47,30 @@ const RootStack = () => {
   }
 
   return (
-    <Stack.Navigator
-      initialRouteName="Home"
-      screenOptions={{
-        header(props) {
-          return <StackHeader {...props} />;
-        },
-      }}>
-      <Stack.Screen name="Home" component={RootTab} />
-      <Stack.Screen
-        name="ProductDetails"
-        component={ProductDetailsScreen}
-        options={{title: ' '}}
-      />
-      <Stack.Screen name="Search" component={SearchScreen} />
-      <Stack.Screen
-        name="CategoryProducts"
-        component={CategoryProductsScreen}
-        options={{title: ' '}}
-      />
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Register" component={RegisterScreen} />
-    </Stack.Navigator>
+    <NavigationContainer theme={navTheme}>
+      <Stack.Navigator
+        initialRouteName="Home"
+        screenOptions={{
+          header(props) {
+            return <StackHeader {...props} />;
+          },
+        }}>
+        <Stack.Screen name="Home" component={RootTab} />
+        <Stack.Screen
+          name="ProductDetails"
+          component={ProductDetailsScreen}
+          options={{title: ' '}}
+        />
+        <Stack.Screen name="Search" component={SearchScreen} />
+        <Stack.Screen
+          name="CategoryProducts"
+          component={CategoryProductsScreen}
+          options={{title: ' '}}
+        />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Register" component={RegisterScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 

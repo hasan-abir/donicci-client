@@ -61,8 +61,6 @@ const CartScreen = ({route}: Props) => {
     <Box flex={1}>
       <FlatList
         px={6}
-        borderColor="red.500"
-        borderWidth={1}
         data={cartItems}
         keyExtractor={(item, index) => item._id}
         renderItem={({item}) => <PureCartItemDetails item={item} />}
@@ -112,7 +110,9 @@ const CartScreen = ({route}: Props) => {
                 </Button>
               </Box>
             ) : (
-              <Text fontFamily="body">No items added yet</Text>
+              <Text fontFamily="body" mt={4}>
+                No items added yet
+              </Text>
             )}
           </Box>
         )}
