@@ -1,5 +1,4 @@
 import axiosInstance from '../axios/instance';
-import Config from 'react-native-config';
 
 export interface User {
   username: string;
@@ -20,8 +19,6 @@ interface AuthResponse {
   access_token: string;
   refresh_token: string;
 }
-
-axiosInstance.defaults.baseURL = Config.API_URL;
 
 const register = async (input: RegisterInput): Promise<AuthResponse> => {
   const response = await axiosInstance.post<AuthResponse>('/auth/register', {

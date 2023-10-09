@@ -237,6 +237,7 @@ const RootContextProvider = ({children}: Props) => {
     if (status === 500) {
       msgs = ['Something went wrong, try refreshing'];
     }
+
     setError({msgs, name: screen});
   };
 

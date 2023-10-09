@@ -123,7 +123,8 @@ const RegisterScreen = ({navigation, route}: Props) => {
             <FormControl.Label
               _text={{
                 fontFamily: 'body',
-              }}>
+              }}
+              testID="password-label">
               Password
             </FormControl.Label>
             <Input
@@ -143,7 +144,8 @@ const RegisterScreen = ({navigation, route}: Props) => {
             onPress={onSubmit}
             bgColor={colors.secondary[500]}
             _text={{fontFamily: 'body', fontWeight: 'bold'}}
-            isDisabled={formDisabled}>
+            isDisabled={formDisabled}
+            testID="submit-btn">
             REGISTER
           </Button>
         </Box>

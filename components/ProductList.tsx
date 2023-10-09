@@ -99,7 +99,11 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
         return (
           <Box mt={6}>
             {route.name === 'Products' && user ? (
-              <Text fontFamily="body" fontSize="md" mb={2}>
+              <Text
+                fontFamily="body"
+                fontSize="md"
+                mb={2}
+                testID="user-greeting">
                 Welcome, {user.display_name}!
               </Text>
             ) : null}
@@ -107,7 +111,8 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
               fontFamily="body"
               fontWeight="semibold"
               mb={6}
-              fontSize="3xl">
+              fontSize="3xl"
+              testID="main-heading">
               {headerTitle || 'Latest products'}
             </Heading>
           </Box>

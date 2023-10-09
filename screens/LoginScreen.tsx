@@ -3,16 +3,14 @@ import {
   Box,
   Button,
   FormControl,
-  Heading,
   HStack,
   Input,
   Pressable,
   ScrollView,
   Text,
   useTheme,
-  VStack,
 } from 'native-base';
-import {useContext, useState, useCallback} from 'react';
+import {useCallback, useContext, useState} from 'react';
 import {RootContext} from '../context/RootContext';
 import type {RootStackParamList} from '../stacks/RootStack';
 
@@ -100,13 +98,16 @@ const LoginScreen = ({navigation, route}: Props) => {
             onPress={onSubmit}
             bgColor={colors.secondary[500]}
             _text={{fontFamily: 'body', fontWeight: 'bold'}}
-            isDisabled={formDisabled}>
+            isDisabled={formDisabled}
+            testID="submit-btn">
             LOGIN
           </Button>
         </Box>
 
         <HStack justifyContent="center">
-          <Pressable onPress={() => navigation.navigate('Register')}>
+          <Pressable
+            onPress={() => navigation.navigate('Register')}
+            testID="register-btn">
             <Text fontFamily="body" color={colors.primary[600]}>
               Register
             </Text>
