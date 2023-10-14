@@ -1,9 +1,10 @@
 import {createStackNavigator} from '@react-navigation/stack';
-import {useCallback, useContext, useEffect} from 'react';
 import RootTab from '../tabs/RootTab';
 
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
-import {Box, Spinner, Text, theme, useTheme} from 'native-base';
+import {theme} from 'native-base';
+import {useContext, useEffect} from 'react';
+import axiosInstance from '../axios/instance';
 import StackHeader from '../components/StackHeader';
 import {RootContext} from '../context/RootContext';
 import CategoryProductsScreen from '../screens/CategoryProductsScreen';
@@ -15,14 +16,7 @@ import SearchScreen from '../screens/SearchScreen';
 const Stack = createStackNavigator<RootStackParamList>();
 
 const RootStack = () => {
-  const {colors} = useTheme();
-  const {
-    verifyCurrentUser,
-    attemptRefreshToken,
-    logOutUser,
-    authenticating,
-    error,
-  } = useContext(RootContext);
+  const {attemptRefreshToken} = useContext(RootContext);
 
   const navTheme = {
     ...DefaultTheme,
@@ -30,21 +24,36 @@ const RootStack = () => {
     colors: {...DefaultTheme.colors, background: theme.colors.gray[100]},
   };
 
-  const initialCheck = useCallback(async () => {
-    await verifyCurrentUser();
-  }, []);
-
   useEffect(() => {
-    initialCheck();
-  }, []);
+    axiosInstance.interceptors.response.use(
+      response => {
+        return response;
+      },
+      async error => {
+        const config = error?.config;
 
-  if (authenticating) {
-    return (
-      <Box alignItems="center" justifyContent="center" flex={1}>
-        <Spinner py={3} color={colors.gray[300]} size="lg" />
-      </Box>
+        if (
+          error.response &&
+          error.response.status === 401 &&
+          config.url !== '/auth/login'
+        ) {
+          try {
+            const newToken = await attemptRefreshToken();
+            config.headers = {
+              Authorization: 'Bearer ' + newToken,
+            };
+
+            // Loop original request
+            return axiosInstance(config);
+          } catch (err) {
+            return Promise.reject(error);
+          }
+        }
+
+        return Promise.reject(error);
+      },
     );
-  }
+  });
 
   return (
     <NavigationContainer theme={navTheme}>

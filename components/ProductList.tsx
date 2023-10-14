@@ -1,7 +1,7 @@
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {Box, FlatList, Heading, Spinner, Text, useTheme} from 'native-base';
 import {memo, useCallback, useContext, useEffect, useState} from 'react';
-import {RootContext} from '../context/RootContext';
+import {RootContext, ErrorType} from '../context/RootContext';
 import productController from '../controllers/productController';
 import type {RootStackParamList} from '../stacks/RootStack';
 import type {RootTabParamList} from '../tabs/RootTab';
@@ -49,7 +49,7 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
     async (page: number, reset?: boolean) => {
       try {
         setLoading(true);
-        clearError();
+        clearError(ErrorType.Fetch);
 
         let prevProducts = [...products];
 
@@ -74,7 +74,7 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
           setEndOfDataList(true);
         }
       } catch (error: any) {
-        handleError(error, route.name);
+        handleError(error, route.name, ErrorType.Fetch);
       } finally {
         setLoading(false);
       }

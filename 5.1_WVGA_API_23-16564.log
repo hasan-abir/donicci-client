@@ -1,0 +1,292 @@
+INFO    | Android emulator version 32.1.15.0 (build_id 10696886) (CL:N/A)
+INFO    | Found systemPath C:\Users\conta\AppData\Local\Android\Sdk\system-images\android-23\google_apis\x86\
+Warning: Quick Boot / Snapshots not supported on this machine. A CPU with EPT + UG features is currently needed. We will address this in a future release.
+INFO    | Storing crashdata in: C:\Users\conta\AppData\Local\Temp\\AndroidEmulator\emu-crash.db, detection is enabled
+INFO    | Duplicate loglines will be removed, if you wish to see each indiviudal line launch with the -log-nofilter flag.
+VERBOSE | autoconfig: -skin 480x800
+VERBOSE | autoconfig: -skindir (null)
+VERBOSE | querying file version info API...
+VERBOSE | found kernelbase.dll
+VERBOSE | GetFileVersionInfoSizeW found. On Windows 10?
+VERBOSE | GetFileVersionInfoW found. On Windows 10?
+VERBOSE | VerQueryValueW found. Can query file versions
+VERBOSE | queryFileVersionInfo: path not found: amdvlk64.dll
+VERBOSE | querying file version info API...
+VERBOSE | queryFileVersionInfo: path not found: amdvlk32.dll
+VERBOSE | querying file version info API...
+VERBOSE | queryFileVersionInfo: path not found: vulkan-1.dll
+VERBOSE | autoconfig: -kernel C:\Users\conta\AppData\Local\Android\Sdk\system-images\android-23\google_apis\x86\\kernel-ranchu
+VERBOSE | Target arch = 'x86'
+VERBOSE | Auto-config: -qemu -cpu qemu32
+VERBOSE | Auto-detect: Kernel image requires new device naming scheme.
+VERBOSE | Auto-detect: Kernel does not support YAFFS2 partitions.
+VERBOSE | autoconfig: -ramdisk C:\Users\conta\AppData\Local\Android\Sdk\system-images\android-23\google_apis\x86\\ramdisk.img
+VERBOSE | Using initial system image: C:\Users\conta\AppData\Local\Android\Sdk\system-images\android-23\google_apis\x86\\system.img
+VERBOSE | No vendor image
+VERBOSE | autoconfig: -data G:\AVD\5.1_WVGA_API_23.avd\userdata-qemu.img
+VERBOSE | autoconfig: -initdata G:\AVD\5.1_WVGA_API_23.avd\userdata.img
+VERBOSE | autoconfig: -cache G:\AVD\5.1_WVGA_API_23.avd\cache.img
+VERBOSE | autoconfig: -sdcard G:\AVD\5.1_WVGA_API_23.avd\sdcard.img
+VERBOSE | Increasing RAM size to 1024MB
+VERBOSE | VM heap size 48MB is below hardware specified minimum of 256MB,setting it to that value
+VERBOSE | System image is read only
+INFO    | IPv4 server found: 192.168.0.1
+VERBOSE | Ignore IPv6 address: c826:5193:902::8991:80:0
+VERBOSE | Ignore IPv6 address: c826:5193:902::8991:80:0
+ (2x)
+VERBOSE | Ignore IPv6 address: b02c:5193:902::8991:80:0
+VERBOSE | Ignore IPv6 address: b02c:5193:902::8991:80:0
+ (2x)
+VERBOSE | Found 1 DNS servers:
+VERBOSE | 	192.168.0.1
+VERBOSE | found magic skin width=480 height=800 bpp=16
+VERBOSE | Requested console port 16564: Inferring adb port 16565.
+VERBOSE | Checking whether Windows Hypervisor Platform (WHPX) is available.
+VERBOSE | WinHvPlatform.dll found. Looking for WHvGetCapability...
+VERBOSE | WHvGetCapability found. Querying WHPX capabilities...
+VERBOSE | WHPX (10.0.19045) is installed and usable.
+VERBOSE | CPU Acceleration: working
+VERBOSE | CPU Acceleration status: Please disable Hyper-V before using the Android Emulator.  Start a command prompt as Administrator, run 'bcdedit /set hypervisorlaunchtype off', reboot.WHPX (10.0.19045) is installed and usable.
+VERBOSE | handleCpuAcceleration: feature check for hvf
+VERBOSE | registered 'boot-properties' qemud service
+VERBOSE | Adding boot property: 'qemu.cmdline' = 'androidboot.logcat=*:V androidboot.consolepipe=qemu_pipe,pipe:logcat'
+VERBOSE | Adding boot property: 'qemu.logcat' = 'start'
+VERBOSE | GPU emulation enabled using 'swiftshader_indirect' mode
+VERBOSE | Initializing hardware OpenGLES emulation support
+VERBOSE | create display 0
+VERBOSE | setDisplayPose 0 x 0 y 0 w 480 h 800 dpi 0
+INFO    | Setting vsync to 60 hz
+VERBOSE | Verified boot params were not found.
+VERBOSE | Found 1 DNS servers:
+VERBOSE | 	192.168.0.1
+INFO    | Content of hardware configuration file:
+INFO    | 	hw.cpu.arch = x86
+INFO    | 	hw.cpu.model = qemu32
+INFO    | 	hw.cpu.ncore = 1
+INFO    | 	hw.ramSize = 1024
+INFO    | 	hw.screen = multi-touch
+INFO    | 	hw.mainKeys = true
+INFO    | 	hw.trackBall = false
+INFO    | 	hw.keyboard = true
+INFO    | 	hw.keyboard.lid = false
+INFO    | 	hw.keyboard.charmap = qwerty2
+INFO    | 	hw.dPad = false
+INFO    | 	hw.rotaryInput = false
+INFO    | 	hw.gsmModem = true
+INFO    | 	hw.gps = true
+INFO    | 	hw.battery = true
+INFO    | 	hw.accelerometer = true
+INFO    | 	hw.accelerometer_uncalibrated = true
+INFO    | 	hw.gyroscope = true
+INFO    | 	hw.audioInput = true
+INFO    | 	hw.audioOutput = true
+INFO    | 	hw.sdCard = true
+INFO    | 	hw.sdCard.path = G:\AVD\5.1_WVGA_API_23.avd\sdcard.img
+INFO    | 	disk.cachePartition = true
+INFO    | 	disk.cachePartition.path = G:\AVD\5.1_WVGA_API_23.avd\cache.img
+INFO    | 	disk.cachePartition.size = 66m
+INFO    | 	test.quitAfterBootTimeOut = -1
+INFO    | 	test.delayAdbTillBootComplete = 0
+INFO    | 	test.monitorAdb = 0
+INFO    | 	hw.lcd.width = 480
+INFO    | 	hw.lcd.height = 800
+INFO    | 	hw.lcd.depth = 16
+INFO    | 	hw.lcd.circular = false
+INFO    | 	hw.lcd.density = 160
+INFO    | 	hw.lcd.backlight = true
+INFO    | 	hw.lcd.vsync = 60
+INFO    | 	hw.gltransport = pipe
+INFO    | 	hw.gltransport.asg.writeBufferSize = 1048576
+INFO    | 	hw.gltransport.asg.writeStepSize = 4096
+INFO    | 	hw.gltransport.asg.dataRingSize = 32768
+INFO    | 	hw.gltransport.drawFlushInterval = 800
+INFO    | 	hw.displayRegion.0.1.xOffset = -1
+INFO    | 	hw.displayRegion.0.1.yOffset = -1
+INFO    | 	hw.displayRegion.0.1.width = 0
+INFO    | 	hw.displayRegion.0.1.height = 0
+INFO    | 	hw.displayRegion.0.2.xOffset = -1
+INFO    | 	hw.displayRegion.0.2.yOffset = -1
+INFO    | 	hw.displayRegion.0.2.width = 0
+INFO    | 	hw.displayRegion.0.2.height = 0
+INFO    | 	hw.displayRegion.0.3.xOffset = -1
+INFO    | 	hw.displayRegion.0.3.yOffset = -1
+INFO    | 	hw.displayRegion.0.3.width = 0
+INFO    | 	hw.displayRegion.0.3.height = 0
+INFO    | 	hw.display1.width = 0
+INFO    | 	hw.display1.height = 0
+INFO    | 	hw.display1.density = 0
+INFO    | 	hw.display1.xOffset = -1
+INFO    | 	hw.display1.yOffset = -1
+INFO    | 	hw.display1.flag = 0
+INFO    | 	hw.display2.width = 0
+INFO    | 	hw.display2.height = 0
+INFO    | 	hw.display2.density = 0
+INFO    | 	hw.display2.xOffset = -1
+INFO    | 	hw.display2.yOffset = -1
+INFO    | 	hw.display2.flag = 0
+INFO    | 	hw.display3.width = 0
+INFO    | 	hw.display3.height = 0
+INFO    | 	hw.display3.density = 0
+INFO    | 	hw.display3.xOffset = -1
+INFO    | 	hw.display3.yOffset = -1
+INFO    | 	hw.display3.flag = 0
+INFO    | 	hw.multi_display_window = false
+INFO    | 	hw.gpu.enabled = true
+INFO    | 	hw.gpu.mode = swiftshader_indirect
+INFO    | 	hw.initialOrientation = Portrait
+INFO    | 	hw.camera.back = virtualscene
+INFO    | 	hw.camera.front = None
+INFO    | 	vm.heapSize = 256
+INFO    | 	hw.sensors.light = true
+INFO    | 	hw.sensors.pressure = true
+INFO    | 	hw.sensors.humidity = true
+INFO    | 	hw.sensors.proximity = true
+INFO    | 	hw.sensors.magnetic_field = true
+INFO    | 	hw.sensors.magnetic_field_uncalibrated = true
+INFO    | 	hw.sensors.gyroscope_uncalibrated = true
+INFO    | 	hw.sensors.orientation = true
+INFO    | 	hw.sensors.temperature = true
+INFO    | 	hw.sensors.rgbclight = false
+INFO    | 	hw.sensor.hinge = false
+INFO    | 	hw.sensor.hinge.count = 0
+INFO    | 	hw.sensor.hinge.type = 0
+INFO    | 	hw.sensor.hinge.sub_type = 0
+INFO    | 	hw.sensor.hinge.fold_to_displayRegion.0.1_at_posture = 1
+INFO    | 	hw.sensor.roll = false
+INFO    | 	hw.sensor.roll.count = 0
+INFO    | 	hw.sensor.roll.resize_to_displayRegion.0.1_at_posture = 6
+INFO    | 	hw.sensor.roll.resize_to_displayRegion.0.2_at_posture = 6
+INFO    | 	hw.sensor.roll.resize_to_displayRegion.0.3_at_posture = 6
+INFO    | 	hw.sensors.heart_rate = false
+INFO    | 	hw.sensors.wrist_tilt = false
+INFO    | 	hw.useext4 = true
+INFO    | 	hw.arc = false
+INFO    | 	hw.arc.autologin = false
+INFO    | 	hw.device.name = 5.1in WVGA
+INFO    | 	kernel.path = C:\Users\conta\AppData\Local\Android\Sdk\system-images\android-23\google_apis\x86\\kernel-ranchu
+INFO    | 	kernel.newDeviceNaming = yes
+INFO    | 	kernel.supportsYaffs2 = no
+INFO    | 	disk.ramdisk.path = C:\Users\conta\AppData\Local\Android\Sdk\system-images\android-23\google_apis\x86\\ramdisk.img
+INFO    | 	disk.systemPartition.initPath = C:\Users\conta\AppData\Local\Android\Sdk\system-images\android-23\google_apis\x86\\system.img
+INFO    | 	disk.systemPartition.size = 1280m
+INFO    | 	disk.vendorPartition.size = 0
+INFO    | 	disk.dataPartition.path = G:\AVD\5.1_WVGA_API_23.avd\userdata-qemu.WARNING | cannot add library vulkan-1.dll: failed
+img
+INFO    | 	disk.dataPartition.size = 2g
+INFO    | 	disk.encryptionKeyPartition.path = G:\AVD\5.1_WVGA_API_23.avd\encryptionkey.img
+INFO    | 	PlayStore.enabled = false
+INFO    | 	avd.name = 5.1_WVGA_API_23
+INFO    | 	avd.id = 5.1_WVGA_API_23
+INFO    | 	fastboot.forceColdBoot = false
+INFO    | 	android.sdk.root = C:\Users\conta\AppData\Local\Android\Sdk
+INFO    | 	android.avd.home = G:\AVD
+INFO    | .
+INFO    | QEMU options list:
+INFO    | 	 argv[00] = "C:\Users\conta\AppData\Local\Android\Sdk\emulator\qemu\windows-x86_64\qemu-system-i386.exe"
+INFO    | 	 argv[01] = "-read-only"
+INFO    | 	 argv[02] = "-dns-server"
+INFO    | 	 argv[03] = "192.168.0.1"
+INFO    | 	 argv[04] = "-no-audio"
+INFO    | 	 argv[05] = "-mem-path"
+INFO    | 	 argv[06] = "G:\AVD\5.1_WVGA_API_23.avd\snapshots\default_boot\ram.img"
+INFO    | 	 argv[07] = "-serial"
+INFO    | 	 argv[08] = "null"
+INFO    | 	 argv[09] = "-android-ports"
+INFO    | 	 argv[10] = "16564,16565"
+INFO    | 	 argv[11] = "-device"
+INFO    | 	 argv[12] = "goldfish_pstore,addr=0xff018000,size=0x10000,file=G:\AVD\5.1_WVGA_API_23.avd\data\misc\pstore\pstore.bin"
+INFO    | 	 argv[13] = "-cpu"
+INFO    | 	 argv[14] = "android32"
+INFO    | 	 argv[15] = "-enable-whpx"
+INFO    | 	 argv[16] = "-m"
+INFO    | 	 argv[17] = "1024"
+INFO    | 	 argv[18] = "-lcd-density"
+INFO    | 	 argv[19] = "160"
+INFO    | 	 argv[20] = "-nodefaults"
+INFO    | 	 argv[21] = "-kernel"
+INFO    | 	 argv[22] = "C:\Users\conta\AppData\Local\Android\Sdk\system-images\android-23\google_apis\x86\\kernel-ranchu"
+INFO    | 	 argv[23] = "-initrd"
+INFO    | 	 argv[24] = "C:\Users\conta\AppData\Local\Android\Sdk\system-images\android-23\google_apis\x86\\ramdisk.img"
+INFO    | 	 argv[25] = "-drive"
+INFO    | 	 argv[26] = "if=none,index=0,id=system,if=none,file=C:\Users\conta\AppData\Local\Android\Sdk\system-images\android-23\google_apis\x86\\system.img,read-only"
+INFO    | 	 argv[27] = "-device"
+INFO    | 	 argv[28] = "virtio-blk-pci,drive=system,modern-pio-notify"
+INFO    | 	 argv[29] = "-drive"
+INFO    | 	 argv[30] = "if=none,index=1,id=cache,if=none,file=G:\AVD\5.1_WVGA_API_23.avd\cache.img.qcow2,overlap-check=none,cache=unsafe,l2-cache-size=1048576"
+INFO    | 	 argv[31] = "-device"
+INFO    | 	 argv[32] = "virtio-blk-pci,drive=cache,modern-pio-notify"
+INFO    | 	 argv[33] = "-drive"
+INFO    | 	 argv[34] = "if=none,index=2,id=userdata,if=none,file=G:\AVD\5.1_WVGA_API_23.avd\userdata-qemu.img.qcow2,overlap-check=none,cache=unsafe,l2-cache-size=1048576"
+INFO    | 	 argv[35] = "-device"
+INFO    | 	 argv[36] = "virtio-blk-pci,drive=userdata,modern-pio-notify"
+INFO    | 	 argv[37] = "-drive"
+INFO    | 	 argv[38] = "if=none,index=3,id=encrypt,if=none,file=G:\AVD\5.1_WVGA_API_23.avd\encryptionkey.img.qcow2,overlap-check=none,cache=unsafe,l2-cache-size=1048576"
+INFO    | 	 argv[39] = "-device"
+INFO    | 	 argv[40] = "virtio-blk-pci,drive=encrypt,modern-pio-notify"
+INFO    | 	 argv[41] = "-drive"
+INFO    | 	 argv[42] = "if=none,index=4,id=sdcard,if=none,file=G:\AVD\5.1_WVGA_API_23.avd\sdcard.img.qcow2,overlap-check=none,cache=unsafe,l2-cache-size=1048576"
+INFO    | 	 argv[43] = "-device"
+INFO    | 	 argv[44] = "virtio-blk-pci,drive=sdcard,modern-pio-notify"
+INFO    | 	 argv[45] = "-netdev"
+INFO    | 	 argv[46] = "user,id=mynet"
+INFO    | 	 argv[47] = "-device"
+INFO    | 	 argv[48] = "virtio-net-pci,netdev=mynet"
+INFO    | 	 argv[49] = "-device"
+INFO    | 	 argv[50] = "virtio-rng-pci"
+INFO    | 	 argv[51] = "-show-cursor"
+INFO    | 	 argv[52] = "-L"
+INFO    | 	 argv[53] = "C:\Users\conta\AppData\Local\Android\Sdk\emulator/lib/pc-bios"
+INFO    | 	 argv[54] = "-soundhw"
+INFO    | 	 argv[55] = "hda"
+INFO    | 	 argv[56] = "-vga"
+INFO    | 	 argv[57] = "none"
+INFO    | 	 argv[58] = "-append"
+INFO    | 	 argv[59] = "no_timer_check clocksource=pit no-kvmclock console=0 cma=262M@0-4G loop.max_part=7 ramoops.mem_address=0xff018000 ramoops.mem_size=0x10000 memmap=0x10000$0xff018000 printk.devkmsg=on qemu=1 androidboot.hardware=ranchu androidboot.serialno=EMULATOR32X1X15X0 android.bootanim=0 qemu.gles=1 qemu.settings.system.screen_off_timeoutWARNING | cannot add library vulkan-1.dll: failed
+=2147483647 qemu.encrypt=1 qemu.vsync=60 qemu.gltransport=pipe qemu.gltransport.drawFlushInterval=800 qemu.opengles.version=196608 qemu.uirenderer=skiagl qemu.dalvik.vm.heapsize=256m qemu.camera_hq_edge_processing=0 androidboot.android_dt_dir=/sys/bus/platform/devices/ANDR0001:00/properties/android/ android.qemud=1 qemu.avd_name=5.1_WVGA_API_23"
+INFO    | 	 argv[60] = "-android-hw"
+INFO    | 	 argv[61] = "C:\Users\conta\AppData\Local\Temp\\AndroidEmulator\TMPF426.tmp"
+INFO    | Concatenated QEMU options: C:\Users\conta\AppData\Local\Android\Sdk\emulator\qemu\windows-x86_64\qemu-system-i386.exe -read-only -dns-server 192.168.0.1 -no-audio -mem-path G:\AVD\5.1_WVGA_API_23.avd\snapshots\default_boot\ram.img -serial null -android-ports 16564,16565 -device goldfish_pstore,addr=0xff018000,size=0x10000,file=G:\AVD\5.1_WVGA_API_23.avd\data\misc\pstore\pstore.bin -cpu android32 -enable-whpx -m 1024 -lcd-density 160 -nodefaults -kernel C:\Users\conta\AppData\Local\Android\Sdk\system-images\android-23\google_apis\x86\\kernel-ranchu -initrd C:\Users\conta\AppData\Local\Android\Sdk\system-images\android-23\google_apis\x86\\ramdisk.img -drive if=none,index=0,id=system,if=none,file=C:\Users\conta\AppData\Local\Android\Sdk\system-images\android-23\google_apis\x86\\system.img,read-only -device virtio-blk-pci,drive=system,modern-pio-notify -drive if=none,index=1,id=cache,if=none,file=G:\AVD\5.1_WVGA_API_23.avd\cache.img.qcow2,overlap-check=none,cache=unsafe,l2-cache-size=1048576 -device virtio-blk-pci,drive=cache,modern-pio-notify -drive if=none,index=2,id=userdata,if=none,file=G:\AVD\5.1_WVGA_API_23.avd\userdata-qemu.img.qcow2,overlap-check=none,cache=unsafe,l2-cache-size=1048576 -device virtio-blk-pci,drive=userdata,modern-pio-notify -drive if=none,index=3,id=encrypt,if=none,file=G:\AVD\5.1_WVGA_API_23.avd\encryptionkey.img.qcow2,overlap-check=none,cache=unsafe,l2-cache-size=1048576 -device virtio-blk-pci,drive=encrypt,modern-pio-notify -drive if=none,index=4,id=sdcard,if=none,file=G:\AVD\5.1_WVGA_API_23.avd\sdcard.img.qcow2,overlap-check=none,cache=unsafe,l2-cache-size=1048576 -device virtio-blk-pci,drive=sdcard,modern-pio-notify -netdev user,id=mynet -device virtio-net-pci,netdev=mynet -device virtio-rng-pci -show-cursor -L C:\Users\conta\AppData\Local\Android\Sdk\emulator/lib/pc-bios -soundhw hda -vga none -append "no_timer_check clocksource=pit no-kvmclock console=0 cma=262M@0-4G loop.max_part=7 ramoops.mem_address=0xff018000 ramoops.mem_size=0x10000 memmap=0x10000$0xff018000 printk.devk
+INFO    | added library C:\Users\conta\AppData\Local\Android\Sdk\emulator\lib64\vulkan\vulkan-1.dll
+VERBOSE | Android qemu version 32.1.15.0 (build_id 10696886) (CL:N/A)
+VERBOSE | Starting QEMU main loop
+VERBOSE | android_fopen: Failed to open /qemu.conf, err: 2
+VERBOSE | Adding boot property: 'ro.opengles.version' = '196608'
+VERBOSE | Adding boot property: 'qemu.sf.fake_camera' = 'none'
+VERBOSE | Adding boot property: 'dalvik.vm.heapsize' = '256m'
+VERBOSE | Adding boot property: 'qemu.hw.mainkeys' = '1'
+VERBOSE | Adding boot property: 'qemu.sf.lcd_density' = '160'
+WHPX on Windows 10.0.19045 detected.
+Windows Hypervisor Platform accelerator is operational
+VERBOSE | goldfish_events.have-dpad: false
+VERBOSE | goldfish_events.have-trackball: false
+VERBOSE | goldfish_events.have-camera: true
+VERBOSE | goldfish_events.have-keyboard: true
+VERBOSE | goldfish_events.have-lidswitch: false
+VERBOSE | goldfish_events.have-tabletmode: false
+VERBOSE | goldfish_events.have-touch: false
+VERBOSE | goldfish_events.have-multitouch: true
+WARNING | Requested adb port (16565) is outside the recommended range [5555,5586]. ADB may not function properly for the emulator. See -help-port for details.
+VERBOSE | Not using any http proxy
+VERBOSE | Adding boot property: 'qemu.timezone' = 'Asia/Dhaka'
+VERBOSE | android_hw_fingerprint_init: fingerprint qemud listen service initialized
+VERBOSE | emulator_window_fb_rotate
+INFO    | Setting display: 0 configuration to: 480x800, dpi: 160x160 
+VERBOSE | No acpi ini file provided, using default
+VERBOSE | No acpi ini file provided, using default
+VERBOSE | Failed obtain protocol version from C:\Users\conta\AppData\Local\Android\Sdk\platform-tools\adb.exe
+VERBOSE | Path:C:\Users\conta\AppData\Local\Android\Sdk\platform-tools\adb.exe protocol version: 41
+VERBOSE | Failed obtain protocol version from C:\Users\conta\AppData\Local\Android\Sdk\platform-tools\adb.exe
+VERBOSE | Found: 1 adb executables
+VERBOSE | Adb: C:\Users\conta\AppData\Local\Android\Sdk\platform-tools\adb.exe
+VERBOSE | Failed obtain protocol version from C:\Users\conta\AppData\Local\Android\Sdk\platform-tools\adb.exe
+INFO    | Wait for emulator (pid 6056) 20 seconds to shutdown gracefully before kill;you can set environment variable ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL(in seconds) to change the default value (20 seconds)
+INFO    | Wait for emulator (pid 6056) 20 seconds to shutdown gracefully before kill;you can set environment variable ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL(in seconds) to change the default value (20 seconds)
+
+WARNING | Not saving state: RAM not mapped as shared
+VERBOSE | Done with QEMU main loop
+INFO    | Your emulator is out of date, please update by launching Android Studio:
+ - Start Android Studio
+ - Select menu "Tools > Android > SDK Manager"
+ - Click "SDK Tools" tab
+ - Check "Android Emulator" checkbox
+ - Click "OK"

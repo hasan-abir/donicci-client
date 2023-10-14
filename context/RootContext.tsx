@@ -17,9 +17,16 @@ interface CartSum {
   total: number;
 }
 
+export enum ErrorType {
+  Auth,
+  Fetch,
+  Form,
+}
+
 interface GlobalError {
   msgs: string[];
   name: string;
+  type: ErrorType;
 }
 
 export interface CartItem {
@@ -48,12 +55,12 @@ interface Value {
     input: RegisterInput | LoginInput,
     screen: string,
   ) => Promise<boolean>;
-  attemptRefreshToken: () => Promise<void>;
+  attemptRefreshToken: () => Promise<string>;
   verifyCurrentUser: () => Promise<void>;
   logOutUser: () => Promise<void>;
   error: GlobalError | null;
-  handleError: (errObj: any, screen: string) => void;
-  clearError: () => void;
+  handleError: (errObj: any, screen: string, type: ErrorType) => void;
+  clearError: (type: ErrorType) => void;
   cartItems: CartItem[];
   setCartItems: Dispatch<SetStateAction<CartItem[]>>;
   addItemToCart: (
@@ -78,7 +85,7 @@ export const RootContext = React.createContext<Value>({
     }),
   attemptRefreshToken: () =>
     new Promise((resolve, reject) => {
-      resolve();
+      resolve('');
     }),
   verifyCurrentUser: () =>
     new Promise((resolve, reject) => {
@@ -139,33 +146,31 @@ const RootContextProvider = ({children}: Props) => {
     screen: string,
   ) => {
     try {
-      clearError();
+      clearError(ErrorType.Form);
 
       let authResponse = null;
 
       if (screen === 'Register') {
         authResponse = await userController.register(input as RegisterInput);
-      } else if (screen === 'Login') {
+      } else {
         authResponse = await userController.login(input as LoginInput);
       }
 
       if (authResponse) {
-        const currentUser = await userController.getCurrentUser(
-          authResponse.access_token,
-        );
-
-        setUser(currentUser);
-
         await AsyncStorage.setItem('@user_token', authResponse.access_token);
         await AsyncStorage.setItem(
           '@refresh_token',
           authResponse.refresh_token,
         );
+
+        await verifyCurrentUser();
+
+        clearError(ErrorType.Auth);
       }
 
       return true;
     } catch (err: any) {
-      handleError(err, screen);
+      handleError(err, screen, ErrorType.Form);
       return false;
     }
   };
@@ -177,21 +182,23 @@ const RootContextProvider = ({children}: Props) => {
 
     await AsyncStorage.setItem('@user_token', authResponse.access_token);
     await AsyncStorage.setItem('@refresh_token', authResponse.refresh_token);
+
+    return authResponse.access_token;
   };
 
   const verifyCurrentUser = async () => {
-    try {
-      setAuthenticating(true);
+    const tokens = await getTokens();
 
-      const tokens = await getTokens();
+    if (!user && tokens.access && tokens.refresh) {
+      try {
+        setAuthenticating(true);
 
-      if (tokens.access && tokens.refresh) {
         const currentUser = await userController.getCurrentUser(tokens.access);
 
         setUser(currentUser);
+      } catch (err: any) {
+        handleError(err, 'Products', ErrorType.Auth);
       }
-    } catch (err: any) {
-      handleError(err, 'Products');
     }
 
     setAuthenticating(false);
@@ -199,12 +206,12 @@ const RootContextProvider = ({children}: Props) => {
 
   const logOutUser = async () => {
     try {
+      setAuthenticating(true);
       const tokens = await getTokens();
 
-      setAuthenticating(true);
       await userController.logout(tokens.access);
-    } catch (error: any) {
-      handleError(error, 'Home');
+    } catch (err: any) {
+      handleError(err, 'Products', ErrorType.Auth);
     } finally {
       await AsyncStorage.removeItem('@user_token');
       await AsyncStorage.removeItem('@refresh_token');
@@ -213,7 +220,7 @@ const RootContextProvider = ({children}: Props) => {
     }
   };
 
-  const handleError = (errObj: any, screen: string) => {
+  const handleError = (errObj: any, screen: string, type: ErrorType) => {
     let status = 500;
     let data: {msg?: string; msgs?: string[]} = {};
 
@@ -238,11 +245,13 @@ const RootContextProvider = ({children}: Props) => {
       msgs = ['Something went wrong, try refreshing'];
     }
 
-    setError({msgs, name: screen});
+    setError({msgs, name: screen, type});
   };
 
-  const clearError = () => {
-    setError(null);
+  const clearError = (type: ErrorType) => {
+    if (type === error?.type) {
+      setError(null);
+    }
   };
 
   const calculateTheTotals = (items: CartItem[]) => {
@@ -292,8 +301,8 @@ const RootContextProvider = ({children}: Props) => {
       const updatedCartItems = [...cartItems, cartItem as CartItem];
       setCartItems(updatedCartItems);
       calculateTheTotals(updatedCartItems);
-    } catch (error: any) {
-      handleError(error, screen);
+    } catch (err: any) {
+      handleError(err, screen, ErrorType.Form);
     }
   };
 
@@ -312,8 +321,8 @@ const RootContextProvider = ({children}: Props) => {
       );
       setCartItems(updatedCartItems);
       calculateTheTotals(updatedCartItems);
-    } catch (error) {
-      handleError(error, screen);
+    } catch (err) {
+      handleError(err, screen, ErrorType.Form);
     }
   };
 

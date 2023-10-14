@@ -1,4 +1,4 @@
-import {FC, useContext, useEffect} from 'react';
+import {FC, useContext, useCallback, useEffect} from 'react';
 
 import {
   BottomTabScreenProps,
@@ -15,6 +15,8 @@ import TabHeader from '../components/TabHeader';
 
 import TabBar from '../components/TabBar';
 import {RootContext} from '../context/RootContext';
+import {Box, Spinner, Text, useTheme} from 'native-base';
+import {useFocusEffect} from '@react-navigation/native';
 
 interface Props extends StackScreenProps<RootStackParamList, 'Home'> {}
 
@@ -42,13 +44,29 @@ export const tabScreens: {
   },
 };
 
-const RootTab = ({navigation}: Props) => {
+const RootTab = ({navigation, route}: Props) => {
+  const {verifyCurrentUser, authenticating} = useContext(RootContext);
+
+  const {colors} = useTheme();
+
   useEffect(() => {
     // Remove stack header
     navigation.setOptions({
       headerShown: false,
     });
+
+    verifyCurrentUser();
   }, [navigation]);
+
+  if (authenticating) {
+    return (
+      <Box alignItems="center" justifyContent="center" flex={1}>
+        <Text mb={2}>Authenticating</Text>
+        <Spinner color={colors.gray[300]} size="lg" />
+      </Box>
+    );
+  }
+
   return (
     <Tab.Navigator
       initialRouteName="Products"
