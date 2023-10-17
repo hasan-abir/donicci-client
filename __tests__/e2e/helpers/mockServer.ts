@@ -1,4 +1,6 @@
 import express from 'express';
+import demoProducts from '../helpers/demoProducts.json';
+import {Product} from '../../../components/ProductItem';
 
 const app = express();
 
@@ -73,6 +75,28 @@ app.delete('/auth/logout', (req, res) => {
   } else {
     res.status(401).json({msg: 'Unauthenticated'});
   }
+});
+
+app.get('/products', (req, res) => {
+  const productsFromDB = demoProducts.products as Product[];
+  let products: Product[] = [];
+
+  const next = req.query.next;
+  const categoryId = req.query.category_id;
+  const searchTerm = req.query.search_term;
+
+  switch (next) {
+    case productsFromDB[productsFromDB.length - 1].updated_at:
+      products = [];
+      break;
+    case productsFromDB[4].updated_at:
+      products = productsFromDB.slice(5, productsFromDB.length);
+      break;
+    default:
+      products = productsFromDB.slice(0, 5);
+  }
+
+  res.json(products);
 });
 
 export default app;

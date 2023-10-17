@@ -29,10 +29,10 @@ export interface Product {
   description?: string;
   images: ImageType[];
   price: number;
-  rating: number;
+  user_rating: number;
   quantity?: number;
-  categories_list: Category[];
-  category_ids: string[];
+  categories_list?: Category[];
+  category_ids?: string[];
   updated_at: string;
   created_at: string;
 }
@@ -60,20 +60,32 @@ const ProductItem = ({item}: Props) => {
           mb={3}
           source={{uri: item.images[0].url}}
           alt={item.title}
+          testID={'product-image-' + item._id}
         />
       </AspectRatio>
       <HStack justifyContent="space-between" alignItems="flex-start" mb={3}>
-        <Text fontFamily="body" fontSize="xl" flex={1}>
+        <Text
+          fontFamily="body"
+          fontSize="xl"
+          flex={1}
+          testID={'product-title-' + item._id}>
           {item.title}
         </Text>
         <HStack ml={2} alignItems="center">
           <Ionicons name="star-sharp" size={24} color={colors.primary[500]} />
-          <Text fontFamily="body" fontWeight="bold" ml={1}>
-            {item.rating}
+          <Text
+            fontFamily="body"
+            fontWeight="bold"
+            ml={1}
+            testID={'product-rating-' + item._id}>
+            {item.user_rating}
           </Text>
         </HStack>
       </HStack>
-      <Text fontFamily="body" fontWeight="bold">
+      <Text
+        fontFamily="body"
+        fontWeight="bold"
+        testID={'product-price-' + item._id}>
         ${item.price}
       </Text>
     </Pressable>

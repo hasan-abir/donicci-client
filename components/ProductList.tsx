@@ -25,28 +25,27 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
   const {colors} = useTheme();
 
   const [products, setProducts] = useState<Product[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<string | undefined>(
+    undefined,
+  );
   const [loading, setLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [endOfDataList, setEndOfDataList] = useState<boolean>(false);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await fetchData(currentPage, true);
+    await fetchData(lastUpdatedAt, true);
     setRefreshing(false);
-  }, [currentPage]);
+  }, [lastUpdatedAt]);
 
   const onEndReached = useCallback(async () => {
     if (!loading && !endOfDataList && !refreshing && !error) {
-      const page = currentPage + 1;
-      setCurrentPage(page);
-
-      await fetchData(page);
+      await fetchData(lastUpdatedAt);
     }
-  }, [loading, endOfDataList, refreshing, error, currentPage]);
+  }, [loading, endOfDataList, refreshing, error, lastUpdatedAt]);
 
   const fetchData = useCallback(
-    async (page: number, reset?: boolean) => {
+    async (next: string | undefined, reset?: boolean) => {
       try {
         setLoading(true);
         clearError(ErrorType.Fetch);
@@ -55,22 +54,23 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
 
         if (reset) {
           prevProducts = [];
-          page = 1;
+          next = undefined;
 
           setProducts(prevProducts);
-          setCurrentPage(page);
+          setLastUpdatedAt(next);
           setEndOfDataList(false);
         }
 
         const data = await productController.fetchProducts(
-          page,
+          next,
           categoryId,
           term,
         );
 
         setProducts([...prevProducts, ...data]);
-
-        if (data.length === 0) {
+        if (data.length > 0) {
+          setLastUpdatedAt(data[data.length - 1].updated_at);
+        } else {
           setEndOfDataList(true);
         }
       } catch (error: any) {
@@ -83,7 +83,7 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
   );
 
   useEffect(() => {
-    fetchData(currentPage, true);
+    fetchData(lastUpdatedAt, true);
   }, [term]);
 
   return (
@@ -121,13 +121,20 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
       ListFooterComponent={() => (
         <Box justifyContent="center" mb={6}>
           {loading && !refreshing ? (
-            <Spinner color={colors.gray[300]} size="lg" />
+            <Spinner
+              color={colors.gray[300]}
+              size="lg"
+              testID="fetching-spinner"
+            />
           ) : products.length < 1 ? (
             <Text fontFamily="body" textAlign="center">
               No products found...
             </Text>
           ) : endOfDataList ? (
-            <Text fontFamily="body" textAlign="center">
+            <Text
+              fontFamily="body"
+              textAlign="center"
+              testID="end-of-data-text">
               That's all for now!
             </Text>
           ) : null}

@@ -5,7 +5,7 @@
 import React from 'react';
 import 'react-native';
 import ProductList from '../../../components/ProductList';
-import demoProducts from '../../../controllers/demoProducts.json';
+import demoProducts from '../../e2e/helpers/demoProducts.json';
 import UIProvider from '../setup/UIProvider';
 
 import {
@@ -49,7 +49,7 @@ describe('ProductList', () => {
     await waitFor(() => {
       expect(productController.fetchProducts).toBeCalledTimes(1);
       expect(productController.fetchProducts).toBeCalledWith(
-        1,
+        undefined,
         undefined,
         undefined,
       );
@@ -82,7 +82,7 @@ describe('ProductList', () => {
     await waitFor(() => {
       expect(productController.fetchProducts).toBeCalledTimes(1);
       expect(productController.fetchProducts).toBeCalledWith(
-        1,
+        undefined,
         categoryId,
         term,
       );
