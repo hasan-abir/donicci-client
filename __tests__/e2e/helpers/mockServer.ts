@@ -82,8 +82,6 @@ app.get('/products', (req, res) => {
   let products: Product[] = [];
 
   const next = req.query.next;
-  const categoryId = req.query.category_id;
-  const searchTerm = req.query.search_term;
 
   switch (next) {
     case productsFromDB[productsFromDB.length - 1].updated_at:

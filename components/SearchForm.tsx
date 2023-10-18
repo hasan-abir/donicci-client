@@ -26,7 +26,7 @@ const SearchForm = () => {
   }, []);
 
   return (
-    <Pressable onPress={onPress}>
+    <Pressable onPress={onPress} testID="search-btn">
       <Box pointerEvents={inSearchScreen ? 'auto' : 'none'}>
         <Input
           onSubmitEditing={() => navigation.setParams({term})}
@@ -48,6 +48,7 @@ const SearchForm = () => {
           }
           w="100%"
           autoFocus={inSearchScreen}
+          testID="search"
         />
       </Box>
     </Pressable>

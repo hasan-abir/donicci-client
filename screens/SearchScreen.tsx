@@ -1,8 +1,8 @@
 import type {StackScreenProps} from '@react-navigation/stack';
-import {Box, Heading, Text} from 'native-base';
+import {Box, Text} from 'native-base';
 import {useContext, useEffect} from 'react';
 import ProductList from '../components/ProductList';
-import {RootContext} from '../context/RootContext';
+import {ErrorType, RootContext} from '../context/RootContext';
 import type {RootStackParamList} from '../stacks/RootStack';
 
 interface Props extends StackScreenProps<RootStackParamList, 'Search'> {}
@@ -11,7 +11,7 @@ const SearchScreen = ({route}: Props) => {
   const {clearError} = useContext(RootContext);
 
   useEffect(() => {
-    clearError();
+    clearError(ErrorType.Fetch);
   }, []);
   return (
     <Box flex={1}>
