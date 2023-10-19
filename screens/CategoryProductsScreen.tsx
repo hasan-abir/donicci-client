@@ -1,9 +1,9 @@
 import type {StackScreenProps} from '@react-navigation/stack';
-import {Box, Button, Text, VStack, useTheme} from 'native-base';
+import {Box, Button, Spinner, Text, VStack, useTheme} from 'native-base';
 import {useContext, useEffect, useState, useCallback} from 'react';
 import type {Category} from '../components/CategoryItem';
 import ProductList from '../components/ProductList';
-import {RootContext} from '../context/RootContext';
+import {ErrorType, RootContext} from '../context/RootContext';
 import categoryController from '../controllers/categoryController';
 import type {RootStackParamList} from '../stacks/RootStack';
 import type {RootTabParamList} from '../tabs/RootTab';
@@ -19,10 +19,12 @@ const CategoryProductsScreen = ({navigation, route}: Props) => {
   const {colors} = useTheme();
 
   const [category, setCategory] = useState<Category | null | undefined>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const fetchData = useCallback(async () => {
     try {
-      clearError();
+      setLoading(true);
+      clearError(ErrorType.Fetch);
 
       const data = await categoryController.fetchSingleCategory(
         route.params.categoryId,
@@ -33,8 +35,10 @@ const CategoryProductsScreen = ({navigation, route}: Props) => {
         navigation.setOptions({title: data.name});
       }
     } catch (error: any) {
-      handleError(error, route.name);
+      handleError(error, route.name, ErrorType.Fetch);
     }
+
+    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -42,14 +46,21 @@ const CategoryProductsScreen = ({navigation, route}: Props) => {
   }, [navigation]);
   return (
     <Box flex={1}>
-      {category ? (
+      {loading ? (
+        <Spinner color={colors.gray[300]} size="lg" />
+      ) : category ? (
         <ProductList
           categoryId={route.params.categoryId}
           headerTitle={category?.name}
         />
       ) : (
         <Box mt={6} mx={6}>
-          <Text mb={3} textAlign="center" fontSize="xl" fontFamily="body">
+          <Text
+            mb={3}
+            textAlign="center"
+            fontSize="xl"
+            fontFamily="body"
+            testID="not-found-text">
             Category not found
           </Text>
           <Button
@@ -58,7 +69,8 @@ const CategoryProductsScreen = ({navigation, route}: Props) => {
             borderRadius={20}
             onPress={() => navigation.navigate('Categories')}
             bgColor={colors.secondary[500]}
-            _text={{fontFamily: 'body', fontWeight: 'bold'}}>
+            _text={{fontFamily: 'body', fontWeight: 'bold'}}
+            testID="backtocategories-btn">
             BACK TO CATEGORIES
           </Button>
         </Box>

@@ -4,7 +4,7 @@ import {Box, FlatList, Heading, Spinner, Text, useTheme} from 'native-base';
 import {memo, useCallback, useContext, useEffect, useState} from 'react';
 import type {Category} from '../components/CategoryItem';
 import CategoryItem from '../components/CategoryItem';
-import {RootContext} from '../context/RootContext';
+import {ErrorType, RootContext} from '../context/RootContext';
 import categoryController from '../controllers/categoryController';
 import type {RootStackParamList} from '../stacks/RootStack';
 import type {RootTabParamList} from '../tabs/RootTab';
@@ -22,51 +22,52 @@ const CategoryListScreen = () => {
   const {error, handleError, clearError} = useContext(RootContext);
 
   const [categories, setCategories] = useState<Category[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<string | undefined>(
+    undefined,
+  );
   const [loading, setLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [endOfDataList, setEndOfDataList] = useState<boolean>(false);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await fetchData(currentPage, true);
+    await fetchData(lastUpdatedAt, true);
     setRefreshing(false);
-  }, [currentPage]);
+  }, [lastUpdatedAt]);
 
   const onEndReached = useCallback(async () => {
     if (!loading && !endOfDataList && !refreshing && !error) {
-      const page = currentPage + 1;
-      setCurrentPage(page);
-
-      await fetchData(page);
+      await fetchData(lastUpdatedAt);
     }
-  }, [loading, endOfDataList, refreshing, error, currentPage]);
+  }, [loading, endOfDataList, refreshing, error, lastUpdatedAt]);
 
   const fetchData = useCallback(
-    async (page: number, reset?: boolean) => {
+    async (next: string | undefined, reset?: boolean) => {
       try {
         setLoading(true);
-        clearError();
+        clearError(ErrorType.Fetch);
 
         let prevCategories = [...categories];
 
         if (reset) {
           prevCategories = [];
-          page = 1;
+          next = undefined;
 
           setCategories(prevCategories);
-          setCurrentPage(page);
+          setLastUpdatedAt(next);
           setEndOfDataList(false);
         }
 
-        const data = await categoryController.fetchCategories(page);
+        const data = await categoryController.fetchCategories(next);
         setCategories([...prevCategories, ...data]);
 
-        if (data.length === 0) {
+        if (data.length > 0) {
+          setLastUpdatedAt(data[data.length - 1].updated_at);
+        } else {
           setEndOfDataList(true);
         }
       } catch (error: any) {
-        handleError(error, route.name);
+        handleError(error, route.name, ErrorType.Fetch);
       } finally {
         setLoading(false);
       }
@@ -75,13 +76,13 @@ const CategoryListScreen = () => {
   );
 
   useEffect(() => {
-    fetchData(currentPage);
+    fetchData(lastUpdatedAt, true);
   }, []);
   return (
     <Box flex={1}>
       <FlatList
         px={6}
-        onEndReachedThreshold={0.5}
+        onEndReachedThreshold={0.1}
         onEndReached={onEndReached}
         onRefresh={onRefresh}
         refreshing={refreshing}
@@ -93,7 +94,8 @@ const CategoryListScreen = () => {
             fontWeight="semibold"
             mt={6}
             mb={4}
-            fontSize="3xl">
+            fontSize="3xl"
+            testID="main-heading">
             Latest Categories
           </Heading>
         }
@@ -104,7 +106,9 @@ const CategoryListScreen = () => {
             ) : categories.length < 1 ? (
               <Text textAlign="center">No categories found...</Text>
             ) : endOfDataList ? (
-              <Text textAlign="center">That's all for now!</Text>
+              <Text textAlign="center" testID="end-of-data-text">
+                That's all for now!
+              </Text>
             ) : null}
           </Box>
         )}

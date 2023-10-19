@@ -1,10 +1,13 @@
 import express from 'express';
 import demoProducts from '../helpers/demoProducts.json';
+import demoCategories from '../helpers/demoCategories.json';
 import {Product} from '../../../components/ProductItem';
+import {Category} from '../../../components/CategoryItem';
 
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded());
 
 app.post('/auth/login', (req, res) => {
   const {email, password} = req.body;
@@ -95,6 +98,43 @@ app.get('/products', (req, res) => {
   }
 
   res.json(products);
+});
+
+app.get('/categories', (req, res) => {
+  const categoriesFromDB = demoCategories.categories as Category[];
+  let categories: Category[] = [];
+
+  const next = req.query.next;
+
+  switch (next) {
+    case categoriesFromDB[categoriesFromDB.length - 1].updated_at:
+      categories = [];
+      break;
+    case categoriesFromDB[9].updated_at:
+      categories = categoriesFromDB.slice(10, categoriesFromDB.length);
+      break;
+    default:
+      categories = categoriesFromDB.slice(0, 10);
+  }
+
+  res.json(categories);
+});
+
+app.get('/categories/:id', (req, res) => {
+  const categoriesFromDB = demoCategories.categories as Category[];
+  let category: Category | undefined;
+
+  category = categoriesFromDB.find(item => item._id === req.params.id);
+
+  if (req.params.id === categoriesFromDB[1]._id) {
+    category = undefined;
+  }
+
+  if (category) {
+    res.json(category);
+  } else {
+    res.status(404).json({msg: 'Category not found'});
+  }
 });
 
 export default app;

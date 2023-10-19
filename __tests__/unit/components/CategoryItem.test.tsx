@@ -5,7 +5,7 @@
 import React from 'react';
 import 'react-native';
 import CategoryItem from '../../../components/CategoryItem';
-import demoCategories from '../../../controllers/demoCategories.json';
+import demoCategories from '../../e2e/helpers/demoCategories.json';
 import UIProvider from '../setup/UIProvider';
 
 import {fireEvent, render, screen} from '@testing-library/react-native';

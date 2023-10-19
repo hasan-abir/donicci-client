@@ -35,7 +35,8 @@ const CategoryItem = ({item, index}: Props) => {
         fontFamily: 'body',
         fontWeight: 'bold',
         color: isOdd ? colors.secondary[500] : colors.primary[500],
-      }}>
+      }}
+      testID={'category-title-' + item._id}>
       {item.name}
     </Button>
   );

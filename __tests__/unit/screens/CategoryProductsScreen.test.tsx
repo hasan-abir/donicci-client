@@ -5,7 +5,7 @@
 import React from 'react';
 import 'react-native';
 import {RootContext} from '../../../context/RootContext';
-import demoCategories from '../../../controllers/demoCategories.json';
+import demoCategories from '../../e2e/helpers/demoCategories.json';
 import CategoryProductsScreen from '../../../screens/CategoryProductsScreen';
 import UIProvider from '../setup/UIProvider';
 

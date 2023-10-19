@@ -5,7 +5,7 @@
 import React from 'react';
 import 'react-native';
 import {RootContext} from '../../../context/RootContext';
-import demoCategories from '../../../controllers/demoCategories.json';
+import demoCategories from '../../e2e/helpers/demoCategories.json';
 import CategoryListScreen from '../../../screens/CategoryListScreen';
 import UIProvider from '../setup/UIProvider';
 
@@ -57,9 +57,7 @@ describe('CategoryListScreen', () => {
     });
 
     expect(screen.queryByText('Latest Categories')).toBeOnTheScreen();
-    expect(screen.queryAllByTestId('flat-list-item').length).toBe(
-      categoriesList.length,
-    );
+    expect(screen.queryAllByTestId('flat-list-item').length).toBe(10);
   });
   it('renders no categories correctly', async () => {
     (categoryController.fetchCategories as jest.Mock).mockReturnValue([]);

@@ -41,7 +41,8 @@ const TabBar = ({state, descriptors, navigation}: BottomTabBarProps) => {
         return (
           <Pressable
             onPress={() => navigation.navigate(route.name)}
-            key={index}>
+            key={index}
+            testID={route.name + '-btn'}>
             <HStack
               space="sm"
               alignItems="center"
