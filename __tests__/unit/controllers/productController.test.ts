@@ -53,4 +53,22 @@ describe('ProductController', () => {
       });
     });
   });
+
+  describe('fetchSingleProduct', () => {
+    it('fetches correctly with id', async () => {
+      const id = '123';
+
+      const response = {
+        data: {_id: '123', title: 'Product'},
+      };
+
+      (axiosInstance.get as jest.Mock).mockResolvedValue(response);
+
+      const apiResponse = await productController.fetchSingleProduct(id);
+
+      expect(apiResponse._id).toBe(response.data._id);
+      expect(apiResponse.title).toBe(response.data.title);
+      expect(axiosInstance.get).toHaveBeenCalledWith('/products/' + id);
+    });
+  });
 });

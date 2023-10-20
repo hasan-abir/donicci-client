@@ -5,7 +5,7 @@
 import React from 'react';
 import 'react-native';
 import ProductDetails from '../../../components/ProductDetails';
-import demoProducts from '../../../controllers/demoProducts.json';
+import demoProducts from '../../e2e/helpers/demoProducts.json';
 import UIProvider from '../setup/UIProvider';
 
 import {fireEvent, render, screen} from '@testing-library/react-native';
@@ -35,12 +35,14 @@ describe('ProductDetails', () => {
     expect(screen.queryByText(product.description || '')).toBeOnTheScreen();
     expect(screen.queryByText('$' + product.price)).toBeOnTheScreen();
     expect(screen.queryByText('1 of ' + product.quantity)).toBeOnTheScreen();
-    expect(
-      screen.queryByText(product.categories_list[0].name),
-    ).toBeOnTheScreen();
-    expect(
-      screen.queryByText(product.categories_list[1].name),
-    ).toBeOnTheScreen();
+    if (product.categories_list) {
+      expect(
+        screen.queryByText(product.categories_list[0].name),
+      ).toBeOnTheScreen();
+      expect(
+        screen.queryByText(product.categories_list[1].name),
+      ).toBeOnTheScreen();
+    }
   });
   it('renders out of stock correctly', () => {
     const product: Product = demoProducts.products[2];

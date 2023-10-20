@@ -5,7 +5,7 @@
 import React from 'react';
 import 'react-native';
 import ImageGallery from '../../../components/ImageGallery';
-import demoProducts from '../../../controllers/demoProducts.json';
+import demoProducts from '../../e2e/helpers/demoProducts.json';
 import UIProvider from '../setup/UIProvider';
 
 import {fireEvent, render, screen} from '@testing-library/react-native';

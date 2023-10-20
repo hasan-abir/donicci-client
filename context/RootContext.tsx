@@ -119,6 +119,13 @@ export const RootContext = React.createContext<Value>({
   clearCart: () => {},
 });
 
+export const getTokens = async (): Promise<Tokens> => {
+  const access = await AsyncStorage.getItem('@user_token');
+  const refresh = await AsyncStorage.getItem('@refresh_token');
+
+  return {access, refresh};
+};
+
 type Props = {
   children: JSX.Element;
 };
@@ -133,13 +140,6 @@ const RootContextProvider = ({children}: Props) => {
     tax: 0,
     total: 0,
   });
-
-  const getTokens = async (): Promise<Tokens> => {
-    const access = await AsyncStorage.getItem('@user_token');
-    const refresh = await AsyncStorage.getItem('@refresh_token');
-
-    return {access, refresh};
-  };
 
   const authenticateUser = async (
     input: RegisterInput | LoginInput,

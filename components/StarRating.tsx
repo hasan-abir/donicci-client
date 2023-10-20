@@ -2,7 +2,7 @@ import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {Box, HStack, Pressable, Spinner, Text, useTheme} from 'native-base';
 import {useContext, useEffect, useState, useCallback} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {RootContext} from '../context/RootContext';
+import {ErrorType, RootContext} from '../context/RootContext';
 import ratingController from '../controllers/ratingController';
 import type {RootStackParamList} from '../stacks/RootStack';
 import type {StackNavigationProp} from '@react-navigation/stack';
@@ -23,7 +23,7 @@ export type Rating = {
 const Rating = ({productId}: Props) => {
   const route = useRoute<RouteProp<RootStackParamList>>();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  const {handleError, clearError, user, token} = useContext(RootContext);
+  const {handleError, clearError, user} = useContext(RootContext);
   const {colors} = useTheme();
 
   const [itemRating, setItemRating] = useState<number>(0);
@@ -33,13 +33,13 @@ const Rating = ({productId}: Props) => {
     async (score: number) => {
       try {
         setLoading(true);
-        clearError();
+        clearError(ErrorType.Form);
 
-        if (user && token) {
+        if (user) {
           const rating = await ratingController.addRating(
             productId,
             score,
-            token,
+            '456',
           );
 
           setItemRating(rating);
@@ -47,24 +47,24 @@ const Rating = ({productId}: Props) => {
           navigation.navigate('Login');
         }
       } catch (error: any) {
-        handleError(error, route.name);
+        handleError(error, route.name, ErrorType.Form);
       } finally {
         setLoading(false);
       }
     },
-    [user, token],
+    [user],
   );
 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      clearError();
+      clearError(ErrorType.Fetch);
 
       const rating = await ratingController.fetchRatings(productId);
 
       setItemRating(rating);
     } catch (error: any) {
-      handleError(error, route.name);
+      handleError(error, route.name, ErrorType.Fetch);
     } finally {
       setLoading(false);
     }

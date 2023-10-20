@@ -6,7 +6,7 @@ import ProductDetails from '../components/ProductDetails';
 import type {Product} from '../components/ProductItem';
 import type {Review} from '../components/UserReview';
 import UserReview from '../components/UserReview';
-import {RootContext} from '../context/RootContext';
+import {ErrorType, RootContext} from '../context/RootContext';
 import productController from '../controllers/productController';
 import reviewController from '../controllers/reviewController';
 import type {RootStackParamList} from '../stacks/RootStack';
@@ -31,7 +31,7 @@ const areEqual = (prevProps: {review: Review}, nextProps: {review: Review}) =>
 const PureUserReview = memo(UserReview, areEqual);
 
 const ProductDetailsScreen = ({route, navigation}: Props) => {
-  const {error, handleError, clearError, user, token} = useContext(RootContext);
+  const {error, handleError, clearError, user} = useContext(RootContext);
   const {colors} = useTheme();
 
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -61,7 +61,7 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
     async (page: number, productId: string, reset?: boolean) => {
       try {
         setLoadingReviews(true);
-        clearError();
+        clearError(ErrorType.Fetch);
 
         let prevReviews = [...reviews];
 
@@ -81,7 +81,7 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
           setEndOfDataList(true);
         }
       } catch (error: any) {
-        handleError(error, route.name);
+        handleError(error, route.name, ErrorType.Fetch);
       } finally {
         setLoadingReviews(false);
       }
@@ -92,24 +92,24 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
   const postReview = useCallback(
     async (description: string) => {
       try {
-        if (user && token) {
-          await reviewController.postReview(description, token);
+        if (user) {
+          await reviewController.postReview(description, '123');
 
           await fetchReviews(currentPage, route.params.productId, true);
         } else {
           navigation.navigate('Login');
         }
       } catch (error: any) {
-        handleError(error, route.name);
+        handleError(error, route.name, ErrorType.Form);
       }
     },
-    [user, token, currentPage],
+    [user, currentPage],
   );
 
   const fetchProduct = useCallback(async () => {
     try {
       setLoadingProduct(true);
-      clearError();
+      clearError(ErrorType.Fetch);
 
       const data = await productController.fetchSingleProduct(
         route.params.productId,
@@ -122,7 +122,7 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
         await fetchReviews(currentPage, data._id, true);
       }
     } catch (error: any) {
-      handleError(error, route.name);
+      handleError(error, route.name, ErrorType.Fetch);
     } finally {
       setLoadingProduct(false);
     }
@@ -159,7 +159,17 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
                     User Reviews
                   </Text>
                 </Box>
-              ) : null}
+              ) : (
+                <Box>
+                  <Text
+                    mb={6}
+                    textAlign="center"
+                    fontSize="xl"
+                    fontFamily="body">
+                    Product not found
+                  </Text>
+                </Box>
+              )}
             </Box>
           );
         }}

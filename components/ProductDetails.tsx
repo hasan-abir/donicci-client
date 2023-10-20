@@ -35,30 +35,38 @@ const ProductDetails = ({product}: Props) => {
   return (
     <Box mb={8}>
       <ImageGallery alt={product.title} images={product.images} />
-      <Text fontWeight="bold" fontFamily="body" fontSize="md" mt={6} mb={3}>
+      <Text
+        fontWeight="bold"
+        fontFamily="body"
+        fontSize="md"
+        mt={6}
+        mb={3}
+        testID="price">
         ${product.price}
       </Text>
-      <Text fontFamily="body" mb={6} fontSize="xl">
+      <Text fontFamily="body" mb={6} fontSize="xl" testID="title">
         {product.title}
       </Text>
       <HStack space={2} mb={6} flexWrap="wrap">
-        {product.categories_list.map(category => {
-          return (
-            <Box
-              key={category._id}
-              backgroundColor={colors.secondary[100]}
-              py={1}
-              px={3}
-              borderRadius={10}>
-              <Text
-                fontSize="sm"
-                color={colors.secondary[500]}
-                fontWeight="bold">
-                {category.name}
-              </Text>
-            </Box>
-          );
-        })}
+        {product.categories_list &&
+          product.categories_list.map(category => {
+            return (
+              <Box
+                key={category._id}
+                backgroundColor={colors.secondary[100]}
+                py={1}
+                px={3}
+                borderRadius={10}>
+                <Text
+                  fontSize="sm"
+                  color={colors.secondary[500]}
+                  fontWeight="bold"
+                  testID={'category-' + category._id}>
+                  {category.name}
+                </Text>
+              </Box>
+            );
+          })}
       </HStack>
       <StarRating productId={product._id} />
       {product.quantity && product.quantity > 0 ? (
@@ -70,7 +78,8 @@ const ProductDetails = ({product}: Props) => {
               borderRadius={20}
               onPress={() => removeItemFromCart(product._id, route.name)}
               bgColor={colors.secondary[500]}
-              _text={{fontFamily: 'body', fontWeight: 'bold'}}>
+              _text={{fontFamily: 'body', fontWeight: 'bold'}}
+              testID="remove-from-cart">
               REMOVE FROM CART
             </Button>
           ) : (
@@ -84,7 +93,7 @@ const ProductDetails = ({product}: Props) => {
                   color={colors.black}
                   onPress={() => deductQuantity()}
                 />
-                <Text fontFamily="body">
+                <Text fontFamily="body" testID="quantity">
                   {selectedQuantity} of {product.quantity}
                 </Text>
                 <Ionicons
@@ -103,7 +112,8 @@ const ProductDetails = ({product}: Props) => {
                   addItemToCart(product, selectedQuantity, route.name)
                 }
                 bgColor={colors.secondary[500]}
-                _text={{fontFamily: 'body', fontWeight: 'bold'}}>
+                _text={{fontFamily: 'body', fontWeight: 'bold'}}
+                testID="add-to-cart">
                 ADD TO CART
               </Button>
             </HStack>
@@ -114,7 +124,8 @@ const ProductDetails = ({product}: Props) => {
           mb={6}
           fontSize="md"
           fontFamily="body"
-          style={{color: colors.danger[600]}}>
+          style={{color: colors.danger[600]}}
+          testID="out-of-stock">
           Out of stock
         </Heading>
       )}
@@ -122,7 +133,7 @@ const ProductDetails = ({product}: Props) => {
       <Text mb={2} fontSize="md" fontFamily="body">
         Description
       </Text>
-      <Text color={colors.gray[500]} fontFamily="body">
+      <Text color={colors.gray[500]} fontFamily="body" testID="description">
         {product.description}
       </Text>
     </Box>

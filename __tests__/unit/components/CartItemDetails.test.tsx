@@ -7,7 +7,7 @@ import 'react-native';
 import CartItemDetails from '../../../components/CartItemDetails';
 import {CartItem, RootContext} from '../../../context/RootContext';
 import demoCartItems from '../../../controllers/demoCartItems.json';
-import demoProducts from '../../../controllers/demoProducts.json';
+import demoProducts from '../../e2e/helpers/demoProducts.json';
 import UIProvider from '../setup/UIProvider';
 
 import {fireEvent, render, screen} from '@testing-library/react-native';

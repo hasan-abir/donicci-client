@@ -100,6 +100,23 @@ app.get('/products', (req, res) => {
   res.json(products);
 });
 
+app.get('/products/:id', (req, res) => {
+  const productsFromDB = demoProducts.products as Product[];
+  let product: Product | undefined;
+
+  product = productsFromDB.find(item => item._id === req.params.id);
+
+  if (req.params.id === productsFromDB[1]._id) {
+    product = undefined;
+  }
+
+  if (product) {
+    res.json(product);
+  } else {
+    res.status(404).json({msg: 'Product not found'});
+  }
+});
+
 app.get('/categories', (req, res) => {
   const categoriesFromDB = demoCategories.categories as Category[];
   let categories: Category[] = [];

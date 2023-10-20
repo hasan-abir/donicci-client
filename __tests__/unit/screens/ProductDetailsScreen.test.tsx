@@ -16,7 +16,7 @@ import {
 import {RootContext} from '../../../context/RootContext';
 import productController from '../../../controllers/productController';
 import reviewController from '../../../controllers/reviewController';
-import demoProducts from '../../../controllers/demoProducts.json';
+import demoProducts from '../../e2e/helpers/demoProducts.json';
 import demoReviews from '../../../controllers/demoReviews.json';
 import {Review} from '../../../components/UserReview';
 
