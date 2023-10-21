@@ -1,67 +1,16 @@
-import type {Rating} from '../components/StarRating';
-import demoRatings from './demoRatings.json';
+import axiosInstance from '../axios/instance';
+import {getTokens} from '../context/RootContext';
 
-const fetchRatings = (productId: string): Promise<number> => {
-  return new Promise((resolve, reject) => {
-    const error: boolean = false;
+const addRating = async (productId: string, score: number): Promise<number> => {
+  const {access} = await getTokens();
 
-    const ratingsOnProduct = (demoRatings.ratings as Rating[]).filter(
-      rating => rating.product_id === productId,
-    );
+  const res = await axiosInstance.post<{average_score: number}>(
+    '/ratings',
+    {product_id: productId, score},
+    {headers: {Authorization: 'Bearer ' + access}},
+  );
 
-    const totalRatings = ratingsOnProduct
-      .map(rating => rating.score)
-      .reduce((prevScore, currentScore) => prevScore + currentScore, 0);
-
-    const averageRating =
-      Math.round((totalRatings / ratingsOnProduct.length) * 10) / 10;
-
-    if (error) {
-      const errObj: any = new Error();
-      errObj.response = {
-        status: 500,
-        data: {msg: "Sommin'"},
-      };
-
-      reject(errObj);
-    }
-
-    resolve(averageRating);
-  });
+  return res.data.average_score;
 };
 
-const addRating = (
-  productId: string,
-  score: number,
-  token: string,
-): Promise<number> => {
-  return new Promise((resolve, reject) => {
-    const error: boolean = false;
-
-    const ratingsOnProduct = (demoRatings.ratings as Rating[]).filter(
-      rating => rating.product_id === productId,
-    );
-
-    const totalRatings = [
-      ...ratingsOnProduct.map(rating => rating.score),
-      score,
-    ].reduce((prevScore, currentScore) => prevScore + currentScore, 0);
-
-    const averageRating =
-      Math.round((totalRatings / (ratingsOnProduct.length + 1)) * 10) / 10;
-
-    if (error) {
-      const errObj: any = new Error();
-      errObj.response = {
-        status: 500,
-        data: {msg: "Sommin'"},
-      };
-
-      reject(errObj);
-    }
-
-    resolve(averageRating);
-  });
-};
-
-export default {fetchRatings, addRating};
+export default {addRating};

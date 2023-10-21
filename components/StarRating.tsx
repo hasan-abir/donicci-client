@@ -8,6 +8,7 @@ import type {RootStackParamList} from '../stacks/RootStack';
 import type {StackNavigationProp} from '@react-navigation/stack';
 
 type Props = {
+  rating: number;
   productId: string;
 };
 
@@ -20,7 +21,7 @@ export type Rating = {
   updated_at: string;
 };
 
-const Rating = ({productId}: Props) => {
+const Rating = ({rating, productId}: Props) => {
   const route = useRoute<RouteProp<RootStackParamList>>();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const {handleError, clearError, user} = useContext(RootContext);
@@ -36,13 +37,9 @@ const Rating = ({productId}: Props) => {
         clearError(ErrorType.Form);
 
         if (user) {
-          const rating = await ratingController.addRating(
-            productId,
-            score,
-            '456',
-          );
+          const newRating = await ratingController.addRating(productId, score);
 
-          setItemRating(rating);
+          setItemRating(newRating);
         } else {
           navigation.navigate('Login');
         }
@@ -55,23 +52,8 @@ const Rating = ({productId}: Props) => {
     [user],
   );
 
-  const fetchData = useCallback(async () => {
-    try {
-      setLoading(true);
-      clearError(ErrorType.Fetch);
-
-      const rating = await ratingController.fetchRatings(productId);
-
-      setItemRating(rating);
-    } catch (error: any) {
-      handleError(error, route.name, ErrorType.Fetch);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    fetchData();
+    setItemRating(rating);
   }, []);
 
   return (
@@ -83,7 +65,7 @@ const Rating = ({productId}: Props) => {
       ) : (
         <HStack space={2} alignItems="center">
           <HStack space={1} mb={2}>
-            <Pressable onPress={() => submitRating(1)}>
+            <Pressable onPress={() => submitRating(1)} testID="one-star-rating">
               <Ionicons
                 name={
                   itemRating >= 0.5
@@ -96,7 +78,7 @@ const Rating = ({productId}: Props) => {
                 color={colors.primary[500]}
               />
             </Pressable>
-            <Pressable onPress={() => submitRating(2)}>
+            <Pressable onPress={() => submitRating(2)} testID="two-star-rating">
               <Ionicons
                 name={
                   itemRating >= 1.5
@@ -150,7 +132,7 @@ const Rating = ({productId}: Props) => {
               />
             </Pressable>
           </HStack>
-          <Text fontFamily="body" fontWeight="bold">
+          <Text fontFamily="body" fontWeight="bold" testID="rating">
             {itemRating}
           </Text>
         </HStack>

@@ -154,4 +154,12 @@ app.get('/categories/:id', (req, res) => {
   }
 });
 
+app.post('/ratings', (req, res) => {
+  if (req.body.score === 1) {
+    res.json({average_score: 1});
+  } else {
+    res.status(400).json({msg: 'Score must be 1'});
+  }
+});
+
 export default app;

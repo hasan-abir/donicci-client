@@ -26,6 +26,24 @@ describe('ProductDetails screen', () => {
   });
 
   it('should load product and display all details', async () => {
+    const email = 'example@test.com';
+    const password = 'testtest';
+
+    const toLoginBtn = element(by.id('login-btn'));
+    await expect(toLoginBtn).toBeVisible();
+    await toLoginBtn.tap();
+    const emailField = element(by.id('email'));
+    const passwordField = element(by.id('password'));
+    await expect(emailField).toBeVisible();
+    await expect(passwordField).toBeVisible();
+    await emailField.typeText(email);
+    await passwordField.typeText(password);
+    const submitBtn = element(by.id('submit-btn'));
+    await submitBtn.tap();
+    await expect(element(by.id('user-greeting'))).toHaveText(
+      'Welcome, Example User!',
+    );
+
     const flatlist = by.id('flat-list');
 
     const product = demoProducts.products[0];
@@ -63,6 +81,21 @@ describe('ProductDetails screen', () => {
         .scroll(50, 'down');
       await expect(category).toHaveText(product.categories_list[i].name);
     }
+
+    const rating = element(by.id('rating'));
+    await waitFor(rating)
+      .toBeVisible()
+      .whileElement(flatlist)
+      .scroll(50, 'down');
+    await expect(rating).toHaveText(product.user_rating.toString());
+
+    const oneStarRating = element(by.id('one-star-rating'));
+    await expect(oneStarRating).toBeVisible();
+    await oneStarRating.tap();
+    await expect(rating).toHaveText('1');
+    const twoStarRating = element(by.id('two-star-rating'));
+    await twoStarRating.tap();
+    await expect(element(by.text('Score must be 1'))).toBeVisible();
 
     const quantity = element(by.id('quantity'));
     await waitFor(quantity)

@@ -26,7 +26,6 @@ jest.mock('@react-navigation/native', () => ({
     ...mockedRoute,
   }),
 }));
-jest.spyOn(ratingController, 'fetchRatings');
 jest.spyOn(ratingController, 'addRating');
 
 describe('StarRating', () => {
@@ -36,48 +35,30 @@ describe('StarRating', () => {
   it('renders correctly', async () => {
     const rating = 2.5;
     const productId = '123';
-    (ratingController.fetchRatings as jest.Mock).mockReturnValue(
-      Promise.resolve(rating),
-    );
 
     render(
       <UIProvider>
         <RootContext.Provider
           value={{handleError: jest.fn(), clearError: jest.fn()} as any}>
-          <StarRating productId={productId} />
+          <StarRating rating={rating} productId={productId} />
         </RootContext.Provider>
       </UIProvider>,
     );
 
-    await waitFor(() => {
-      expect(ratingController.fetchRatings).toBeCalledTimes(1);
-      expect(ratingController.fetchRatings).toBeCalledWith(productId);
-    });
     expect(screen.queryByText(rating.toString())).toBeOnTheScreen();
   });
   it('when unauthorized, navigates correctly', async () => {
     const rating = 2.5;
     const productId = '123';
-    (ratingController.fetchRatings as jest.Mock).mockReturnValue(
-      Promise.resolve(rating),
-    );
-    (ratingController.addRating as jest.Mock).mockReturnValue(
-      Promise.resolve(rating),
-    );
 
     render(
       <UIProvider>
         <RootContext.Provider
           value={{handleError: jest.fn(), clearError: jest.fn()} as any}>
-          <StarRating productId={productId} />
+          <StarRating rating={rating} productId={productId} />
         </RootContext.Provider>
       </UIProvider>,
     );
-
-    await waitFor(() => {
-      expect(ratingController.fetchRatings).toBeCalledTimes(1);
-      expect(ratingController.fetchRatings).toBeCalledWith(productId);
-    });
 
     expect(screen.queryByText(rating.toString())).toBeOnTheScreen();
 
@@ -90,10 +71,6 @@ describe('StarRating', () => {
     const rating = 2.5;
     const updatedRating = 3;
     const productId = '123';
-    const token = '456';
-    (ratingController.fetchRatings as jest.Mock).mockReturnValue(
-      Promise.resolve(rating),
-    );
     (ratingController.addRating as jest.Mock).mockReturnValue(
       Promise.resolve(updatedRating),
     );
@@ -106,18 +83,12 @@ describe('StarRating', () => {
               handleError: jest.fn(),
               clearError: jest.fn(),
               user: {username: 'Hasan Abir'},
-              token,
             } as any
           }>
-          <StarRating productId={productId} />
+          <StarRating rating={rating} productId={productId} />
         </RootContext.Provider>
       </UIProvider>,
     );
-
-    await waitFor(() => {
-      expect(ratingController.fetchRatings).toBeCalledTimes(1);
-      expect(ratingController.fetchRatings).toBeCalledWith(productId);
-    });
 
     expect(screen.queryByText(rating.toString())).toBeOnTheScreen();
 
@@ -125,7 +96,7 @@ describe('StarRating', () => {
 
     await waitFor(() => {
       expect(ratingController.addRating).toBeCalledTimes(1);
-      expect(ratingController.addRating).toBeCalledWith(productId, 3, token);
+      expect(ratingController.addRating).toBeCalledWith(productId, 3);
     });
 
     expect(screen.queryByText(updatedRating.toString())).toBeOnTheScreen();

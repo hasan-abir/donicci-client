@@ -68,7 +68,7 @@ const ProductDetails = ({product}: Props) => {
             );
           })}
       </HStack>
-      <StarRating productId={product._id} />
+      <StarRating rating={product.user_rating} productId={product._id} />
       {product.quantity && product.quantity > 0 ? (
         <Box mb={6}>
           {inCart(product._id) ? (
