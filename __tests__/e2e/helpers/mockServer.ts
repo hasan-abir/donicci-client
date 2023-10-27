@@ -1,8 +1,10 @@
 import express from 'express';
 import demoProducts from '../helpers/demoProducts.json';
 import demoCategories from '../helpers/demoCategories.json';
+import demoReviews from '../helpers/demoReviews.json';
 import {Product} from '../../../components/ProductItem';
 import {Category} from '../../../components/CategoryItem';
+import {Review} from '../../../components/UserReview';
 
 const app = express();
 
@@ -159,6 +161,38 @@ app.post('/ratings', (req, res) => {
     res.json({average_score: 1});
   } else {
     res.status(400).json({msg: 'Score must be 1'});
+  }
+});
+
+app.get('/reviews/product/:product_id', (req, res) => {
+  const reviewsFromDB = demoReviews.reviews as Review[];
+  let reviews: Review[] = [];
+
+  const next = req.query.next;
+
+  switch (next) {
+    case reviewsFromDB[reviewsFromDB.length - 1].updated_at:
+      reviews = [];
+      break;
+    case reviewsFromDB[9].updated_at:
+      reviews = reviewsFromDB.slice(10, reviewsFromDB.length);
+      break;
+    default:
+      reviews = reviewsFromDB.slice(0, 10);
+  }
+
+  res.json(reviews);
+});
+
+app.post('/reviews', (req, res) => {
+  if (req.body.description === 'Some description') {
+    res.json({
+      _id: '123',
+      description: req.body.description,
+      author: 'Super Mario',
+    });
+  } else {
+    res.status(400).json({msg: 'Description is wrong'});
   }
 });
 

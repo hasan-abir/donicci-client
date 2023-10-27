@@ -249,7 +249,7 @@ const RootContextProvider = ({children}: Props) => {
   };
 
   const clearError = (type: ErrorType) => {
-    if (type === error?.type) {
+    if (error && type === error.type) {
       setError(null);
     }
   };

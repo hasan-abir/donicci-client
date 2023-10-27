@@ -24,7 +24,7 @@ export type Rating = {
 const Rating = ({rating, productId}: Props) => {
   const route = useRoute<RouteProp<RootStackParamList>>();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  const {handleError, clearError, user} = useContext(RootContext);
+  const {error, handleError, clearError, user} = useContext(RootContext);
   const {colors} = useTheme();
 
   const [itemRating, setItemRating] = useState<number>(0);
@@ -49,7 +49,7 @@ const Rating = ({rating, productId}: Props) => {
         setLoading(false);
       }
     },
-    [user],
+    [user, error],
   );
 
   useEffect(() => {

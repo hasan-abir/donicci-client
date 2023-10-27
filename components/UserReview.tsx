@@ -19,10 +19,17 @@ const UserReview = ({review}: Props) => {
 
   return (
     <Box mb={3}>
-      <Text fontFamily="body" fontSize="md" mb={2}>
+      <Text
+        fontFamily="body"
+        fontSize="md"
+        mb={2}
+        testID={'review-author-' + review._id}>
         {review.author} says,
       </Text>
-      <Text color={colors.gray[500]} fontFamily="body">
+      <Text
+        color={colors.gray[500]}
+        fontFamily="body"
+        testID={'review-description-' + review._id}>
         {review.description}
       </Text>
     </Box>

@@ -1,58 +1,30 @@
+import axiosInstance from '../axios/instance';
 import type {Review} from '../components/UserReview';
-import demoReviews from './demoReviews.json';
 
-const fetchReviews = (page: number, productId: string): Promise<Review[]> => {
-  return new Promise((resolve, reject) => {
-    let data: Review[] = [];
-    const error: boolean = false;
+const fetchReviews = async (
+  productId: string,
+  next?: string,
+): Promise<Review[]> => {
+  const res = await axiosInstance.get<Review[]>(
+    '/reviews/product/' + productId,
+    {params: {next}},
+  );
 
-    switch (page) {
-      case 1:
-        data = (demoReviews.reviews as Review[]).filter(
-          review => review.product_id === productId,
-        );
-        data = data.slice(0, 5);
-        break;
-      case 2:
-        data = (demoReviews.reviews as Review[]).filter(
-          review => review.product_id === productId,
-        );
-        data = data.slice(5, data.length);
-        break;
-      default:
-        data = [];
-    }
-
-    if (error) {
-      const errObj: any = new Error();
-      errObj.response = {
-        status: 500,
-        data: {msg: "Sommin'"},
-      };
-
-      reject(errObj);
-    }
-
-    resolve(data);
-  });
+  return res.data;
 };
 
-const postReview = (description: string, token: string): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    const error: boolean = false;
+const postReview = async (
+  description: string,
+  productId: string,
+  token: string,
+): Promise<Review> => {
+  const res = await axiosInstance.post<Review>(
+    '/reviews',
+    {description, product_id: productId},
+    {headers: {Authorization: 'Bearer ' + token}},
+  );
 
-    if (error) {
-      const errObj: any = new Error();
-      errObj.response = {
-        status: 500,
-        data: {msg: "Sommin'"},
-      };
-
-      reject(errObj);
-    }
-
-    resolve();
-  });
+  return res.data;
 };
 
 export default {fetchReviews, postReview};

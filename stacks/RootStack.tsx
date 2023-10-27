@@ -12,6 +12,7 @@ import LoginScreen from '../screens/LoginScreen';
 import ProductDetailsScreen from '../screens/ProductDetailsScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import SearchScreen from '../screens/SearchScreen';
+import ReviewsScreen from '../screens/ReviewsScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -70,6 +71,11 @@ const RootStack = () => {
           component={ProductDetailsScreen}
           options={{title: ' '}}
         />
+        <Stack.Screen
+          name="Reviews"
+          component={ReviewsScreen}
+          options={{title: ' '}}
+        />
         <Stack.Screen name="Search" component={SearchScreen} />
         <Stack.Screen
           name="CategoryProducts"
@@ -86,6 +92,7 @@ const RootStack = () => {
 export type RootStackParamList = {
   Home: undefined;
   ProductDetails: {productId: string};
+  Reviews: {productId: string};
   Search: {term?: string};
   CategoryProducts: {categoryId: string};
   Login: undefined;

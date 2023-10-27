@@ -57,18 +57,4 @@ describe('PostReview', () => {
       expect(postReview).toBeCalledWith(description);
     });
   });
-
-  it('shows error correctly', () => {
-    const postReview = jest.fn(() => Promise.resolve());
-
-    render(
-      <UIProvider>
-        <PostReview postReview={postReview} />
-      </UIProvider>,
-    );
-
-    fireEvent.press(screen.getByText('SUBMIT'));
-
-    expect(screen.queryByText('Description is required')).toBeOnTheScreen();
-  });
 });

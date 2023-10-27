@@ -1,8 +1,8 @@
-import {device, element, by, expect} from 'detox';
-import app from './helpers/mockServer';
-import demoProducts from './helpers/demoProducts.json';
+import {by, device, element, expect} from 'detox';
 import {Server} from 'http';
-import {Product} from '../../components/ProductItem';
+import demoProducts from './helpers/demoProducts.json';
+import app from './helpers/mockServer';
+import utilities from './helpers/utilities';
 
 let server: Server;
 describe('ProductDetails screen', () => {
@@ -23,6 +23,13 @@ describe('ProductDetails screen', () => {
 
   beforeEach(async () => {
     await device.launchApp({newInstance: true});
+
+    const isLoggedIn = await utilities.expectToBeVisible('logout-btn');
+
+    if (isLoggedIn) {
+      await element(by.id('logout-btn')).tap();
+      await expect(element(by.id('login-btn'))).toBeVisible();
+    }
   });
 
   it('should load product and display all details', async () => {
@@ -44,31 +51,31 @@ describe('ProductDetails screen', () => {
       'Welcome, Example User!',
     );
 
-    const flatlist = by.id('flat-list');
+    const scrollview = by.id('scrollview');
 
     const product = demoProducts.products[0];
 
     await element(by.id('product-image-' + product._id)).tap();
 
     const mainImage = element(by.id('gallery-image-main'));
-    await expect(mainImage).toBeVisible();
+    await waitFor(mainImage).toBeVisible().withTimeout(30000);
 
     for (let i = 0; i < product.images.length; i++) {
       const image = element(by.id('gallery-image-' + (i + 1)));
 
       await waitFor(image)
         .toBeVisible()
-        .whileElement(flatlist)
+        .whileElement(scrollview)
         .scroll(50, 'down');
     }
 
     await waitFor(element(by.id('title')))
       .toBeVisible()
-      .whileElement(flatlist)
+      .whileElement(scrollview)
       .scroll(50, 'down');
     await waitFor(element(by.id('price')))
       .toBeVisible()
-      .whileElement(flatlist)
+      .whileElement(scrollview)
       .scroll(50, 'down');
 
     for (let i = 0; i < product.categories_list.length; i++) {
@@ -77,7 +84,7 @@ describe('ProductDetails screen', () => {
       );
       await waitFor(category)
         .toBeVisible()
-        .whileElement(flatlist)
+        .whileElement(scrollview)
         .scroll(50, 'down');
       await expect(category).toHaveText(product.categories_list[i].name);
     }
@@ -85,22 +92,26 @@ describe('ProductDetails screen', () => {
     const rating = element(by.id('rating'));
     await waitFor(rating)
       .toBeVisible()
-      .whileElement(flatlist)
+      .whileElement(scrollview)
       .scroll(50, 'down');
     await expect(rating).toHaveText(product.user_rating.toString());
 
-    const oneStarRating = element(by.id('one-star-rating'));
-    await expect(oneStarRating).toBeVisible();
-    await oneStarRating.tap();
-    await expect(rating).toHaveText('1');
     const twoStarRating = element(by.id('two-star-rating'));
     await twoStarRating.tap();
     await expect(element(by.text('Score must be 1'))).toBeVisible();
+    const oneStarRating = element(by.id('one-star-rating'));
+    await waitFor(oneStarRating)
+      .toBeVisible()
+      .whileElement(scrollview)
+      .scroll(50, 'down');
+    await oneStarRating.tap();
+    await expect(element(by.text('Score must be 1'))).not.toBeVisible();
+    await expect(rating).toHaveText('1');
 
     const quantity = element(by.id('quantity'));
     await waitFor(quantity)
       .toBeVisible()
-      .whileElement(flatlist)
+      .whileElement(scrollview)
       .scroll(50, 'down');
 
     await expect(quantity).toHaveText('1 of ' + product.quantity);
@@ -108,7 +119,7 @@ describe('ProductDetails screen', () => {
     const increaseQuantity = element(by.id('increase-quantity'));
     await waitFor(increaseQuantity)
       .toBeVisible()
-      .whileElement(flatlist)
+      .whileElement(scrollview)
       .scroll(50, 'down');
     await increaseQuantity.tap();
     await expect(quantity).toHaveText('2 of ' + product.quantity);
@@ -116,14 +127,47 @@ describe('ProductDetails screen', () => {
     const decreaseQuantity = element(by.id('decrease-quantity'));
     await waitFor(decreaseQuantity)
       .toBeVisible()
-      .whileElement(flatlist)
+      .whileElement(scrollview)
       .scroll(50, 'down');
     await decreaseQuantity.tap();
     await expect(quantity).toHaveText('1 of ' + product.quantity);
 
     await waitFor(element(by.id('description')))
       .toBeVisible()
-      .whileElement(flatlist)
+      .whileElement(scrollview)
       .scroll(50, 'down');
+
+    const toReviewsBtn = element(by.id('to-reviews-btn'));
+
+    await waitFor(toReviewsBtn)
+      .toBeVisible()
+      .whileElement(scrollview)
+      .scroll(50, 'down');
+  });
+
+  it('should load product and not rate it without auth', async () => {
+    const product = demoProducts.products[0];
+
+    await element(by.id('product-image-' + product._id)).tap();
+
+    const mainImage = element(by.id('gallery-image-main'));
+
+    await waitFor(mainImage).toBeVisible().withTimeout(30000);
+
+    const scrollview = by.id('scrollview');
+
+    const rating = element(by.id('rating'));
+    await waitFor(rating)
+      .toBeVisible()
+      .whileElement(scrollview)
+      .scroll(50, 'down');
+    await expect(rating).toHaveText(product.user_rating.toString());
+
+    const twoStarRating = element(by.id('two-star-rating'));
+    await twoStarRating.tap();
+
+    await waitFor(element(by.id('email')))
+      .toBeVisible()
+      .withTimeout(30000);
   });
 });

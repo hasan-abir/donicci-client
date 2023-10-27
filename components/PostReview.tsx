@@ -12,33 +12,14 @@ interface PostReviewFormData {
 
 const PostReview = ({postReview, disabled}: Props) => {
   const [formData, setData] = useState<PostReviewFormData>({});
-  const [errors, setErrors] = useState<PostReviewFormData>({});
   const [loading, setLoading] = useState<boolean>(false);
 
   const {colors} = useTheme();
 
-  const validate = useCallback(() => {
-    setErrors({});
-
-    if (formData.description === undefined || formData.description === '') {
-      setErrors(prevState => ({
-        ...prevState,
-        description: 'Description is required',
-      }));
-      return false;
-    }
-
-    return true;
-  }, [formData]);
-
   const onSubmit = useCallback(async () => {
-    if (validate()) {
-      setLoading(true);
-      setErrors({});
-
-      await postReview(formData.description as string);
-      setLoading(false);
-    }
+    setLoading(true);
+    await postReview(formData.description as string);
+    setLoading(false);
   }, [formData]);
 
   return (
@@ -46,7 +27,7 @@ const PostReview = ({postReview, disabled}: Props) => {
       <Text mb={2} fontSize="md" fontFamily="body">
         Post a Review
       </Text>
-      <FormControl isRequired isInvalid={'description' in errors}>
+      <FormControl isRequired>
         <TextArea
           autoCompleteType={true}
           onChangeText={value => setData({...formData, description: value})}
@@ -55,12 +36,8 @@ const PostReview = ({postReview, disabled}: Props) => {
           backgroundColor={colors.white}
           borderRadius={10}
           placeholder="Review description..."
+          testID="review-input"
         />
-        {'description' in errors ? (
-          <FormControl.ErrorMessage color={colors.danger[600]}>
-            {errors.description}
-          </FormControl.ErrorMessage>
-        ) : null}
       </FormControl>
       <Button
         py={2}
@@ -70,7 +47,8 @@ const PostReview = ({postReview, disabled}: Props) => {
         mt="4"
         isDisabled={loading || disabled}
         bgColor={colors.secondary[500]}
-        _text={{fontFamily: 'body', fontWeight: 'bold'}}>
+        _text={{fontFamily: 'body', fontWeight: 'bold'}}
+        testID="review-submit">
         SUBMIT
       </Button>
     </Box>

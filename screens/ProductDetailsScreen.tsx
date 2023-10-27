@@ -1,14 +1,11 @@
 import type {StackScreenProps} from '@react-navigation/stack';
-import {Box, FlatList, Heading, Spinner, Text, useTheme} from 'native-base';
-import {memo, useCallback, useContext, useEffect, useState} from 'react';
-import PostReview from '../components/PostReview';
+import {Box, Button, ScrollView, Spinner, Text, useTheme} from 'native-base';
+import {useCallback, useContext, useEffect, useState} from 'react';
+import {RefreshControl} from 'react-native';
 import ProductDetails from '../components/ProductDetails';
 import type {Product} from '../components/ProductItem';
-import type {Review} from '../components/UserReview';
-import UserReview from '../components/UserReview';
 import {ErrorType, RootContext} from '../context/RootContext';
 import productController from '../controllers/productController';
-import reviewController from '../controllers/reviewController';
 import type {RootStackParamList} from '../stacks/RootStack';
 
 interface Props
@@ -26,21 +23,13 @@ const truncate = (str: string, n: number, useWordBoundary?: boolean) => {
   );
 };
 
-const areEqual = (prevProps: {review: Review}, nextProps: {review: Review}) =>
-  prevProps.review === nextProps.review;
-const PureUserReview = memo(UserReview, areEqual);
-
 const ProductDetailsScreen = ({route, navigation}: Props) => {
-  const {error, handleError, clearError, user} = useContext(RootContext);
+  const {handleError, clearError} = useContext(RootContext);
   const {colors} = useTheme();
 
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [loadingProduct, setLoadingProduct] = useState<boolean>(false);
-  const [loadingReviews, setLoadingReviews] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [product, setProduct] = useState<Product | undefined>(undefined);
-  const [endOfDataList, setEndOfDataList] = useState<boolean>(false);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -48,67 +37,9 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
     setRefreshing(false);
   }, []);
 
-  const onEndReached = useCallback(async () => {
-    if (!loadingReviews && !endOfDataList && !refreshing && !error && product) {
-      const page = currentPage + 1;
-      setCurrentPage(page);
-
-      await fetchReviews(page, product._id);
-    }
-  }, [loadingReviews, endOfDataList, refreshing, error, product, currentPage]);
-
-  const fetchReviews = useCallback(
-    async (page: number, productId: string, reset?: boolean) => {
-      try {
-        setLoadingReviews(true);
-        clearError(ErrorType.Fetch);
-
-        let prevReviews = [...reviews];
-
-        if (reset) {
-          prevReviews = [];
-          page = 1;
-
-          setReviews(prevReviews);
-          setCurrentPage(page);
-          setEndOfDataList(false);
-        }
-
-        const data = await reviewController.fetchReviews(page, productId);
-        setReviews([...prevReviews, ...data]);
-
-        if (data.length === 0) {
-          setEndOfDataList(true);
-        }
-      } catch (error: any) {
-        handleError(error, route.name, ErrorType.Fetch);
-      } finally {
-        setLoadingReviews(false);
-      }
-    },
-    [reviews],
-  );
-
-  const postReview = useCallback(
-    async (description: string) => {
-      try {
-        if (user) {
-          await reviewController.postReview(description, '123');
-
-          await fetchReviews(currentPage, route.params.productId, true);
-        } else {
-          navigation.navigate('Login');
-        }
-      } catch (error: any) {
-        handleError(error, route.name, ErrorType.Form);
-      }
-    },
-    [user, currentPage],
-  );
-
   const fetchProduct = useCallback(async () => {
     try {
-      setLoadingProduct(true);
+      setLoading(true);
       clearError(ErrorType.Fetch);
 
       const data = await productController.fetchSingleProduct(
@@ -118,80 +49,59 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
 
       if (data) {
         navigation.setOptions({title: truncate(data.title, 30, true)});
-
-        await fetchReviews(currentPage, data._id, true);
       }
     } catch (error: any) {
       handleError(error, route.name, ErrorType.Fetch);
     } finally {
-      setLoadingProduct(false);
+      setLoading(false);
     }
-  }, [currentPage]);
+  }, [route]);
 
   useEffect(() => {
     fetchProduct();
   }, []);
   return (
-    <Box flex={1}>
-      <FlatList
-        px={6}
-        onEndReachedThreshold={0.5}
-        onEndReached={onEndReached}
-        onRefresh={onRefresh}
-        refreshing={refreshing}
-        data={reviews}
-        testID="flat-list"
-        ListHeaderComponent={() => {
-          return (
-            <Box mt={6}>
-              {loadingProduct && !refreshing ? (
-                <Box mt={6} justifyContent="center">
-                  <Spinner py={3} color={colors.gray[300]} size="lg" />
-                </Box>
-              ) : product ? (
-                <Box>
-                  <ProductDetails product={product} />
-                  <PostReview
-                    postReview={postReview}
-                    disabled={loadingReviews}
-                  />
-                  <Text mb={6} fontSize="xl" fontFamily="body">
-                    User Reviews
-                  </Text>
-                </Box>
-              ) : (
-                <Box>
-                  <Text
-                    mb={6}
-                    textAlign="center"
-                    fontSize="xl"
-                    fontFamily="body">
-                    Product not found
-                  </Text>
-                </Box>
-              )}
-            </Box>
-          );
-        }}
-        ListFooterComponent={
-          <Box justifyContent="center" mb={6}>
-            {loadingReviews && !refreshing ? (
-              <Spinner color={colors.gray[300]} size="lg" />
-            ) : reviews.length < 1 ? (
-              <Text textAlign="center">No reviews found...</Text>
-            ) : endOfDataList ? (
-              <Text textAlign="center">That's all for now!</Text>
-            ) : null}
+    <ScrollView
+      contentContainerStyle={{
+        flexGrow: 1,
+      }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+      testID="scrollview">
+      <Box flex={1} px={6} mt={6}>
+        {loading && !refreshing ? (
+          <Box mt={6} justifyContent="center">
+            <Spinner py={3} color={colors.gray[300]} size="lg" />
           </Box>
-        }
-        keyExtractor={(item, index) => item._id}
-        renderItem={({item}) => (
-          <Box testID="flat-list-item">
-            <PureUserReview review={item} />
+        ) : product ? (
+          <Box>
+            <ProductDetails product={product} />
+            <Button
+              borderRadius={100}
+              mb={6}
+              onPress={() => {
+                navigation.navigate('Reviews', {productId: product._id});
+              }}
+              bgColor={colors.primary[100]}
+              _text={{
+                fontFamily: 'body',
+                fontWeight: 'bold',
+                color: colors.primary[500],
+              }}
+              testID="to-reviews-btn">
+              User Reviews
+            </Button>
+          </Box>
+        ) : (
+          <Box>
+            <Text mb={6} textAlign="center" fontSize="xl" fontFamily="body">
+              Product not found
+            </Text>
           </Box>
         )}
-      />
-    </Box>
+      </Box>
+    </ScrollView>
   );
 };
 
