@@ -54,7 +54,10 @@ describe('ProductList', () => {
         undefined,
       );
     });
-    expect(screen.queryByText('Latest products')).toBeOnTheScreen();
+    expect(screen.queryByTestId('main-heading')).toBeOnTheScreen();
+    expect(screen.queryByTestId('main-heading')).toHaveTextContent(
+      'Latest products',
+    );
     expect(screen.queryAllByTestId('flat-list-item').length).toBe(
       productsList.length,
     );
@@ -87,7 +90,8 @@ describe('ProductList', () => {
         term,
       );
     });
-    expect(screen.queryByText(headerTitle)).toBeOnTheScreen();
+    expect(screen.queryByTestId('main-heading')).toBeOnTheScreen();
+    expect(screen.queryByTestId('main-heading')).toHaveTextContent(headerTitle);
   });
 
   it('renders no products correctly', async () => {
@@ -104,7 +108,7 @@ describe('ProductList', () => {
     await waitFor(() => {
       expect(productController.fetchProducts).toBeCalledTimes(1);
     });
-    expect(screen.queryByText('No products found...')).toBeOnTheScreen();
+    expect(screen.queryByTestId('no-data-text')).toBeOnTheScreen();
     expect(screen.queryAllByTestId('flat-list-item').length).toBe(0);
   });
 
@@ -135,9 +139,10 @@ describe('ProductList', () => {
       expect(productController.fetchProducts).toBeCalledTimes(1);
     });
 
-    expect(
-      screen.queryByText('Welcome, ' + user.display_name + '!'),
-    ).toBeOnTheScreen();
+    expect(screen.queryByTestId('user-greeting')).toBeOnTheScreen();
+    expect(screen.queryByTestId('user-greeting')).toHaveTextContent(
+      'Welcome, ' + user.display_name + '!',
+    );
   });
   it('does not render username correctly when in a different route', async () => {
     (productController.fetchProducts as jest.Mock).mockReturnValue(
@@ -167,9 +172,10 @@ describe('ProductList', () => {
       expect(productController.fetchProducts).toBeCalledTimes(1);
     });
 
-    expect(
-      screen.queryByText('Welcome, ' + user.display_name + '!'),
-    ).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('main-heading')).toBeOnTheScreen();
+    expect(screen.queryByTestId('main-heading')).not.toHaveTextContent(
+      'Welcome, ' + user.display_name + '!',
+    );
   });
   it('loads more products correctly', async () => {
     const firstResult = Promise.resolve(demoProducts.products.slice(0, 5));

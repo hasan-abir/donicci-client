@@ -93,7 +93,7 @@ const Rating = ({rating, productId}: Props) => {
             </Pressable>
             <Pressable onPress={() => submitRating(3)}>
               <Ionicons
-                testID="star"
+                testID="three-star-rating"
                 name={
                   itemRating >= 2.5
                     ? itemRating >= 3
@@ -105,7 +105,9 @@ const Rating = ({rating, productId}: Props) => {
                 color={colors.primary[500]}
               />
             </Pressable>
-            <Pressable onPress={() => submitRating(4)}>
+            <Pressable
+              onPress={() => submitRating(4)}
+              testID="four-star-rating">
               <Ionicons
                 name={
                   itemRating >= 3.5
@@ -118,7 +120,9 @@ const Rating = ({rating, productId}: Props) => {
                 color={colors.primary[500]}
               />
             </Pressable>
-            <Pressable onPress={() => submitRating(5)}>
+            <Pressable
+              onPress={() => submitRating(5)}
+              testID="five-star-rating">
               <Ionicons
                 name={
                   itemRating >= 4.5

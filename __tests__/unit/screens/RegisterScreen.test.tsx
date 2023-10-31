@@ -15,8 +15,6 @@ import {
 } from '@testing-library/react-native';
 import {RootContext} from '../../../context/RootContext';
 
-jest.mock('../../../components/ProductList', () => 'ProductList');
-
 describe('RegisterScreen', () => {
   it('renders correctly', async () => {
     const navigate = jest.fn();
@@ -36,16 +34,14 @@ describe('RegisterScreen', () => {
     );
 
     expect(screen.queryAllByText('Register').length).toBe(1);
-    expect(screen.queryAllByText('REGISTER').length).toBe(1);
-    expect(screen.queryByText('Username')).toBeOnTheScreen();
-    expect(screen.queryByText('Email')).toBeOnTheScreen();
-    expect(screen.queryByText('Password')).toBeOnTheScreen();
-    expect(screen.queryByText('Login')).toBeOnTheScreen();
-    expect(
-      screen.queryByText(', if you already have an account'),
-    ).toBeOnTheScreen();
+    expect(screen.queryByTestId('display_name')).toBeOnTheScreen();
+    expect(screen.queryByTestId('username')).toBeOnTheScreen();
+    expect(screen.queryByTestId('email')).toBeOnTheScreen();
+    expect(screen.queryByTestId('password')).toBeOnTheScreen();
+    expect(screen.queryByTestId('submit-btn')).toBeOnTheScreen();
+    expect(screen.queryByTestId('login-btn')).toBeOnTheScreen();
   });
-  it('navigates to login correctly', async () => {
+  it('calls navigate to login correctly', async () => {
     const navigate = jest.fn();
     const route = {name: 'Register'};
 
@@ -62,9 +58,10 @@ describe('RegisterScreen', () => {
       </UIProvider>,
     );
 
-    fireEvent.press(screen.getByText('Login'));
+    fireEvent.press(screen.getByTestId('login-btn'));
 
     expect(navigate).toBeCalledTimes(1);
+    expect(navigate).toBeCalledWith('Login');
   });
   it('submits form correctly', async () => {
     const navigate = jest.fn();
@@ -94,7 +91,7 @@ describe('RegisterScreen', () => {
     fireEvent.changeText(screen.getByTestId('email'), email);
     const password = 'testtest';
     fireEvent.changeText(screen.getByTestId('password'), password);
-    const button = screen.getByText('REGISTER');
+    const button = screen.getByTestId('submit-btn');
     fireEvent.press(button);
 
     expect(button).toBeDisabled();
@@ -139,7 +136,7 @@ describe('RegisterScreen', () => {
     fireEvent.changeText(screen.getByTestId('email'), email);
     const password = 'testtest';
     fireEvent.changeText(screen.getByTestId('password'), password);
-    fireEvent.press(screen.getByText('REGISTER'));
+    fireEvent.press(screen.getByTestId('submit-btn'));
 
     await waitFor(() => {
       expect(authenticateUser).toBeCalledWith(

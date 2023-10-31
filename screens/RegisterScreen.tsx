@@ -151,7 +151,9 @@ const RegisterScreen = ({navigation, route}: Props) => {
         </Box>
 
         <HStack justifyContent="center">
-          <Pressable onPress={() => navigation.navigate('Login')}>
+          <Pressable
+            onPress={() => navigation.navigate('Login')}
+            testID="login-btn">
             <Text fontFamily="body" color={colors.primary[600]}>
               Login
             </Text>

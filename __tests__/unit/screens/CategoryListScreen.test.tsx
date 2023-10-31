@@ -30,7 +30,7 @@ describe('CategoryListScreen', () => {
     jest.clearAllMocks();
   });
   it('renders correctly', async () => {
-    const categoriesList = demoCategories.categories;
+    const categoriesList = demoCategories.categories.slice(0, 5);
     (categoryController.fetchCategories as jest.Mock).mockReturnValue(
       categoriesList,
     );
@@ -56,8 +56,8 @@ describe('CategoryListScreen', () => {
       expect(categoryController.fetchCategories).toBeCalledTimes(1);
     });
 
-    expect(screen.queryByText('Latest Categories')).toBeOnTheScreen();
-    expect(screen.queryAllByTestId('flat-list-item').length).toBe(10);
+    expect(screen.queryByTestId('main-heading')).toBeOnTheScreen();
+    expect(screen.queryAllByTestId('flat-list-item').length).toBe(categoriesList.length);
   });
   it('renders no categories correctly', async () => {
     (categoryController.fetchCategories as jest.Mock).mockReturnValue([]);
@@ -83,7 +83,7 @@ describe('CategoryListScreen', () => {
       expect(categoryController.fetchCategories).toBeCalledTimes(1);
     });
 
-    expect(screen.queryByText('No categories found...')).toBeOnTheScreen();
+    expect(screen.queryByTestId('no-data-text')).toBeOnTheScreen();
     expect(screen.queryAllByTestId('flat-list-item').length).toBe(0);
   });
   it('loads more categories correctly', async () => {

@@ -21,7 +21,12 @@ const SearchScreen = ({route}: Props) => {
           headerTitle={'Results for ' + '"' + route.params.term + '"'}
         />
       ) : (
-        <Text mt={6} mx={6} fontFamily="body" fontSize="xl">
+        <Text
+          mt={6}
+          mx={6}
+          fontFamily="body"
+          fontSize="xl"
+          testID="instruction">
           Type in input above to search
         </Text>
       )}

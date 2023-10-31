@@ -45,7 +45,8 @@ describe('StarRating', () => {
       </UIProvider>,
     );
 
-    expect(screen.queryByText(rating.toString())).toBeOnTheScreen();
+    expect(screen.queryByTestId('rating')).toBeOnTheScreen();
+    expect(screen.queryByTestId('rating')).toHaveTextContent(rating.toString());
   });
   it('when unauthorized, navigates correctly', async () => {
     const rating = 2.5;
@@ -62,16 +63,16 @@ describe('StarRating', () => {
 
     expect(screen.queryByText(rating.toString())).toBeOnTheScreen();
 
-    fireEvent.press(screen.getByTestId('star'));
+    fireEvent.press(screen.getByTestId('one-star-rating'));
 
     expect(mockedNavigate).toBeCalledTimes(1);
     expect(mockedNavigate).toBeCalledWith('Login');
   });
   it('when authorized, submits rating correctly', async () => {
     const rating = 2.5;
-    const updatedRating = 3;
+    let updatedRating = 1;
     const productId = '123';
-    (ratingController.addRating as jest.Mock).mockReturnValue(
+    (ratingController.addRating as jest.Mock).mockReturnValueOnce(
       Promise.resolve(updatedRating),
     );
 
@@ -90,15 +91,97 @@ describe('StarRating', () => {
       </UIProvider>,
     );
 
-    expect(screen.queryByText(rating.toString())).toBeOnTheScreen();
+    expect(screen.queryByTestId('rating')).toBeOnTheScreen();
+    expect(screen.queryByTestId('rating')).toHaveTextContent(rating.toString());
 
-    fireEvent.press(screen.getByTestId('star'));
+    fireEvent.press(screen.getByTestId('one-star-rating'));
 
     await waitFor(() => {
       expect(ratingController.addRating).toBeCalledTimes(1);
-      expect(ratingController.addRating).toBeCalledWith(productId, 3);
+      expect(ratingController.addRating).toBeCalledWith(
+        productId,
+        updatedRating,
+      );
     });
 
-    expect(screen.queryByText(updatedRating.toString())).toBeOnTheScreen();
+    expect(screen.queryByTestId('rating')).toHaveTextContent(
+      updatedRating.toString(),
+    );
+
+    updatedRating = 2;
+    (ratingController.addRating as jest.Mock).mockReturnValueOnce(
+      Promise.resolve(updatedRating),
+    );
+
+    fireEvent.press(screen.getByTestId('two-star-rating'));
+
+    await waitFor(() => {
+      expect(ratingController.addRating).toBeCalledTimes(2);
+      expect(ratingController.addRating).toBeCalledWith(
+        productId,
+        updatedRating,
+      );
+    });
+
+    expect(screen.queryByTestId('rating')).toHaveTextContent(
+      updatedRating.toString(),
+    );
+
+    updatedRating = 3;
+    (ratingController.addRating as jest.Mock).mockReturnValueOnce(
+      Promise.resolve(updatedRating),
+    );
+
+    fireEvent.press(screen.getByTestId('three-star-rating'));
+
+    await waitFor(() => {
+      expect(ratingController.addRating).toBeCalledTimes(3);
+      expect(ratingController.addRating).toBeCalledWith(
+        productId,
+        updatedRating,
+      );
+    });
+
+    expect(screen.queryByTestId('rating')).toHaveTextContent(
+      updatedRating.toString(),
+    );
+
+    updatedRating = 4;
+    (ratingController.addRating as jest.Mock).mockReturnValueOnce(
+      Promise.resolve(updatedRating),
+    );
+
+    fireEvent.press(screen.getByTestId('four-star-rating'));
+
+    await waitFor(() => {
+      expect(ratingController.addRating).toBeCalledTimes(4);
+      expect(ratingController.addRating).toBeCalledWith(
+        productId,
+        updatedRating,
+      );
+    });
+
+    expect(screen.queryByTestId('rating')).toHaveTextContent(
+      updatedRating.toString(),
+    );
+
+    updatedRating = 5;
+    (ratingController.addRating as jest.Mock).mockReturnValueOnce(
+      Promise.resolve(updatedRating),
+    );
+
+    fireEvent.press(screen.getByTestId('five-star-rating'));
+
+    await waitFor(() => {
+      expect(ratingController.addRating).toBeCalledTimes(5);
+      expect(ratingController.addRating).toBeCalledWith(
+        productId,
+        updatedRating,
+      );
+    });
+
+    expect(screen.queryByTestId('rating')).toHaveTextContent(
+      updatedRating.toString(),
+    );
   });
 });

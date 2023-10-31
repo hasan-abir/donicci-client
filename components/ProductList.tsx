@@ -127,7 +127,7 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
               testID="fetching-spinner"
             />
           ) : products.length < 1 ? (
-            <Text fontFamily="body" textAlign="center">
+            <Text fontFamily="body" textAlign="center" testID="no-data-text">
               No products found...
             </Text>
           ) : endOfDataList ? (

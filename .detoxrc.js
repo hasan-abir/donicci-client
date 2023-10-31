@@ -53,7 +53,7 @@ module.exports = {
     emulator: {
       type: 'android.emulator',
       device: {
-        avdName: '5.1_WVGA_API_23',
+        avdName: 'Old_Android',
       },
     },
   },

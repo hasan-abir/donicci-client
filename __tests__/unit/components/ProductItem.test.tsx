@@ -28,8 +28,27 @@ describe('ProductItem', () => {
       </UIProvider>,
     );
 
-    expect(screen.queryByText(product.title)).toBeOnTheScreen();
-    expect(screen.queryByText('$' + product.price)).toBeOnTheScreen();
+    expect(
+      screen.queryByTestId('product-image-' + product._id),
+    ).toBeOnTheScreen();
+    expect(
+      screen.queryByTestId('product-title-' + product._id),
+    ).toBeOnTheScreen();
+    expect(
+      screen.queryByTestId('product-title-' + product._id),
+    ).toHaveTextContent(product.title);
+    expect(
+      screen.queryByTestId('product-price-' + product._id),
+    ).toBeOnTheScreen();
+    expect(
+      screen.queryByTestId('product-price-' + product._id),
+    ).toHaveTextContent('$' + product.price);
+    expect(
+      screen.queryByTestId('product-rating-' + product._id),
+    ).toBeOnTheScreen();
+    expect(
+      screen.queryByTestId('product-rating-' + product._id),
+    ).toHaveTextContent(product.user_rating.toString());
   });
 
   it('navigates to ProductDetails correctly', () => {

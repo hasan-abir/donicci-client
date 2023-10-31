@@ -29,9 +29,7 @@ describe('SearchScreen', () => {
       </UIProvider>,
     );
 
-    expect(
-      screen.queryByText('Type in input above to search'),
-    ).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('instruction')).not.toBeOnTheScreen();
   });
   it('renders prompt to search correctly', async () => {
     const route = {name: 'Search', params: {term: ''}};
@@ -49,8 +47,6 @@ describe('SearchScreen', () => {
       </UIProvider>,
     );
 
-    expect(
-      screen.queryByText('Type in input above to search'),
-    ).toBeOnTheScreen();
+    expect(screen.queryByTestId('instruction')).toBeOnTheScreen();
   });
 });

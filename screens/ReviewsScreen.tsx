@@ -115,7 +115,7 @@ const ReviewsScreen = ({route, navigation}: Props) => {
           return (
             <Box mt={6}>
               <PostReview postReview={postReview} disabled={loading} />
-              <Text mb={6} fontSize="xl" fontFamily="body">
+              <Text mb={6} fontSize="xl" fontFamily="body" testID='reviews-heading'>
                 User Reviews
               </Text>
             </Box>
@@ -126,7 +126,7 @@ const ReviewsScreen = ({route, navigation}: Props) => {
             {loading && !refreshing ? (
               <Spinner color={colors.gray[300]} size="lg" />
             ) : reviews.length < 1 ? (
-              <Text textAlign="center">No reviews found...</Text>
+              <Text textAlign="center" testID="no-data-text">No reviews found...</Text>
             ) : endOfDataList ? (
               <Text textAlign="center" testID="end-of-data-text">
                 That's all for now!

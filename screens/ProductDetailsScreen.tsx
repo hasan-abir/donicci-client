@@ -95,7 +95,12 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
           </Box>
         ) : (
           <Box>
-            <Text mb={6} textAlign="center" fontSize="xl" fontFamily="body">
+            <Text
+              mb={6}
+              textAlign="center"
+              fontSize="xl"
+              fontFamily="body"
+              testID="not-found-text">
               Product not found
             </Text>
           </Box>

@@ -104,7 +104,9 @@ const CategoryListScreen = () => {
             {loading && !refreshing ? (
               <Spinner color={colors.gray[300]} size="lg" />
             ) : categories.length < 1 ? (
-              <Text textAlign="center">No categories found...</Text>
+              <Text textAlign="center" testID="no-data-text">
+                No categories found...
+              </Text>
             ) : endOfDataList ? (
               <Text textAlign="center" testID="end-of-data-text">
                 That's all for now!

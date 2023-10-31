@@ -27,7 +27,9 @@ describe('CategoryItem', () => {
       </UIProvider>,
     );
 
-    expect(screen.queryByText(item.name)).toBeOnTheScreen();
+    expect(
+      screen.queryByTestId('category-title-' + item._id),
+    ).toBeOnTheScreen();
   });
 
   it('navigates correctly', () => {
@@ -39,7 +41,7 @@ describe('CategoryItem', () => {
       </UIProvider>,
     );
 
-    fireEvent.press(screen.getByText(item.name));
+    fireEvent.press(screen.getByTestId('category-title-' + item._id));
 
     expect(mockedNavigate).toBeCalledTimes(1);
     expect(mockedNavigate).toBeCalledWith('CategoryProducts', {

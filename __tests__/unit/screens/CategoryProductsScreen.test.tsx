@@ -67,7 +67,7 @@ describe('CategoryProductsScreen', () => {
       expect(navigation.setOptions).toBeCalledWith({title: category.name});
     });
 
-    expect(screen.queryByText('Category not found')).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('not-found-text')).not.toBeOnTheScreen();
   });
   it('when no category navigates correctly', async () => {
     (categoryController.fetchSingleCategory as jest.Mock).mockReturnValue(null);
@@ -105,9 +105,9 @@ describe('CategoryProductsScreen', () => {
       expect(categoryController.fetchSingleCategory).toBeCalledWith('123');
     });
 
-    expect(screen.queryByText('Category not found')).toBeOnTheScreen();
+    expect(screen.queryByTestId('not-found-text')).toBeOnTheScreen();
 
-    fireEvent.press(screen.getByText('BACK TO CATEGORIES'));
+    fireEvent.press(screen.getByTestId('backtocategories-btn'));
 
     expect(navigation.navigate).toBeCalledTimes(1);
     expect(navigation.navigate).toBeCalledWith('Categories');

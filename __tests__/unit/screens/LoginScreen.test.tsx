@@ -15,8 +15,6 @@ import {
 } from '@testing-library/react-native';
 import {RootContext} from '../../../context/RootContext';
 
-jest.mock('../../../components/ProductList', () => 'ProductList');
-
 describe('LoginScreen', () => {
   it('renders correctly', async () => {
     const canGoBack = jest.fn();
@@ -40,15 +38,12 @@ describe('LoginScreen', () => {
     );
 
     expect(screen.queryAllByText('Login').length).toBe(1);
-    expect(screen.queryAllByText('LOGIN').length).toBe(1);
-    expect(screen.queryByText('Email')).toBeOnTheScreen();
-    expect(screen.queryByText('Password')).toBeOnTheScreen();
-    expect(screen.queryByText('Register')).toBeOnTheScreen();
-    expect(
-      screen.queryByText(", if you don't have an account"),
-    ).toBeOnTheScreen();
+    expect(screen.queryByTestId('email')).toBeOnTheScreen();
+    expect(screen.queryByTestId('password')).toBeOnTheScreen();
+    expect(screen.queryByTestId('submit-btn')).toBeOnTheScreen();
+    expect(screen.queryByTestId('register-btn')).toBeOnTheScreen();
   });
-  it('navigates to register correctly', async () => {
+  it('calls navigate to register correctly', async () => {
     const canGoBack = jest.fn();
     const goBack = jest.fn();
     const navigate = jest.fn();
@@ -69,9 +64,10 @@ describe('LoginScreen', () => {
       </UIProvider>,
     );
 
-    fireEvent.press(screen.getByText('Register'));
+    fireEvent.press(screen.getByTestId('register-btn'));
 
     expect(navigate).toBeCalledTimes(1);
+    expect(navigate).toBeCalledWith('Register');
   });
   it('submits form correctly', async () => {
     const mockedAuthenticateUser = jest.fn().mockResolvedValueOnce(true);
@@ -103,7 +99,7 @@ describe('LoginScreen', () => {
     fireEvent.changeText(screen.getByTestId('email'), email);
     const password = 'testtest';
     fireEvent.changeText(screen.getByTestId('password'), password);
-    const button = screen.getByText('LOGIN');
+    const button = screen.getByTestId('submit-btn');
     fireEvent.press(button);
 
     expect(button).toBeDisabled();
@@ -149,7 +145,7 @@ describe('LoginScreen', () => {
     fireEvent.changeText(screen.getByTestId('email'), email);
     const password = 'testtest';
     fireEvent.changeText(screen.getByTestId('password'), password);
-    fireEvent.press(screen.getByText('LOGIN'));
+    fireEvent.press(screen.getByTestId('submit-btn'));
 
     await waitFor(() => {
       expect(mockedAuthenticateUser).toHaveBeenCalledWith(
