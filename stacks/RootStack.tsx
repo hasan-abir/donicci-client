@@ -2,7 +2,6 @@ import {createStackNavigator} from '@react-navigation/stack';
 import RootTab from '../tabs/RootTab';
 
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
-import {theme} from 'native-base';
 import {useContext, useEffect} from 'react';
 import axiosInstance from '../axios/instance';
 import StackHeader from '../components/StackHeader';
@@ -13,6 +12,8 @@ import ProductDetailsScreen from '../screens/ProductDetailsScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import SearchScreen from '../screens/SearchScreen';
 import ReviewsScreen from '../screens/ReviewsScreen';
+import {config} from '../config/gluestack-ui.config';
+import HomeScreen from '../screens/HomeScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -22,7 +23,10 @@ const RootStack = () => {
   const navTheme = {
     ...DefaultTheme,
     // Change app background
-    colors: {...DefaultTheme.colors, background: theme.colors.gray[100]},
+    colors: {
+      ...DefaultTheme.colors,
+      background: config.tokens.colors.coolGray100,
+    },
   };
 
   useEffect(() => {
@@ -66,7 +70,7 @@ const RootStack = () => {
           },
         }}>
         <Stack.Screen name="Home" component={RootTab} />
-        <Stack.Screen
+        {/* <Stack.Screen
           name="ProductDetails"
           component={ProductDetailsScreen}
           options={{title: ' '}}
@@ -81,7 +85,7 @@ const RootStack = () => {
           name="CategoryProducts"
           component={CategoryProductsScreen}
           options={{title: ' '}}
-        />
+        /> */}
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
       </Stack.Navigator>

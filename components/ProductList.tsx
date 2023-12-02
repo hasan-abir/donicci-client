@@ -1,5 +1,4 @@
 import {RouteProp, useRoute} from '@react-navigation/native';
-import {Box, FlatList, Heading, Spinner, Text, useTheme} from 'native-base';
 import {memo, useCallback, useContext, useEffect, useState} from 'react';
 import {RootContext, ErrorType} from '../context/RootContext';
 import productController from '../controllers/productController';
@@ -7,6 +6,9 @@ import type {RootStackParamList} from '../stacks/RootStack';
 import type {RootTabParamList} from '../tabs/RootTab';
 import type {Product} from './ProductItem';
 import ProductItem from './ProductItem';
+import {Box, FlatList, Heading, Spinner, Text} from '@gluestack-ui/themed';
+import {RefreshControl} from 'react-native';
+import {config} from '../config/gluestack-ui.config';
 
 interface Props {
   categoryId?: string;
@@ -22,7 +24,6 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
   const route = useRoute<RouteProp<RootStackParamList & RootTabParamList>>();
 
   const {error, handleError, clearError, user} = useContext(RootContext);
-  const {colors} = useTheme();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [lastUpdatedAt, setLastUpdatedAt] = useState<string | undefined>(
@@ -30,7 +31,7 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
   );
   const [loading, setLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [endOfDataList, setEndOfDataList] = useState<boolean>(false);
+  const [endOfDataList, setEndOfDataList] = useState<boolean>(true);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -74,7 +75,7 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
           setEndOfDataList(true);
         }
       } catch (error: any) {
-        handleError(error, route.name, ErrorType.Fetch);
+        handleError(error, 'Bla', ErrorType.Fetch);
       } finally {
         setLoading(false);
       }
@@ -88,30 +89,31 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
 
   return (
     <FlatList
-      px={6}
+      px="$6"
       onEndReachedThreshold={0.5}
       onEndReached={onEndReached}
-      onRefresh={onRefresh}
-      refreshing={refreshing}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={[config.tokens.colors.coolGray400]}
+        />
+      }
       data={products}
       testID="flat-list"
       ListHeaderComponent={() => {
         return (
-          <Box mt={6}>
+          <Box mt="$6">
             {route.name === 'Products' && user ? (
-              <Text
-                fontFamily="body"
-                fontSize="md"
-                mb={2}
-                testID="user-greeting">
-                Welcome, {user.display_name}!
+              <Text fontSize="$md" mb="$2" testID="user-greeting">
+                Welcome, {user?.display_name}!
               </Text>
             ) : null}
             <Heading
-              fontFamily="body"
-              fontWeight="semibold"
-              mb={6}
-              fontSize="3xl"
+              fontFamily="$subheading"
+              fontWeight="$normal"
+              mb="$6"
+              fontSize="$3xl"
               testID="main-heading">
               {headerTitle || 'Latest products'}
             </Heading>
@@ -119,31 +121,28 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
         );
       }}
       ListFooterComponent={() => (
-        <Box justifyContent="center" mb={6}>
+        <Box justifyContent="center" mb="$6">
           {loading && !refreshing ? (
             <Spinner
-              color={colors.gray[300]}
-              size="lg"
+              size="large"
               testID="fetching-spinner"
+              color="$coolGray300"
             />
           ) : products.length < 1 ? (
-            <Text fontFamily="body" textAlign="center" testID="no-data-text">
+            <Text textAlign="center" testID="no-data-text">
               No products found...
             </Text>
           ) : endOfDataList ? (
-            <Text
-              fontFamily="body"
-              textAlign="center"
-              testID="end-of-data-text">
+            <Text textAlign="center" testID="end-of-data-text">
               That's all for now!
             </Text>
           ) : null}
         </Box>
       )}
-      keyExtractor={(item, index) => item._id}
-      renderItem={({item}: {item: Product}) => (
+      keyExtractor={(item, index) => (item as Product)._id}
+      renderItem={({item}) => (
         <Box testID="flat-list-item">
-          <PureProductItem item={item} />
+          <PureProductItem item={item as Product} />
         </Box>
       )}
     />

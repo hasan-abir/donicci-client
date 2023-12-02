@@ -78,7 +78,7 @@ interface Value {
 
 export const RootContext = React.createContext<Value>({
   user: null,
-  authenticating: true,
+  authenticating: false,
   authenticateUser: () =>
     new Promise((resolve, reject) => {
       resolve(false);
@@ -132,7 +132,7 @@ type Props = {
 
 const RootContextProvider = ({children}: Props) => {
   const [user, setUser] = useState<User | null>(null);
-  const [authenticating, setAuthenticating] = useState<boolean>(true);
+  const [authenticating, setAuthenticating] = useState<boolean>(false);
   const [error, setError] = useState<GlobalError | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [cartSum, setCartSum] = useState<CartSum>({
@@ -199,9 +199,9 @@ const RootContextProvider = ({children}: Props) => {
       } catch (err: any) {
         handleError(err, 'Products', ErrorType.Auth);
       }
-    }
 
-    setAuthenticating(false);
+      setAuthenticating(false);
+    }
   };
 
   const logOutUser = async () => {

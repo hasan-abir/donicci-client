@@ -15,8 +15,7 @@ import TabHeader from '../components/TabHeader';
 
 import TabBar from '../components/TabBar';
 import {RootContext} from '../context/RootContext';
-import {Box, Spinner, Text, useTheme} from 'native-base';
-import {useFocusEffect} from '@react-navigation/native';
+import {Box, Text, Spinner} from '@gluestack-ui/themed';
 
 interface Props extends StackScreenProps<RootStackParamList, 'Home'> {}
 
@@ -34,35 +33,28 @@ export const tabScreens: {
     component: HomeScreen,
     icon: 'home',
   },
-  Cart: {
-    component: CartScreen,
-    icon: 'cart',
-  },
-  Categories: {
-    component: CategoryListScreen,
-    icon: 'list',
-  },
+  // Cart: {
+  //   component: CartScreen,
+  //   icon: 'cart',
+  // },
+  // Categories: {
+  //   component: CategoryListScreen,
+  //   icon: 'list',
+  // },
 };
 
 const RootTab = ({navigation, route}: Props) => {
   const {verifyCurrentUser, authenticating} = useContext(RootContext);
 
-  const {colors} = useTheme();
-
   useEffect(() => {
-    // Remove stack header
-    navigation.setOptions({
-      headerShown: false,
-    });
-
     verifyCurrentUser();
-  }, [navigation]);
+  }, []);
 
   if (authenticating) {
     return (
       <Box alignItems="center" justifyContent="center" flex={1}>
-        <Text mb={2}>Authenticating</Text>
-        <Spinner color={colors.gray[300]} size="lg" />
+        <Text mb="$2">Authenticating</Text>
+        <Spinner color="$coolGray300" size="large" />
       </Box>
     );
   }
@@ -71,11 +63,7 @@ const RootTab = ({navigation, route}: Props) => {
     <Tab.Navigator
       initialRouteName="Products"
       tabBar={props => <TabBar {...props} />}
-      screenOptions={{
-        header(props) {
-          return <TabHeader {...props} />;
-        },
-      }}>
+      screenOptions={{headerShown: false}}>
       {Object.entries(tabScreens).map(([name, {component, label}]) => (
         <Tab.Screen
           key={name}
