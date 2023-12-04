@@ -1,5 +1,5 @@
 import type {StackScreenProps} from '@react-navigation/stack';
-import {Box, Button, Spinner, Text, VStack, useTheme} from 'native-base';
+import {Box, Button, Spinner, Text} from '@gluestack-ui/themed';
 import {useContext, useEffect, useState, useCallback} from 'react';
 import type {Category} from '../components/CategoryItem';
 import ProductList from '../components/ProductList';
@@ -7,6 +7,7 @@ import {ErrorType, RootContext} from '../context/RootContext';
 import categoryController from '../controllers/categoryController';
 import type {RootStackParamList} from '../stacks/RootStack';
 import type {RootTabParamList} from '../tabs/RootTab';
+import {ButtonText} from '@gluestack-ui/themed';
 
 type Props = StackScreenProps<
   RootStackParamList & RootTabParamList,
@@ -15,8 +16,6 @@ type Props = StackScreenProps<
 
 const CategoryProductsScreen = ({navigation, route}: Props) => {
   const {clearError, handleError} = useContext(RootContext);
-
-  const {colors} = useTheme();
 
   const [category, setCategory] = useState<Category | null | undefined>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -47,31 +46,31 @@ const CategoryProductsScreen = ({navigation, route}: Props) => {
   return (
     <Box flex={1}>
       {loading ? (
-        <Spinner color={colors.gray[300]} size="lg" />
+        <Spinner mt="$6" color="$coolGray300" size="large" />
       ) : category ? (
         <ProductList
           categoryId={route.params.categoryId}
           headerTitle={category?.name}
         />
       ) : (
-        <Box mt={6} mx={6}>
+        <Box mt="$6" mx="$6">
           <Text
-            mb={3}
+            mb="$3"
             textAlign="center"
-            fontSize="xl"
-            fontFamily="body"
+            fontSize="$xl"
             testID="not-found-text">
             Category not found
           </Text>
           <Button
-            py={2}
-            px={6}
-            borderRadius={20}
+            py="$2"
+            px="$6"
+            borderRadius="$md"
             onPress={() => navigation.navigate('Categories')}
-            bgColor={colors.secondary[500]}
-            _text={{fontFamily: 'body', fontWeight: 'bold'}}
+            bgColor="$secondary700"
             testID="backtocategories-btn">
-            BACK TO CATEGORIES
+            <ButtonText fontFamily="$heading" fontWeight="$normal">
+              BACK TO CATEGORIES
+            </ButtonText>
           </Button>
         </Box>
       )}

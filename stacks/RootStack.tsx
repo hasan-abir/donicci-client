@@ -79,13 +79,13 @@ const RootStack = () => {
           name="Reviews"
           component={ReviewsScreen}
           options={{title: ' '}}
-        />
+        /> */}
         <Stack.Screen name="Search" component={SearchScreen} />
         <Stack.Screen
           name="CategoryProducts"
           component={CategoryProductsScreen}
           options={{title: ' '}}
-        /> */}
+        />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
       </Stack.Navigator>

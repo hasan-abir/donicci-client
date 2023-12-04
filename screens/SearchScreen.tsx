@@ -1,5 +1,5 @@
 import type {StackScreenProps} from '@react-navigation/stack';
-import {Box, Text} from 'native-base';
+import {Box, Text} from '@gluestack-ui/themed';
 import {useContext, useEffect} from 'react';
 import ProductList from '../components/ProductList';
 import {ErrorType, RootContext} from '../context/RootContext';
@@ -21,12 +21,7 @@ const SearchScreen = ({route}: Props) => {
           headerTitle={'Results for ' + '"' + route.params.term + '"'}
         />
       ) : (
-        <Text
-          mt={6}
-          mx={6}
-          fontFamily="body"
-          fontSize="xl"
-          testID="instruction">
+        <Text mt="$6" mx="$6" fontSize="$xl" testID="instruction">
           Type in input above to search
         </Text>
       )}

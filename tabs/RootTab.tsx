@@ -37,10 +37,10 @@ export const tabScreens: {
   //   component: CartScreen,
   //   icon: 'cart',
   // },
-  // Categories: {
-  //   component: CategoryListScreen,
-  //   icon: 'list',
-  // },
+  Categories: {
+    component: CategoryListScreen,
+    icon: 'list',
+  },
 };
 
 const RootTab = ({navigation, route}: Props) => {
@@ -53,7 +53,6 @@ const RootTab = ({navigation, route}: Props) => {
   if (authenticating) {
     return (
       <Box alignItems="center" justifyContent="center" flex={1}>
-        <Text mb="$2">Authenticating</Text>
         <Spinner color="$coolGray300" size="large" />
       </Box>
     );

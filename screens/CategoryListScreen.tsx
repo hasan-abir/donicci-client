@@ -1,6 +1,6 @@
 import type {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {RouteProp, useRoute} from '@react-navigation/native';
-import {Box, FlatList, Heading, Spinner, Text, useTheme} from 'native-base';
+import {Box, FlatList, Heading, Spinner, Text} from '@gluestack-ui/themed';
 import {memo, useCallback, useContext, useEffect, useState} from 'react';
 import type {Category} from '../components/CategoryItem';
 import CategoryItem from '../components/CategoryItem';
@@ -16,7 +16,6 @@ const areEqual = (prevProps: {item: Category}, nextProps: {item: Category}) =>
 const PureCategoryItem = memo(CategoryItem, areEqual);
 
 const CategoryListScreen = () => {
-  const {colors} = useTheme();
   const route = useRoute<RouteProp<RootStackParamList & RootTabParamList>>();
 
   const {error, handleError, clearError} = useContext(RootContext);
@@ -81,7 +80,7 @@ const CategoryListScreen = () => {
   return (
     <Box flex={1}>
       <FlatList
-        px={6}
+        px="$6"
         onEndReachedThreshold={0.1}
         onEndReached={onEndReached}
         onRefresh={onRefresh}
@@ -90,19 +89,18 @@ const CategoryListScreen = () => {
         testID="flat-list"
         ListHeaderComponent={
           <Heading
-            fontFamily="body"
-            fontWeight="semibold"
-            mt={6}
-            mb={4}
-            fontSize="3xl"
+            fontFamily="$subheading"
+            fontWeight="$normal"
+            my="$6"
+            fontSize="$3xl"
             testID="main-heading">
             Latest Categories
           </Heading>
         }
         ListFooterComponent={() => (
-          <Box justifyContent="center" mb={6}>
+          <Box justifyContent="center" mb="$6">
             {loading && !refreshing ? (
-              <Spinner color={colors.gray[300]} size="lg" />
+              <Spinner color="$coolGray300" size="large" />
             ) : categories.length < 1 ? (
               <Text textAlign="center" testID="no-data-text">
                 No categories found...
@@ -114,10 +112,10 @@ const CategoryListScreen = () => {
             ) : null}
           </Box>
         )}
-        keyExtractor={(item, index) => item._id}
+        keyExtractor={item => (item as Category)._id}
         renderItem={({item, index}) => (
           <Box testID="flat-list-item">
-            <PureCategoryItem item={item} index={index} />
+            <PureCategoryItem item={item as Category} index={index} />
           </Box>
         )}
       />

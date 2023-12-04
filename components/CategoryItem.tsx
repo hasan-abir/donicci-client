@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import type {StackNavigationProp} from '@react-navigation/stack';
-import {Box, Button, Divider, Text, useTheme} from 'native-base';
+import {Button, ButtonText} from '@gluestack-ui/themed';
 import type {RootStackParamList} from '../stacks/RootStack';
 import type {RootTabParamList} from '../tabs/RootTab';
 import {useMemo} from 'react';
@@ -18,26 +18,22 @@ export interface Category {
 }
 
 const CategoryItem = ({item, index}: Props) => {
-  const {colors} = useTheme();
   const navigation =
     useNavigation<StackNavigationProp<RootStackParamList & RootTabParamList>>();
   const isOdd = useMemo((): boolean => index % 2 == 1, []);
 
   return (
     <Button
-      borderRadius={100}
-      mb={5}
+      borderRadius="$lg"
+      mb="$5"
       onPress={() => {
         navigation.navigate('CategoryProducts', {categoryId: item._id});
       }}
-      bgColor={isOdd ? colors.secondary[100] : colors.primary[100]}
-      _text={{
-        fontFamily: 'body',
-        fontWeight: 'bold',
-        color: isOdd ? colors.secondary[500] : colors.primary[500],
-      }}
+      bgColor={isOdd ? '$secondary700' : '$primary700'}
       testID={'category-title-' + item._id}>
-      {item.name}
+      <ButtonText fontFamily="$heading" fontWeight="$normal" color="$white">
+        {item.name}
+      </ButtonText>
     </Button>
   );
 };
