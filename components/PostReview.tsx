@@ -1,4 +1,12 @@
-import {Box, Button, FormControl, Text, TextArea, useTheme} from 'native-base';
+import {
+  Box,
+  Button,
+  ButtonText,
+  FormControl,
+  Text,
+  Textarea,
+  TextareaInput,
+} from '@gluestack-ui/themed';
 import {useCallback, useState} from 'react';
 
 interface Props {
@@ -14,8 +22,6 @@ const PostReview = ({postReview, disabled}: Props) => {
   const [formData, setData] = useState<PostReviewFormData>({});
   const [loading, setLoading] = useState<boolean>(false);
 
-  const {colors} = useTheme();
-
   const onSubmit = useCallback(async () => {
     setLoading(true);
     await postReview(formData.description as string);
@@ -23,33 +29,35 @@ const PostReview = ({postReview, disabled}: Props) => {
   }, [formData]);
 
   return (
-    <Box mb={8}>
-      <Text mb={2} fontSize="md" fontFamily="body">
+    <Box mb="$8">
+      <Text mb="$2" fontSize="$md">
         Post a Review
       </Text>
       <FormControl isRequired>
-        <TextArea
-          autoCompleteType={true}
-          onChangeText={value => setData({...formData, description: value})}
-          fontFamily="body"
-          borderWidth={0}
-          backgroundColor={colors.white}
-          borderRadius={10}
-          placeholder="Review description..."
-          testID="review-input"
-        />
+        <Textarea>
+          <TextareaInput
+            onChangeText={value => setData({...formData, description: value})}
+            fontFamily="$body"
+            borderWidth="$0"
+            backgroundColor="$white"
+            borderRadius="$lg"
+            placeholder="Review description..."
+            testID="review-input"
+          />
+        </Textarea>
       </FormControl>
       <Button
-        py={2}
-        px={6}
-        borderRadius={10}
+        py="$2"
+        px="$6"
+        borderRadius="$lg"
         onPress={onSubmit}
-        mt="4"
+        mt="$4"
         isDisabled={loading || disabled}
-        bgColor={colors.secondary[500]}
-        _text={{fontFamily: 'body', fontWeight: 'bold'}}
+        bgColor="$secondary700"
         testID="review-submit">
-        SUBMIT
+        <ButtonText fontFamily="$heading" fontWeight="$normal">
+          SUBMIT
+        </ButtonText>
       </Button>
     </Box>
   );

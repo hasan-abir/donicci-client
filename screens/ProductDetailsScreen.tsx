@@ -1,5 +1,12 @@
 import type {StackScreenProps} from '@react-navigation/stack';
-import {Box, Button, ScrollView, Spinner, Text, useTheme} from 'native-base';
+import {
+  Box,
+  Button,
+  ButtonText,
+  ScrollView,
+  Spinner,
+  Text,
+} from '@gluestack-ui/themed';
 import {useCallback, useContext, useEffect, useState} from 'react';
 import {RefreshControl} from 'react-native';
 import ProductDetails from '../components/ProductDetails';
@@ -25,7 +32,6 @@ const truncate = (str: string, n: number, useWordBoundary?: boolean) => {
 
 const ProductDetailsScreen = ({route, navigation}: Props) => {
   const {handleError, clearError} = useContext(RootContext);
-  const {colors} = useTheme();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -69,37 +75,36 @@ const ProductDetailsScreen = ({route, navigation}: Props) => {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
       testID="scrollview">
-      <Box flex={1} px={6} mt={6}>
+      <Box flex={1} px="$6" mt="$6">
         {loading && !refreshing ? (
-          <Box mt={6} justifyContent="center">
-            <Spinner py={3} color={colors.gray[300]} size="lg" />
+          <Box mt="$6" justifyContent="center">
+            <Spinner py="$3" color="$coolGray300" size="large" />
           </Box>
         ) : product ? (
           <Box>
             <ProductDetails product={product} />
             <Button
-              borderRadius={100}
-              mb={6}
+              borderRadius="$lg"
+              mb="$6"
               onPress={() => {
                 navigation.navigate('Reviews', {productId: product._id});
               }}
-              bgColor={colors.primary[100]}
-              _text={{
-                fontFamily: 'body',
-                fontWeight: 'bold',
-                color: colors.primary[500],
-              }}
+              bgColor="$primary100"
               testID="to-reviews-btn">
-              User Reviews
+              <ButtonText
+                fontFamily="$heading"
+                fontWeight="$normal"
+                color="$primary700">
+                User Reviews
+              </ButtonText>
             </Button>
           </Box>
         ) : (
           <Box>
             <Text
-              mb={6}
+              mb="$6"
               textAlign="center"
-              fontSize="xl"
-              fontFamily="body"
+              fontSize="$xl"
               testID="not-found-text">
               Product not found
             </Text>

@@ -52,7 +52,7 @@ const TabBar = ({state, descriptors, navigation}: BottomTabBarProps) => {
               backgroundColor={isActive ? '$primary100' : '$white'}
               py="$2"
               px={isActive ? '$4' : '$0'}
-              borderRadius={100}>
+              borderRadius="$full">
               <TabBarIcon icon={icon} focused={isActive} />
               {isActive ? (
                 <Text

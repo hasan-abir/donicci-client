@@ -1,4 +1,11 @@
-import {Box, Button, Heading, HStack, Text, useTheme} from 'native-base';
+import {
+  Box,
+  Button,
+  ButtonText,
+  Heading,
+  HStack,
+  Text,
+} from '@gluestack-ui/themed';
 import {useContext, useState} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {RootContext} from '../context/RootContext';
@@ -8,6 +15,7 @@ import StarRating from './StarRating';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {RootStackParamList} from '../stacks/RootStack';
 import {RootTabParamList} from '../tabs/RootTab';
+import {config} from '../config/gluestack-ui.config';
 
 interface Props {
   product: Product;
@@ -16,7 +24,6 @@ interface Props {
 const ProductDetails = ({product}: Props) => {
   const route = useRoute<RouteProp<RootStackParamList & RootTabParamList>>();
 
-  const {colors} = useTheme();
   const {addItemToCart, removeItemFromCart, inCart} = useContext(RootContext);
 
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
@@ -33,34 +40,35 @@ const ProductDetails = ({product}: Props) => {
   };
 
   return (
-    <Box mb={8}>
+    <Box mb="$8">
       <ImageGallery alt={product.title} images={product.images} />
       <Text
-        fontWeight="bold"
-        fontFamily="body"
-        fontSize="md"
-        mt={6}
-        mb={3}
+        fontWeight="$normal"
+        fontFamily="$heading"
+        fontSize="$md"
+        mt="$6"
+        mb="$3"
         testID="price">
         ${product.price}
       </Text>
-      <Text fontFamily="body" mb={6} fontSize="xl" testID="title">
+      <Text mb="$6" fontSize="$xl" testID="title">
         {product.title}
       </Text>
-      <HStack space={2} mb={6} flexWrap="wrap">
+      <HStack space="sm" mb="$6" flexWrap="wrap">
         {product.categories_list &&
           product.categories_list.map(category => {
             return (
               <Box
                 key={category._id}
-                backgroundColor={colors.secondary[100]}
-                py={1}
-                px={3}
-                borderRadius={10}>
+                backgroundColor="$secondary100"
+                py="$1"
+                px="$3"
+                borderRadius="$sm">
                 <Text
-                  fontSize="sm"
-                  color={colors.secondary[500]}
-                  fontWeight="bold"
+                  fontSize="$sm"
+                  color="$secondary700"
+                  fontFamily="$heading"
+                  fontWeight="$normal"
                   testID={'category-' + category._id}>
                   {category.name}
                 </Text>
@@ -70,70 +78,72 @@ const ProductDetails = ({product}: Props) => {
       </HStack>
       <StarRating rating={product.user_rating} productId={product._id} />
       {product.quantity && product.quantity > 0 ? (
-        <Box mb={6}>
+        <Box mb="$6">
           {inCart(product._id) ? (
             <Button
-              py={2}
-              px={6}
-              borderRadius={20}
+              py="$2"
+              px="$6"
+              borderRadius="$sm"
               onPress={() => removeItemFromCart(product._id, route.name)}
-              bgColor={colors.secondary[500]}
-              _text={{fontFamily: 'body', fontWeight: 'bold'}}
+              bgColor="$secondary700"
               testID="remove-from-cart">
-              REMOVE FROM CART
+              <ButtonText fontFamily="$heading" fontWeight="$normal">
+                REMOVE FROM CART
+              </ButtonText>
             </Button>
           ) : (
-            <HStack space={2} justifyContent="space-between">
-              <HStack space={1} alignItems="center">
-                <Text fontFamily="body">Quantity</Text>
+            <HStack space="sm" justifyContent="space-between">
+              <HStack space="xs" alignItems="center">
+                <Text>Quantity</Text>
                 <Ionicons
                   testID="decrease-quantity"
                   name={'chevron-back-outline'}
                   size={24}
-                  color={colors.black}
+                  color={config.tokens.colors.black}
                   onPress={() => deductQuantity()}
                 />
-                <Text fontFamily="body" testID="quantity">
+                <Text testID="quantity">
                   {selectedQuantity} of {product.quantity}
                 </Text>
                 <Ionicons
                   testID="increase-quantity"
                   name={'chevron-forward-outline'}
                   size={24}
-                  color={colors.black}
+                  color={config.tokens.colors.black}
                   onPress={() => addQuantity()}
                 />
               </HStack>
               <Button
-                py={2}
-                px={6}
-                borderRadius={20}
+                py="$2"
+                px="$6"
+                borderRadius="$sm"
                 onPress={() =>
                   addItemToCart(product, selectedQuantity, route.name)
                 }
-                bgColor={colors.secondary[500]}
-                _text={{fontFamily: 'body', fontWeight: 'bold'}}
+                bgColor="$secondary700"
                 testID="add-to-cart">
-                ADD TO CART
+                <ButtonText fontFamily="$heading" fontWeight="$normal">
+                  ADD TO CART
+                </ButtonText>
               </Button>
             </HStack>
           )}
         </Box>
       ) : (
         <Heading
-          mb={6}
-          fontSize="md"
+          mb="$6"
+          fontSize="$md"
           fontFamily="body"
-          style={{color: colors.danger[600]}}
+          color="$error600"
           testID="out-of-stock">
           Out of stock
         </Heading>
       )}
 
-      <Text mb={2} fontSize="md" fontFamily="body">
+      <Text mb="$2" fontSize="$md">
         Description
       </Text>
-      <Text color={colors.gray[500]} fontFamily="body" testID="description">
+      <Text color="$coolGray500" testID="description">
         {product.description}
       </Text>
     </Box>

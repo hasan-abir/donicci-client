@@ -70,7 +70,7 @@ const RootStack = () => {
           },
         }}>
         <Stack.Screen name="Home" component={RootTab} />
-        {/* <Stack.Screen
+        <Stack.Screen
           name="ProductDetails"
           component={ProductDetailsScreen}
           options={{title: ' '}}
@@ -79,7 +79,7 @@ const RootStack = () => {
           name="Reviews"
           component={ReviewsScreen}
           options={{title: ' '}}
-        /> */}
+        />
         <Stack.Screen name="Search" component={SearchScreen} />
         <Stack.Screen
           name="CategoryProducts"

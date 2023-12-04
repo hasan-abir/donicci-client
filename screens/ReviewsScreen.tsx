@@ -1,5 +1,5 @@
 import type {StackScreenProps} from '@react-navigation/stack';
-import {Box, FlatList, Spinner, Text, useTheme} from 'native-base';
+import {Box, FlatList, Spinner, Text} from '@gluestack-ui/themed';
 import {memo, useCallback, useContext, useEffect, useState} from 'react';
 import PostReview from '../components/PostReview';
 import type {Review} from '../components/UserReview';
@@ -16,7 +16,6 @@ const PureUserReview = memo(UserReview, areEqual);
 
 const ReviewsScreen = ({route, navigation}: Props) => {
   const {error, handleError, clearError, user} = useContext(RootContext);
-  const {colors} = useTheme();
 
   const [reviews, setReviews] = useState<Review[]>([]);
   const [lastUpdatedAt, setLastUpdatedAt] = useState<string | undefined>(
@@ -104,7 +103,7 @@ const ReviewsScreen = ({route, navigation}: Props) => {
   return (
     <Box flex={1}>
       <FlatList
-        px={6}
+        px="$6"
         onEndReachedThreshold={0.5}
         onEndReached={onEndReached}
         onRefresh={onRefresh}
@@ -113,20 +112,22 @@ const ReviewsScreen = ({route, navigation}: Props) => {
         testID="flat-list"
         ListHeaderComponent={() => {
           return (
-            <Box mt={6}>
+            <Box mt="$6">
               <PostReview postReview={postReview} disabled={loading} />
-              <Text mb={6} fontSize="xl" fontFamily="body" testID='reviews-heading'>
+              <Text mb="$6" fontSize="$xl" testID="reviews-heading">
                 User Reviews
               </Text>
             </Box>
           );
         }}
         ListFooterComponent={
-          <Box justifyContent="center" mb={6}>
+          <Box justifyContent="center" mb="$6">
             {loading && !refreshing ? (
-              <Spinner color={colors.gray[300]} size="lg" />
+              <Spinner color="$coolGray300" size="large" />
             ) : reviews.length < 1 ? (
-              <Text textAlign="center" testID="no-data-text">No reviews found...</Text>
+              <Text textAlign="center" testID="no-data-text">
+                No reviews found...
+              </Text>
             ) : endOfDataList ? (
               <Text textAlign="center" testID="end-of-data-text">
                 That's all for now!
@@ -134,10 +135,10 @@ const ReviewsScreen = ({route, navigation}: Props) => {
             ) : null}
           </Box>
         }
-        keyExtractor={(item, index) => item._id}
+        keyExtractor={(item, index) => (item as Review)._id}
         renderItem={({item}) => (
           <Box testID="flat-list-item">
-            <PureUserReview review={item} />
+            <PureUserReview review={item as Review} />
           </Box>
         )}
       />

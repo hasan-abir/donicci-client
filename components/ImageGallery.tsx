@@ -1,12 +1,4 @@
-import {
-  AspectRatio,
-  Box,
-  HStack,
-  Image,
-  Pressable,
-  Text,
-  useTheme,
-} from 'native-base';
+import {Box, HStack, Image, Pressable} from '@gluestack-ui/themed';
 import {useEffect, useMemo, useState} from 'react';
 import {ImageType} from './ProductItem';
 
@@ -16,8 +8,6 @@ type Props = {
 };
 
 const ImageGallery = ({images, alt}: Props) => {
-  const {colors} = useTheme();
-
   const [selectedImage, setSelectedImage] = useState<ImageType | null>(null);
 
   useEffect(() => {
@@ -28,20 +18,20 @@ const ImageGallery = ({images, alt}: Props) => {
   return (
     <Box>
       {selectedImage ? (
-        <AspectRatio
-          overflow="hidden"
-          backgroundColor={colors.white}
+        <Image
+          size="md"
+          w="$full"
+          resizeMode="contain"
+          h="$80"
           borderRadius={20}
-          ratio={{base: 1 / 1}}>
-          <Image
-            testID="gallery-image-main"
-            resizeMode="contain"
-            source={{uri: selectedImage.url}}
-            alt={alt}
-          />
-        </AspectRatio>
+          mb="$3"
+          backgroundColor="$secondary700"
+          source={{uri: selectedImage.url}}
+          alt={alt}
+          testID="gallery-image-main"
+        />
       ) : null}
-      <HStack space={2} mt={4} mb={4} flexWrap="wrap">
+      <HStack space="xs" mt="$4" mb="$4" flexWrap="wrap">
         {images.map((image, index) => {
           const active = useMemo(
             () => selectedImage && image.url === selectedImage.url,
@@ -52,17 +42,17 @@ const ImageGallery = ({images, alt}: Props) => {
             <Pressable
               testID={'gallery-image-' + (index + 1)}
               key={image.url}
-              borderRadius={10}
+              borderRadius="$lg"
               overflow="hidden"
               onPress={() => setSelectedImage(image)}>
               <Image size="sm" source={{uri: image.url}} alt={alt} />
               {active ? (
                 <Box
                   position="absolute"
-                  width="full"
-                  height="full"
+                  w="$full"
+                  h="$full"
                   zIndex={20}
-                  backgroundColor={colors.primary[500]}
+                  backgroundColor="$primary700"
                   opacity={0.5}
                 />
               ) : null}

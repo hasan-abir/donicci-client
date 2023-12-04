@@ -71,7 +71,7 @@ const LoginScreen = ({navigation, route}: Props) => {
                 fontFamily="$body"
                 borderWidth={0}
                 backgroundColor="$white"
-                borderRadius={10}
+                borderRadius="$lg"
                 py="$2"
               />
             </Input>
@@ -88,7 +88,7 @@ const LoginScreen = ({navigation, route}: Props) => {
                 fontFamily="$body"
                 borderWidth="$0"
                 backgroundColor="$white"
-                borderRadius={10}
+                borderRadius="$lg"
                 py="$2"
               />
             </Input>
@@ -96,7 +96,7 @@ const LoginScreen = ({navigation, route}: Props) => {
           <Button
             py="$2"
             px="$6"
-            borderRadius={10}
+            borderRadius="$lg"
             onPress={onSubmit}
             bgColor="$secondary700"
             isDisabled={formDisabled}

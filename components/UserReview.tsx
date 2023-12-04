@@ -1,4 +1,4 @@
-import {Box, Heading, Text, useTheme} from 'native-base';
+import {Box, Text} from '@gluestack-ui/themed';
 
 export type Review = {
   _id: string;
@@ -15,21 +15,12 @@ type Props = {
 };
 
 const UserReview = ({review}: Props) => {
-  const {colors} = useTheme();
-
   return (
-    <Box mb={3}>
-      <Text
-        fontFamily="body"
-        fontSize="md"
-        mb={2}
-        testID={'review-author-' + review._id}>
+    <Box mb="$3">
+      <Text fontSize="$md" mb="$2" testID={'review-author-' + review._id}>
         {review.author} says,
       </Text>
-      <Text
-        color={colors.gray[500]}
-        fontFamily="body"
-        testID={'review-description-' + review._id}>
+      <Text color="$coolGray500" testID={'review-description-' + review._id}>
         {review.description}
       </Text>
     </Box>

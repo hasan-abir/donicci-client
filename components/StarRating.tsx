@@ -1,11 +1,12 @@
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
-import {Box, HStack, Pressable, Spinner, Text, useTheme} from 'native-base';
+import {Box, HStack, Pressable, Spinner, Text} from '@gluestack-ui/themed';
 import {useContext, useEffect, useState, useCallback} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {ErrorType, RootContext} from '../context/RootContext';
 import ratingController from '../controllers/ratingController';
 import type {RootStackParamList} from '../stacks/RootStack';
 import type {StackNavigationProp} from '@react-navigation/stack';
+import {config} from '../config/gluestack-ui.config';
 
 type Props = {
   rating: number;
@@ -25,7 +26,6 @@ const Rating = ({rating, productId}: Props) => {
   const route = useRoute<RouteProp<RootStackParamList>>();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const {error, handleError, clearError, user} = useContext(RootContext);
-  const {colors} = useTheme();
 
   const [itemRating, setItemRating] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
@@ -60,11 +60,11 @@ const Rating = ({rating, productId}: Props) => {
     <Box mb={4}>
       {loading ? (
         <Box justifyContent="center">
-          <Spinner color={colors.gray[300]} size="lg" />
+          <Spinner color="$coolGray300" size="large" />
         </Box>
       ) : (
-        <HStack space={2} alignItems="center">
-          <HStack space={1} mb={2}>
+        <HStack space="xs" alignItems="center">
+          <HStack space="xs" mb="$2">
             <Pressable onPress={() => submitRating(1)} testID="one-star-rating">
               <Ionicons
                 name={
@@ -75,7 +75,7 @@ const Rating = ({rating, productId}: Props) => {
                     : 'star-outline'
                 }
                 size={24}
-                color={colors.primary[500]}
+                color={config.tokens.colors.primary700}
               />
             </Pressable>
             <Pressable onPress={() => submitRating(2)} testID="two-star-rating">
@@ -88,7 +88,7 @@ const Rating = ({rating, productId}: Props) => {
                     : 'star-outline'
                 }
                 size={24}
-                color={colors.primary[500]}
+                color={config.tokens.colors.primary700}
               />
             </Pressable>
             <Pressable onPress={() => submitRating(3)}>
@@ -102,7 +102,7 @@ const Rating = ({rating, productId}: Props) => {
                     : 'star-outline'
                 }
                 size={24}
-                color={colors.primary[500]}
+                color={config.tokens.colors.primary700}
               />
             </Pressable>
             <Pressable
@@ -117,7 +117,7 @@ const Rating = ({rating, productId}: Props) => {
                     : 'star-outline'
                 }
                 size={24}
-                color={colors.primary[500]}
+                color={config.tokens.colors.primary700}
               />
             </Pressable>
             <Pressable
@@ -132,11 +132,11 @@ const Rating = ({rating, productId}: Props) => {
                     : 'star-outline'
                 }
                 size={24}
-                color={colors.primary[500]}
+                color={config.tokens.colors.primary700}
               />
             </Pressable>
           </HStack>
-          <Text fontFamily="body" fontWeight="bold" testID="rating">
+          <Text fontFamily="$heading" fontWeight="$normal" testID="rating">
             {itemRating}
           </Text>
         </HStack>

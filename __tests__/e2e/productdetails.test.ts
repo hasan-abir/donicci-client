@@ -46,7 +46,7 @@ describe('ProductDetails screen', () => {
     await emailField.typeText(email);
     await passwordField.typeText(password);
     const submitBtn = element(by.id('submit-btn'));
-    await submitBtn.tap();
+    await submitBtn.multiTap(2);
     await expect(element(by.id('user-greeting'))).toHaveText(
       'Welcome, Example User!',
     );

@@ -47,7 +47,7 @@ describe('Reviews screen', () => {
     await emailField.typeText(email);
     await passwordField.typeText(password);
     const submitBtn = element(by.id('submit-btn'));
-    await submitBtn.tap();
+    await submitBtn.multiTap(2);
     await expect(element(by.id('user-greeting'))).toHaveText(
       'Welcome, Example User!',
     );
@@ -105,7 +105,7 @@ describe('Reviews screen', () => {
     await emailField.typeText(email);
     await passwordField.typeText(password);
     const submitBtn = element(by.id('submit-btn'));
-    await submitBtn.tap();
+    await submitBtn.multiTap(2);
     await expect(element(by.id('user-greeting'))).toHaveText(
       'Welcome, Example User!',
     );
@@ -134,10 +134,10 @@ describe('Reviews screen', () => {
     await expect(reviewSubmit).toBeVisible();
 
     await reviewInput.typeText(' ');
-    await reviewSubmit.tap();
+    await reviewSubmit.multiTap(2);
     await expect(element(by.text('Description is wrong'))).toBeVisible();
     await reviewInput.typeText('Some description');
-    await reviewSubmit.tap();
+    await reviewSubmit.multiTap(2);
     await expect(element(by.text('Description is wrong'))).not.toBeVisible();
 
     await waitFor(element(by.id('review-author-123')))
@@ -164,7 +164,7 @@ describe('Reviews screen', () => {
 
     await element(scrollview).scrollTo('bottom');
     await expect(toReviewsBtn).toBeVisible();
-    await toReviewsBtn.tap();
+    await toReviewsBtn.multiTap(2);
 
     const reviewInput = element(by.id('review-input'));
     const reviewSubmit = element(by.id('review-submit'));
@@ -172,7 +172,7 @@ describe('Reviews screen', () => {
     await expect(reviewSubmit).toBeVisible();
 
     await reviewInput.typeText('Lorem');
-    await reviewSubmit.tap();
+    await reviewSubmit.multiTap(2);
 
     await waitFor(element(by.id('email')))
       .toBeVisible()

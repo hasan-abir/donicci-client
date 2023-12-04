@@ -2,7 +2,6 @@ import {AnimationResolver} from '@gluestack-style/animation-resolver';
 import {MotionAnimationDriver} from '@gluestack-style/legend-motion-animation-driver';
 import {createConfig} from '@gluestack-style/react';
 import {config as defaultConfig, componentsConfig} from '@gluestack-ui/config';
-// import * as componentsTheme from './theme';
 
 export const gluestackUIConfig = createConfig({
   aliases: {
@@ -25,13 +24,13 @@ export const gluestackUIConfig = createConfig({
       primary950: '#000711',
       secondary0: '#F6F6F6',
       secondary50: '#F3F3F3',
-      secondary100: '#E7E6F9',
+      secondary100: '#DDF4DE',
       secondary200: '#DADADA',
       secondary300: '#B0B0B0',
       secondary400: '#737373',
       secondary500: '#5F5F5F',
       secondary600: '#525252',
-      secondary700: '#94DC96',
+      secondary700: '#6CCF6F',
       secondary800: '#262626',
       secondary900: '#171717',
       secondary950: '#0C0C0C',
