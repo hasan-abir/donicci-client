@@ -1,9 +1,6 @@
-import type {CartItem} from '../context/RootContext';
-import demoCartItems from './demoCartItems.json';
-import demoProducts from './demoProducts.json';
 import 'react-native-get-random-values';
-import {v4 as uuidv4} from 'uuid';
 import axiosInstance from '../axios/instance';
+import type {CartItem} from '../context/RootContext';
 
 const fetchCartItems = async (token: string): Promise<CartItem[]> => {
   const res = await axiosInstance.get('/cart', {
