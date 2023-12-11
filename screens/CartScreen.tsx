@@ -2,17 +2,22 @@ import type {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {
   Box,
   Button,
+  ButtonText,
   Divider,
   FlatList,
   HStack,
   Spinner,
   Text,
   VStack,
-  useTheme,
-} from 'native-base';
+} from '@gluestack-ui/themed';
 import {memo, useCallback, useContext, useEffect, useState} from 'react';
 import CartItemDetails from '../components/CartItemDetails';
-import {CartItem, RootContext} from '../context/RootContext';
+import {
+  CartItem,
+  ErrorType,
+  RootContext,
+  getTokens,
+} from '../context/RootContext';
 import cartItemController from '../controllers/cartItemController';
 import type {RootTabParamList} from '../tabs/RootTab';
 
@@ -30,89 +35,98 @@ const CartScreen = ({route}: Props) => {
     clearCart,
     user,
     handleError,
-    token,
     setCartItems,
     calculateTheTotals,
   } = useContext(RootContext);
-  const {colors} = useTheme();
 
   const fetchUserCartItems = useCallback(async () => {
-    if (user && token) {
+    const tokens = await getTokens();
+
+    if (user && tokens.access) {
       try {
         setLoading(true);
-        clearCart();
+        clearCart(route.name);
 
-        const userItems = await cartItemController.fetchCartItems(token);
+        const userItems = await cartItemController.fetchCartItems(
+          tokens.access,
+        );
 
-        setCartItems(userItems);
+        setCartItems([...cartItems, ...userItems]);
         calculateTheTotals(userItems);
       } catch (error: any) {
-        handleError(error, route.name);
+        handleError(error, route.name, ErrorType.Fetch);
       } finally {
         setLoading(false);
       }
     }
-  }, [user, token]);
+  }, [user, cartItems]);
 
   useEffect(() => {
     fetchUserCartItems();
-  }, [user, token]);
+  }, [user]);
   return (
     <Box flex={1}>
       <FlatList
-        px={6}
+        py="$6"
+        px="$6"
         data={cartItems}
-        keyExtractor={(item, index) => item._id}
-        renderItem={({item}) => <PureCartItemDetails item={item} />}
+        keyExtractor={item => (item as CartItem)._id}
+        renderItem={({item}) => <PureCartItemDetails item={item as CartItem} />}
+        testID="flat-list"
         ListFooterComponent={() => (
           <Box justifyContent="center">
             {loading ? (
-              <Spinner color={colors.gray[300]} size="lg" />
+              <Spinner color="$coolGray300" size="large" />
             ) : cartItems.length > 0 ? (
               <Box>
                 <VStack
-                  backgroundColor={colors.white}
-                  mt={4}
-                  p={5}
-                  borderRadius={10}
-                  space={2}>
+                  backgroundColor="$white"
+                  mt="$4"
+                  p="$5"
+                  borderRadius="$sm"
+                  space="sm">
                   <HStack alignItems="center" justifyContent="space-between">
-                    <Text fontFamily="body">Sub Total</Text>
-                    <Text fontFamily="body">${cartSum.subTotal}</Text>
+                    <Text>Sub Total</Text>
+                    <Text testID="subtotal">${cartSum.subTotal}</Text>
                   </HStack>
                   <HStack alignItems="center" justifyContent="space-between">
-                    <Text fontFamily="body">Tax</Text>
-                    <Text fontFamily="body">${cartSum.tax}</Text>
+                    <Text>Tax</Text>
+                    <Text testID="tax">${cartSum.tax}</Text>
                   </HStack>
                   <Divider />
                   <HStack alignItems="center" justifyContent="space-between">
-                    <Text fontFamily="body">Total</Text>
-                    <Text fontFamily="body" fontSize="xl">
+                    <Text>Total</Text>
+                    <Text
+                      fontSize="$xl"
+                      fontFamily="$heading"
+                      fontWeight="$normal"
+                      color="$black"
+                      testID="total">
                       ${cartSum.total}
                     </Text>
                   </HStack>
                 </VStack>
                 <Button
-                  py={2}
-                  onPress={() => clearCart()}
-                  mt={6}
-                  mb={3}
-                  bgColor={colors.secondary[500]}
-                  _text={{fontFamily: 'body', fontWeight: 'bold'}}>
-                  Purchase
+                  py="$2"
+                  onPress={() => clearCart(route.name)}
+                  mt="$6"
+                  mb="$4"
+                  bgColor="$secondary700">
+                  <ButtonText fontFamily="$heading" fontWeight="$normal">
+                    PURCHASE
+                  </ButtonText>
                 </Button>
                 <Button
-                  mb={6}
-                  colorScheme="danger"
-                  onPress={() => clearCart()}
-                  _text={{fontFamily: 'body', fontWeight: 'bold'}}>
-                  Clear Cart
+                  onPress={() => clearCart(route.name)}
+                  bgColor="$error600"
+                  testID="clear-cart-btn">
+                  <ButtonText fontFamily="$heading" fontWeight="$normal">
+                    CLEAR
+                  </ButtonText>
                 </Button>
               </Box>
             ) : (
-              <Text fontFamily="body" mt={4}>
-                No items added yet
-              </Text>
+              <Text testID="no-items-text">No items added</Text>
             )}
           </Box>
         )}

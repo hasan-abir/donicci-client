@@ -2,7 +2,7 @@ import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {Box, HStack, Pressable, Spinner, Text} from '@gluestack-ui/themed';
 import {useContext, useEffect, useState, useCallback} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {ErrorType, RootContext} from '../context/RootContext';
+import {ErrorType, RootContext, getTokens} from '../context/RootContext';
 import ratingController from '../controllers/ratingController';
 import type {RootStackParamList} from '../stacks/RootStack';
 import type {StackNavigationProp} from '@react-navigation/stack';
@@ -36,8 +36,14 @@ const Rating = ({rating, productId}: Props) => {
         setLoading(true);
         clearError(ErrorType.Form);
 
-        if (user) {
-          const newRating = await ratingController.addRating(productId, score);
+        const tokens = await getTokens();
+
+        if (user && tokens.access) {
+          const newRating = await ratingController.addRating(
+            productId,
+            score,
+            tokens.access,
+          );
 
           setItemRating(newRating);
         } else {

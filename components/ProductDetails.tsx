@@ -6,7 +6,7 @@ import {
   HStack,
   Text,
 } from '@gluestack-ui/themed';
-import {useContext, useState} from 'react';
+import {useCallback, useContext, useEffect, useState} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {RootContext} from '../context/RootContext';
 import ImageGallery from './ImageGallery';
@@ -22,9 +22,13 @@ interface Props {
 }
 
 const ProductDetails = ({product}: Props) => {
+  const [isInCart, setIsInCart] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+
   const route = useRoute<RouteProp<RootStackParamList & RootTabParamList>>();
 
-  const {addItemToCart, removeItemFromCart, inCart} = useContext(RootContext);
+  const {addItemToCart, removeItemFromCart, inCart, cartItems} =
+    useContext(RootContext);
 
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
 
@@ -38,6 +42,27 @@ const ProductDetails = ({product}: Props) => {
       setSelectedQuantity(selectedQuantity - 1);
     }
   };
+
+  const addToCart = useCallback(async () => {
+    setLoading(true);
+    await addItemToCart(product, selectedQuantity, route.name);
+  }, [selectedQuantity]);
+
+  const removeFromCart = useCallback(async () => {
+    setLoading(true);
+    await removeItemFromCart(product._id, route.name);
+  }, []);
+
+  const onMount = useCallback(async () => {
+    const productInCart: boolean = await inCart(product._id);
+
+    setIsInCart(productInCart);
+    setLoading(false);
+  }, [cartItems]);
+
+  useEffect(() => {
+    onMount();
+  }, [cartItems]);
 
   return (
     <Box mb="$8">
@@ -79,12 +104,13 @@ const ProductDetails = ({product}: Props) => {
       <StarRating rating={product.user_rating} productId={product._id} />
       {product.quantity && product.quantity > 0 ? (
         <Box mb="$6">
-          {inCart(product._id) ? (
+          {isInCart ? (
             <Button
               py="$2"
               px="$6"
               borderRadius="$sm"
-              onPress={() => removeItemFromCart(product._id, route.name)}
+              onPress={() => removeFromCart()}
+              isDisabled={loading}
               bgColor="$secondary700"
               testID="remove-from-cart">
               <ButtonText fontFamily="$heading" fontWeight="$normal">
@@ -117,9 +143,8 @@ const ProductDetails = ({product}: Props) => {
                 py="$2"
                 px="$6"
                 borderRadius="$sm"
-                onPress={() =>
-                  addItemToCart(product, selectedQuantity, route.name)
-                }
+                onPress={() => addToCart()}
+                isDisabled={loading}
                 bgColor="$secondary700"
                 testID="add-to-cart">
                 <ButtonText fontFamily="$heading" fontWeight="$normal">

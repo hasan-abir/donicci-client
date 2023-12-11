@@ -33,10 +33,10 @@ export const tabScreens: {
     component: HomeScreen,
     icon: 'home',
   },
-  // Cart: {
-  //   component: CartScreen,
-  //   icon: 'cart',
-  // },
+  Cart: {
+    component: CartScreen,
+    icon: 'cart',
+  },
   Categories: {
     component: CategoryListScreen,
     icon: 'list',

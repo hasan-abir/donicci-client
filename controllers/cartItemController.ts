@@ -3,109 +3,45 @@ import demoCartItems from './demoCartItems.json';
 import demoProducts from './demoProducts.json';
 import 'react-native-get-random-values';
 import {v4 as uuidv4} from 'uuid';
+import axiosInstance from '../axios/instance';
 
-const fetchCartItems = (token: string): Promise<CartItem[]> => {
-  return new Promise((resolve, reject) => {
-    let data: CartItem[] = [];
-
-    const error: boolean = false;
-
-    data = demoCartItems.cartItems
-      .filter(item => item.user_id === '1')
-      .map(item => {
-        const product = demoProducts.products.find(
-          product => product._id === item.product_id,
-        );
-
-        if (product) {
-          return {
-            _id: item._id,
-            product: {
-              _id: product?._id,
-              title: product?.title,
-              images: product?.images,
-              price: product?.price,
-              quantity: product?.quantity,
-            },
-            selectedQuantity: item.selected_quantity,
-            updated_at: item.updated_at,
-            created_at: item.created_at,
-          };
-        }
-      }) as CartItem[];
-
-    if (error) {
-      const errObj: any = new Error();
-      errObj.response = {
-        status: 500,
-        data: {msg: "Sommin'"},
-      };
-
-      reject(errObj);
-    }
-
-    resolve(data);
+const fetchCartItems = async (token: string): Promise<CartItem[]> => {
+  const res = await axiosInstance.get('/cart', {
+    headers: {Authorization: 'Bearer ' + token},
   });
+
+  return res.data;
 };
 
-const addCartItem = (
+const addCartItem = async (
   token: string,
   productId: string,
   selectedQuantity: number,
 ): Promise<CartItem> => {
-  return new Promise((resolve, reject) => {
-    let data: CartItem | null = null;
-    const error: boolean = false;
+  const res = await axiosInstance.post(
+    '/cart',
+    {item: {product_id: productId, selected_quantity: selectedQuantity}},
+    {headers: {Authorization: 'Bearer ' + token}},
+  );
 
-    const product = demoProducts.products.find(
-      product => product._id === productId,
-    );
+  return res.data;
+};
 
-    if (product) {
-      data = {
-        _id: uuidv4(),
-        product: {
-          _id: product._id,
-          title: product.title,
-          images: product.images,
-          price: product.price,
-          quantity: product.quantity,
-        },
-        selectedQuantity: selectedQuantity,
-        updated_at: '2023-03-04T06:27:45.282+00:00',
-        created_at: '2023-03-05T06:27:45.282+00:00',
-      };
-    }
-
-    if (error) {
-      const errObj: any = new Error();
-      errObj.response = {
-        status: 500,
-        data: {msg: "Sommin'"},
-      };
-
-      reject(errObj);
-    }
-
-    resolve(data as CartItem);
+const removeCartItem = async (token: string, id: string): Promise<void> => {
+  await axiosInstance.delete('/cart/' + id, {
+    headers: {Authorization: 'Bearer ' + token},
   });
 };
 
-const removeCartItem = (token: string, id: string): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    const error: boolean = false;
+const removeAllCartItems = async (token: string): Promise<void> => {
+  await axiosInstance.delete('/cart/all', {
+    headers: {Authorization: 'Bearer ' + token},
+  });
+};
 
-    if (error) {
-      const errObj: any = new Error();
-      errObj.response = {
-        status: 500,
-        data: {msg: "Sommin'"},
-      };
-
-      reject(errObj);
-    }
-
-    resolve();
+const isInCart = async (token: string, productId: string): Promise<void> => {
+  await axiosInstance.get('/cart/is-in-cart/' + productId, {
+    headers: {Authorization: 'Bearer ' + token},
   });
 };
 
@@ -113,4 +49,6 @@ export default {
   fetchCartItems,
   addCartItem,
   removeCartItem,
+  removeAllCartItems,
+  isInCart,
 };

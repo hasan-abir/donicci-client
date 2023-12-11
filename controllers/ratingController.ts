@@ -1,13 +1,14 @@
 import axiosInstance from '../axios/instance';
-import {getTokens} from '../context/RootContext';
 
-const addRating = async (productId: string, score: number): Promise<number> => {
-  const {access} = await getTokens();
-
+const addRating = async (
+  productId: string,
+  score: number,
+  token: string,
+): Promise<number> => {
   const res = await axiosInstance.post<{average_score: number}>(
     '/ratings',
     {product_id: productId, score},
-    {headers: {Authorization: 'Bearer ' + access}},
+    {headers: {Authorization: 'Bearer ' + token}},
   );
 
   return res.data.average_score;

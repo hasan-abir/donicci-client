@@ -31,14 +31,12 @@ interface GlobalError {
 
 export interface CartItem {
   _id: string;
-  product: {
-    _id: string;
-    title: string;
-    images: ImageType[];
-    price: number;
-    quantity: number;
-  };
-  selectedQuantity: number;
+  product_id: string;
+  product_image: ImageType;
+  product_title: string;
+  product_price: number;
+  product_quantity: number;
+  selected_quantity: number;
   updated_at?: string;
   created_at?: string;
 }
@@ -70,10 +68,10 @@ interface Value {
   ) => Promise<void>;
   removeItemFromCart: (productId: string, screen: string) => Promise<void>;
   calculateTheTotals: (items: CartItem[]) => void;
-  inCart: (productId: string) => boolean;
+  inCart: (productId: string) => Promise<boolean>;
   cartSum: CartSum;
   updateSelectedQuantity: (productId: string, add: boolean) => void;
-  clearCart: () => void;
+  clearCart: (screen: string) => Promise<void>;
 }
 
 export const RootContext = React.createContext<Value>({
@@ -114,9 +112,15 @@ export const RootContext = React.createContext<Value>({
       resolve();
     }),
   calculateTheTotals: () => {},
-  inCart: () => false,
+  inCart: () =>
+    new Promise((resolve, reject) => {
+      resolve(false);
+    }),
   updateSelectedQuantity: () => {},
-  clearCart: () => {},
+  clearCart: () =>
+    new Promise((resolve, reject) => {
+      resolve();
+    }),
 });
 
 export const getTokens = async (): Promise<Tokens> => {
@@ -258,7 +262,7 @@ const RootContextProvider = ({children}: Props) => {
     const subTotal = Math.round(
       items
         .map(item => {
-          return item.product.price * item.selectedQuantity;
+          return item.product_price * item.selected_quantity;
         })
         .reduce((a, b) => a + b, 0),
     );
@@ -288,14 +292,12 @@ const RootContextProvider = ({children}: Props) => {
       } else {
         cartItem = {
           _id: uuidv4(),
-          product: {
-            _id: product._id,
-            title: product.title,
-            images: product.images,
-            quantity: product.quantity as number,
-            price: product.price,
-          },
-          selectedQuantity,
+          product_id: product._id,
+          product_image: product.images[0],
+          product_title: product.title,
+          product_quantity: product.quantity,
+          product_price: product.price,
+          selected_quantity: selectedQuantity,
         };
       }
       const updatedCartItems = [...cartItems, cartItem as CartItem];
@@ -308,7 +310,7 @@ const RootContextProvider = ({children}: Props) => {
 
   const removeItemFromCart = async (productId: string, screen: string) => {
     try {
-      const cartItem = cartItems.find(item => item.product._id === productId);
+      const cartItem = cartItems.find(item => item.product_id === productId);
       if (!cartItem) return;
 
       const tokens = await getTokens();
@@ -326,15 +328,15 @@ const RootContextProvider = ({children}: Props) => {
     }
   };
 
-  const updateSelectedQuantity = (productId: string, add: boolean) => {
+  const updateSelectedQuantity = (cartItemId: string, add: boolean) => {
     const updatedCartItems = cartItems.map(item => {
-      if (item._id === productId && item.product.quantity) {
-        if (add && item.selectedQuantity < item.product.quantity) {
-          item.selectedQuantity++;
+      if (item._id === cartItemId && item.product_quantity) {
+        if (add && item.selected_quantity < item.product_quantity) {
+          item.selected_quantity++;
         }
 
-        if (!add && item.selectedQuantity > 1) {
-          item.selectedQuantity--;
+        if (!add && item.selected_quantity > 1) {
+          item.selected_quantity--;
         }
       }
 
@@ -345,13 +347,42 @@ const RootContextProvider = ({children}: Props) => {
     calculateTheTotals(updatedCartItems);
   };
 
-  const clearCart = () => {
-    setCartItems([]);
-    setCartSum({subTotal: 0, tax: 0, total: 0});
+  const clearCart = async (screen: string) => {
+    try {
+      clearError(ErrorType.Form);
+
+      const tokens = await getTokens();
+
+      if (user && tokens.access) {
+        await cartItemController.removeAllCartItems(tokens.access);
+      }
+
+      setCartItems([]);
+
+      setCartSum({subTotal: 0, tax: 0, total: 0});
+    } catch (error) {
+      handleError(error, screen, ErrorType.Form);
+    }
   };
 
-  const inCart = (productId: string) => {
-    return cartItems.map(item => item.product._id).includes(productId);
+  const inCart = async (productId: string) => {
+    let itemExists: boolean = false;
+
+    try {
+      const tokens = await getTokens();
+
+      if (user && tokens.access) {
+        await cartItemController.isInCart(tokens.access, productId);
+
+        itemExists = true;
+      } else {
+        itemExists = cartItems.map(item => item.product_id).includes(productId);
+      }
+    } catch (err) {
+      itemExists = false;
+    }
+
+    return itemExists;
   };
   return (
     <RootContext.Provider

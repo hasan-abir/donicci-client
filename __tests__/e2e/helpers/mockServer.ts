@@ -2,6 +2,7 @@ import express from 'express';
 import demoProducts from '../helpers/demoProducts.json';
 import demoCategories from '../helpers/demoCategories.json';
 import demoReviews from '../helpers/demoReviews.json';
+import demoCartItems from '../helpers/demoCartItems.json';
 import {Product} from '../../../components/ProductItem';
 import {Category} from '../../../components/CategoryItem';
 import {Review} from '../../../components/UserReview';
@@ -193,6 +194,45 @@ app.post('/reviews', (req, res) => {
     });
   } else {
     res.status(400).json({msg: 'Description is wrong'});
+  }
+});
+
+app.get('/cart', (req, res) => {
+  res.json(demoCartItems.cartItems);
+});
+
+// app.post('/cart', (req, res) => {
+//   res.json({
+//     _id: '9',
+//     selected_quantity: req.body.item.selected_quantity,
+//     product_image: {
+//       url: 'https://picsum.photos/seed/1/300/200',
+//       fileId: '1',
+//     },
+//     product_title:
+//       'Pellentesque pellentesque nisi ut nibh dapibus, ac lacinia nulla imperdiet.',
+//     product_price: 29.99,
+//     product_quantity: 5,
+//     product_id: req.body.item.product_id,
+//     user_id: '1',
+//     updated_at: '2023-03-03T06:27:45.282+00:00',
+//     created_at: '2023-03-03T06:27:45.282+00:00',
+//   });
+// });
+
+// app.delete('/cart', (req, res) => {
+//   res.sendStatus(200);
+// });
+
+app.get('/cart/is-in-cart/:product_id', (req, res) => {
+  if (
+    demoCartItems.cartItems
+      .map(item => item.product_id)
+      .includes(req.params.product_id)
+  ) {
+    res.sendStatus(201);
+  } else {
+    res.sendStatus(400);
   }
 });
 

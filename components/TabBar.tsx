@@ -57,7 +57,7 @@ const TabBar = ({state, descriptors, navigation}: BottomTabBarProps) => {
               {isActive ? (
                 <Text
                   fontFamily="$heading"
-                  fontWeight="$bold"
+                  fontWeight="$normal"
                   color="$primary700">
                   {label || route.name}
                 </Text>
@@ -72,8 +72,9 @@ const TabBar = ({state, descriptors, navigation}: BottomTabBarProps) => {
                   right={-2}>
                   <BadgeText
                     fontFamily="$heading"
-                    fontWeight="$bold"
-                    color="$white">
+                    fontWeight="$normal"
+                    color="$white"
+                    testID="cart-items-length">
                     {cartItems.length}
                   </BadgeText>
                 </Badge>
