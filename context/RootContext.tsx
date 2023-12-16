@@ -70,7 +70,7 @@ interface Value {
   calculateTheTotals: (items: CartItem[]) => void;
   inCart: (productId: string) => Promise<boolean>;
   cartSum: CartSum;
-  updateSelectedQuantity: (productId: string, add: boolean) => void;
+  updateSelectedQuantity: (cartItemId: string, add: boolean) => void;
   clearCart: (screen: string) => Promise<void>;
 }
 
