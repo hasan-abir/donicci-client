@@ -13,10 +13,10 @@ import {RootContext} from '../../../context/RootContext';
 jest.mock('../../../components/SearchForm', () => 'SearchForm');
 
 describe('StackHeader', () => {
-  it('renders correctly', () => {
+  it('renders correctly when not in bottom tabs AND not in search', () => {
     const navigation = {canGoBack: jest.fn()};
     const options = {title: 'Lorem'};
-    const route = {name: 'Home'};
+    const route = {name: 'Login'};
 
     const props = {
       navigation,
@@ -31,9 +31,65 @@ describe('StackHeader', () => {
     );
 
     expect(screen.queryByText(options.title)).toBeOnTheScreen();
+    expect(screen.queryByTestId('back-btn')).toBeOnTheScreen();
+    expect(screen.queryByTestId('search-box')).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('logout-btn')).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('login-btn')).not.toBeOnTheScreen();
   });
 
-  it('renders SearchForm correctly', () => {
+  it('renders correctly when in bottom tabs AND authorized', () => {
+    const navigation = {canGoBack: jest.fn()};
+    const options = {title: 'Lorem'};
+    const route = {name: 'Home'};
+
+    const props = {
+      navigation,
+      options,
+      route,
+    };
+
+    render(
+      <RootContext.Provider value={{user: {username: 'Hasan'}} as any}>
+        <UIProvider>
+          <StackHeader {...(props as any)} />
+        </UIProvider>
+      </RootContext.Provider>,
+    );
+
+    expect(screen.queryByText(options.title)).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('back-btn')).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('search-box')).toBeOnTheScreen();
+    expect(screen.queryByTestId('logout-btn')).toBeOnTheScreen();
+    expect(screen.queryByTestId('login-btn')).not.toBeOnTheScreen();
+  });
+
+  it('renders correctly when in bottom tabs AND not authorized', () => {
+    const navigation = {canGoBack: jest.fn()};
+    const options = {title: 'Lorem'};
+    const route = {name: 'Home'};
+
+    const props = {
+      navigation,
+      options,
+      route,
+    };
+
+    render(
+      <RootContext.Provider value={{user: null} as any}>
+        <UIProvider>
+          <StackHeader {...(props as any)} />
+        </UIProvider>
+      </RootContext.Provider>,
+    );
+
+    expect(screen.queryByText(options.title)).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('back-btn')).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('search-box')).toBeOnTheScreen();
+    expect(screen.queryByTestId('logout-btn')).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('login-btn')).toBeOnTheScreen();
+  });
+
+  it('renders correctly when in search', () => {
     const navigation = {canGoBack: jest.fn()};
     const options = {title: 'Lorem'};
     const route = {name: 'Search'};
@@ -45,12 +101,18 @@ describe('StackHeader', () => {
     };
 
     render(
-      <UIProvider>
-        <StackHeader {...(props as any)} />
-      </UIProvider>,
+      <RootContext.Provider value={{user: null} as any}>
+        <UIProvider>
+          <StackHeader {...(props as any)} />
+        </UIProvider>
+      </RootContext.Provider>,
     );
 
     expect(screen.queryByText(options.title)).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('back-btn')).toBeOnTheScreen();
+    expect(screen.queryByTestId('search-box')).toBeOnTheScreen();
+    expect(screen.queryByTestId('logout-btn')).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('login-btn')).not.toBeOnTheScreen();
   });
 
   it('back button works correctly', () => {

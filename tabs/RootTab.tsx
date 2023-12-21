@@ -11,8 +11,6 @@ import CartScreen from '../screens/CartScreen';
 import CategoryListScreen from '../screens/CategoryListScreen';
 import HomeScreen from '../screens/HomeScreen';
 
-import TabHeader from '../components/TabHeader';
-
 import TabBar from '../components/TabBar';
 import {RootContext} from '../context/RootContext';
 import {Box, Text, Spinner} from '@gluestack-ui/themed';

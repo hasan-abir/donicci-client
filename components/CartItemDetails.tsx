@@ -6,7 +6,7 @@ import {
   Image,
   Text,
 } from '@gluestack-ui/themed';
-import {useContext} from 'react';
+import {useCallback, useContext, useState} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {CartItem, RootContext} from '../context/RootContext';
 import {RouteProp, useRoute} from '@react-navigation/native';
@@ -18,9 +18,17 @@ type Props = {
 };
 
 const CartItemDetails = ({item}: Props) => {
+  const [loading, setLoading] = useState<boolean | undefined>(undefined);
+
   const route = useRoute<RouteProp<RootTabParamList>>();
 
   const {updateSelectedQuantity, removeItemFromCart} = useContext(RootContext);
+
+  const removeCartItem = useCallback(async () => {
+    setLoading(true);
+    await removeItemFromCart(item.product_id, route.name);
+    setLoading(undefined);
+  }, []);
 
   return (
     <Box backgroundColor="$white" mb="$4" p="$5" borderRadius="$lg">
@@ -84,7 +92,8 @@ const CartItemDetails = ({item}: Props) => {
         px="$2"
         py="$1"
         backgroundColor="$error600"
-        onPress={() => removeItemFromCart(item.product_id, route.name)}
+        isDisabled={loading}
+        onPress={removeCartItem}
         testID={'item-' + item.product_id + '-remove'}>
         <ButtonText fontFamily="$heading" fontWeight="$normal">
           REMOVE

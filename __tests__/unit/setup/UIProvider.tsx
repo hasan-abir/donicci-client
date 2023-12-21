@@ -1,4 +1,5 @@
-import {NativeBaseProvider} from 'native-base';
+import {GluestackUIProvider} from '@gluestack-ui/themed';
+import {config} from '../../../config/gluestack-ui.config';
 
 interface Props {
   children: JSX.Element;
@@ -10,11 +11,7 @@ const inset = {
 };
 
 const UIProvider = ({children}: Props) => {
-  return (
-    <NativeBaseProvider initialWindowMetrics={inset}>
-      {children}
-    </NativeBaseProvider>
-  );
+  return <GluestackUIProvider config={config}>{children}</GluestackUIProvider>;
 };
 
 export default UIProvider;

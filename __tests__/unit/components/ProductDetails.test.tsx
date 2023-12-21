@@ -8,7 +8,13 @@ import ProductDetails from '../../../components/ProductDetails';
 import demoProducts from '../../e2e/helpers/demoProducts.json';
 import UIProvider from '../setup/UIProvider';
 
-import {fireEvent, render, screen} from '@testing-library/react-native';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  act,
+} from '@testing-library/react-native';
 import {Product} from '../../../components/ProductItem';
 import {RootContext} from '../../../context/RootContext';
 
@@ -22,14 +28,28 @@ jest.mock('../../../components/ImageGallery', () => 'ImageGallery');
 jest.mock('../../../components/StarRating', () => 'StarRating');
 
 describe('ProductDetails', () => {
-  it('renders correctly', () => {
+  it('renders correctly', async () => {
     const product: Product = demoProducts.products[0];
+    const inCart = jest.fn(() => Promise.resolve(false));
 
     render(
-      <UIProvider>
-        <ProductDetails product={product} />
-      </UIProvider>,
+      <RootContext.Provider value={{inCart} as any}>
+        <UIProvider>
+          <ProductDetails product={product} />
+        </UIProvider>
+      </RootContext.Provider>,
     );
+
+    const addToCartBtn = screen.getByTestId('add-to-cart');
+
+    expect(addToCartBtn).toBeDisabled();
+
+    await waitFor(() => {
+      expect(inCart).toBeCalledWith(product._id);
+    });
+
+    expect(addToCartBtn).toBeOnTheScreen();
+    expect(addToCartBtn).not.toBeDisabled();
 
     expect(screen.queryByTestId('title')).toBeOnTheScreen();
     expect(screen.queryByTestId('title')).toHaveTextContent(product.title);
@@ -59,25 +79,46 @@ describe('ProductDetails', () => {
       }
     }
   });
-  it('renders out of stock correctly', () => {
-    const product: Product = demoProducts.products[2];
+  it('renders out of stock correctly', async () => {
+    const product: Product = demoProducts.products[3];
+    const inCart = jest.fn(() => Promise.resolve(false));
 
     render(
-      <UIProvider>
-        <ProductDetails product={product} />
-      </UIProvider>,
+      <RootContext.Provider value={{inCart} as any}>
+        <UIProvider>
+          <ProductDetails product={product} />
+        </UIProvider>
+      </RootContext.Provider>,
     );
+
+    await waitFor(() => {
+      expect(inCart).toBeCalledWith(product._id);
+    });
 
     expect(screen.queryByTestId('out-of-stock')).toBeOnTheScreen();
   });
-  it('increase quantity correctly', () => {
+  it('increase quantity correctly', async () => {
     const product: Product = demoProducts.products[0];
+    const inCart = jest.fn(() => Promise.resolve(false));
 
     render(
-      <UIProvider>
-        <ProductDetails product={product} />
-      </UIProvider>,
+      <RootContext.Provider value={{inCart} as any}>
+        <UIProvider>
+          <ProductDetails product={product} />
+        </UIProvider>
+      </RootContext.Provider>,
     );
+
+    const addToCartBtn = screen.getByTestId('add-to-cart');
+
+    expect(addToCartBtn).toBeDisabled();
+
+    await waitFor(() => {
+      expect(inCart).toBeCalledWith(product._id);
+    });
+
+    expect(addToCartBtn).toBeOnTheScreen();
+    expect(addToCartBtn).not.toBeDisabled();
 
     fireEvent.press(screen.getByTestId('increase-quantity'));
 
@@ -87,14 +128,28 @@ describe('ProductDetails', () => {
     );
   });
 
-  it('decrease quantity correctly', () => {
+  it('decrease quantity correctly', async () => {
     const product: Product = demoProducts.products[0];
+    const inCart = jest.fn(() => Promise.resolve(false));
 
     render(
-      <UIProvider>
-        <ProductDetails product={product} />
-      </UIProvider>,
+      <RootContext.Provider value={{inCart} as any}>
+        <UIProvider>
+          <ProductDetails product={product} />
+        </UIProvider>
+      </RootContext.Provider>,
     );
+
+    const addToCartBtn = screen.getByTestId('add-to-cart');
+
+    expect(addToCartBtn).toBeDisabled();
+
+    await waitFor(() => {
+      expect(inCart).toBeCalledWith(product._id);
+    });
+
+    expect(addToCartBtn).toBeOnTheScreen();
+    expect(addToCartBtn).not.toBeDisabled();
 
     fireEvent.press(screen.getByTestId('increase-quantity'));
     fireEvent.press(screen.getByTestId('increase-quantity'));
@@ -106,14 +161,28 @@ describe('ProductDetails', () => {
     );
   });
 
-  it('avoids decreasing quantity below 1', () => {
+  it('avoids decreasing quantity below 1', async () => {
     const product: Product = demoProducts.products[0];
+    const inCart = jest.fn(() => Promise.resolve(false));
 
     render(
-      <UIProvider>
-        <ProductDetails product={product} />
-      </UIProvider>,
+      <RootContext.Provider value={{inCart} as any}>
+        <UIProvider>
+          <ProductDetails product={product} />
+        </UIProvider>
+      </RootContext.Provider>,
     );
+
+    const addToCartBtn = screen.getByTestId('add-to-cart');
+
+    expect(addToCartBtn).toBeDisabled();
+
+    await waitFor(() => {
+      expect(inCart).toBeCalledWith(product._id);
+    });
+
+    expect(addToCartBtn).toBeOnTheScreen();
+    expect(addToCartBtn).not.toBeDisabled();
 
     fireEvent.press(screen.getByTestId('decrease-quantity'));
 
@@ -123,29 +192,47 @@ describe('ProductDetails', () => {
     );
   });
 
-  it('adds item to cart correctly', () => {
+  it('adds item to cart correctly', async () => {
     const product: Product = demoProducts.products[0];
-    const inCart = jest.fn(() => false);
-    const addItemToCart = jest.fn();
+    const inCart = jest.fn(() => Promise.resolve(false));
+    const addItemToCart = jest.fn(() => Promise.resolve(null));
 
     render(
       <UIProvider>
-        <RootContext.Provider value={{addItemToCart, inCart} as any}>
+        <RootContext.Provider
+          value={{addItemToCart, inCart, cartItems: []} as any}>
           <ProductDetails product={product} />
         </RootContext.Provider>
       </UIProvider>,
     );
 
-    fireEvent.press(screen.getByTestId('add-to-cart'));
+    const addToCartBtn = screen.getByTestId('add-to-cart');
 
-    expect(addItemToCart).toBeCalledTimes(1);
-    expect(addItemToCart).toBeCalledWith(product, 1, mockedRoute.name);
+    expect(addToCartBtn).toBeDisabled();
+
+    await waitFor(() => {
+      expect(inCart).toBeCalledWith(product._id);
+    });
+
+    expect(addToCartBtn).toBeOnTheScreen();
+    expect(addToCartBtn).not.toBeDisabled();
+
+    await act(() => {
+      fireEvent.press(addToCartBtn);
+    });
+
+    await waitFor(() => {
+      expect(addItemToCart).toBeCalledTimes(1);
+      expect(addItemToCart).toBeCalledWith(product, 1, mockedRoute.name);
+
+      expect(inCart).toHaveBeenCalled();
+    });
   });
 
-  it('removes item to cart correctly', () => {
+  it('removes item from cart correctly', async () => {
     const product: Product = demoProducts.products[0];
-    const inCart = jest.fn(() => true);
-    const removeItemFromCart = jest.fn();
+    const inCart = jest.fn(() => Promise.resolve(true));
+    const removeItemFromCart = jest.fn(() => Promise.resolve(null));
 
     render(
       <UIProvider>
@@ -155,9 +242,24 @@ describe('ProductDetails', () => {
       </UIProvider>,
     );
 
-    fireEvent.press(screen.getByTestId('remove-from-cart'));
+    await waitFor(() => {
+      expect(inCart).toBeCalledWith(product._id);
+    });
 
-    expect(removeItemFromCart).toBeCalledTimes(1);
-    expect(removeItemFromCart).toBeCalledWith('1', mockedRoute.name);
+    const removeCartItem = screen.getByTestId('remove-from-cart');
+
+    expect(removeCartItem).toBeOnTheScreen();
+    expect(removeCartItem).not.toBeDisabled();
+
+    await act(() => {
+      fireEvent.press(removeCartItem);
+    });
+
+    await waitFor(() => {
+      expect(removeItemFromCart).toBeCalledTimes(1);
+      expect(removeItemFromCart).toBeCalledWith(product._id, mockedRoute.name);
+
+      expect(inCart).toHaveBeenCalled();
+    });
   });
 });

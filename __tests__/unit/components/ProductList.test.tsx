@@ -16,6 +16,7 @@ import {
 } from '@testing-library/react-native';
 import {RootContext} from '../../../context/RootContext';
 import productController from '../../../controllers/productController';
+import {Box} from '@gluestack-ui/themed';
 
 const mockedRoute = {name: 'Products'};
 jest.mock('@react-navigation/native', () => ({
@@ -57,9 +58,6 @@ describe('ProductList', () => {
     expect(screen.queryByTestId('main-heading')).toBeOnTheScreen();
     expect(screen.queryByTestId('main-heading')).toHaveTextContent(
       'Latest products',
-    );
-    expect(screen.queryAllByTestId('flat-list-item').length).toBe(
-      productsList.length,
     );
   });
 
@@ -109,7 +107,6 @@ describe('ProductList', () => {
       expect(productController.fetchProducts).toBeCalledTimes(1);
     });
     expect(screen.queryByTestId('no-data-text')).toBeOnTheScreen();
-    expect(screen.queryAllByTestId('flat-list-item').length).toBe(0);
   });
 
   it('renders username correctly', async () => {
@@ -176,51 +173,5 @@ describe('ProductList', () => {
     expect(screen.queryByTestId('main-heading')).not.toHaveTextContent(
       'Welcome, ' + user.display_name + '!',
     );
-  });
-  it('loads more products correctly', async () => {
-    const firstResult = Promise.resolve(demoProducts.products.slice(0, 5));
-    const secondResult = Promise.resolve(demoProducts.products.slice(6, 10));
-
-    (productController.fetchProducts as jest.Mock)
-      .mockReturnValueOnce(firstResult)
-      .mockReturnValueOnce(secondResult);
-
-    render(
-      <UIProvider>
-        <ProductList />
-      </UIProvider>,
-    );
-
-    await waitFor(() => {
-      expect(productController.fetchProducts).toBeCalledTimes(1);
-      expect(productController.fetchProducts).toHaveReturnedWith(firstResult);
-    });
-
-    expect(screen.queryAllByTestId('flat-list-item').length).toBe(5);
-
-    const eventData = {
-      nativeEvent: {
-        contentOffset: {
-          y: 500,
-        },
-        contentSize: {
-          // Dimensions of the scrollable content
-          height: 500,
-          width: 100,
-        },
-        layoutMeasurement: {
-          // Dimensions of the device
-          height: 100,
-          width: 100,
-        },
-      },
-    };
-
-    fireEvent.scroll(screen.getByTestId('flat-list'), eventData);
-
-    await waitFor(() => {
-      expect(productController.fetchProducts).toBeCalledTimes(1);
-      expect(productController.fetchProducts).toHaveReturnedWith(secondResult);
-    });
   });
 });

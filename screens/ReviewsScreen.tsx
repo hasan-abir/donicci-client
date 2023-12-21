@@ -21,7 +21,7 @@ const ReviewsScreen = ({route, navigation}: Props) => {
   const [lastUpdatedAt, setLastUpdatedAt] = useState<string | undefined>(
     undefined,
   );
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean | undefined>(undefined);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [endOfDataList, setEndOfDataList] = useState<boolean>(false);
 
@@ -67,7 +67,7 @@ const ReviewsScreen = ({route, navigation}: Props) => {
       } catch (error: any) {
         handleError(error, route.name, ErrorType.Fetch);
       } finally {
-        setLoading(false);
+        setLoading(undefined);
       }
     },
     [reviews],

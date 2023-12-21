@@ -140,11 +140,7 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
         </Box>
       )}
       keyExtractor={(item, index) => (item as Product)._id}
-      renderItem={({item}) => (
-        <Box testID="flat-list-item">
-          <PureProductItem item={item as Product} />
-        </Box>
-      )}
+      renderItem={({item}) => <PureProductItem item={item as Product} />}
     />
   );
 };

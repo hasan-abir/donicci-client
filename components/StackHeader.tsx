@@ -67,7 +67,7 @@ const StackHeader = ({navigation, options, route}: StackHeaderProps) => {
           />
         ) : null}
         {inBottomTabsScreen || inSearchScreen ? (
-          <Box flex={1} mr="$4">
+          <Box flex={1} mr="$4" testID="search-box">
             <SearchForm />
           </Box>
         ) : null}

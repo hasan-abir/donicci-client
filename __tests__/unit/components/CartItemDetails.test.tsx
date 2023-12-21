@@ -6,11 +6,17 @@ import React from 'react';
 import 'react-native';
 import CartItemDetails from '../../../components/CartItemDetails';
 import {CartItem, RootContext} from '../../../context/RootContext';
-import demoCartItems from '../../../controllers/demoCartItems.json';
+import demoCartItems from '../../e2e/helpers/demoCartItems.json';
 import demoProducts from '../../e2e/helpers/demoProducts.json';
 import UIProvider from '../setup/UIProvider';
 
-import {fireEvent, render, screen} from '@testing-library/react-native';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react-native';
 
 const mockedRoute = {name: 'Cart'};
 jest.mock('@react-navigation/native', () => ({
@@ -21,13 +27,7 @@ jest.mock('@react-navigation/native', () => ({
 
 describe('CartItemDetails', () => {
   it('renders correctly', () => {
-    const cartItem: CartItem = {
-      ...demoCartItems.cartItems[0],
-      product: {
-        ...demoProducts.products[0],
-      },
-      selectedQuantity: 10,
-    };
+    const cartItem: CartItem = demoCartItems.cartItems[0];
 
     render(
       <UIProvider>
@@ -35,18 +35,20 @@ describe('CartItemDetails', () => {
       </UIProvider>,
     );
 
-    expect(screen.queryByText(cartItem.product.title)).toBeOnTheScreen();
-    expect(screen.queryByText('$' + cartItem.product.price)).toBeOnTheScreen();
+    expect(screen.queryByText(cartItem.product_title)).toBeOnTheScreen();
+    expect(screen.queryByText('$' + cartItem.product_price)).toBeOnTheScreen();
     expect(
       screen.queryByText(
         '$' +
-          Math.round(cartItem.product.price * cartItem.selectedQuantity * 100) /
+          Math.round(
+            cartItem.product_price * cartItem.selected_quantity * 100,
+          ) /
             100,
       ),
     ).toBeOnTheScreen();
     expect(
       screen.queryByText(
-        cartItem.selectedQuantity + ' of ' + cartItem.product.quantity,
+        cartItem.selected_quantity + ' of ' + cartItem.product_quantity,
       ),
     ).toBeOnTheScreen();
   });
@@ -54,13 +56,7 @@ describe('CartItemDetails', () => {
   it('increases quantity correctly', () => {
     const updateSelectedQuantity = jest.fn();
 
-    const cartItem: CartItem = {
-      ...demoCartItems.cartItems[0],
-      product: {
-        ...demoProducts.products[0],
-      },
-      selectedQuantity: 10,
-    };
+    const cartItem: CartItem = demoCartItems.cartItems[0];
 
     render(
       <UIProvider>
@@ -70,7 +66,9 @@ describe('CartItemDetails', () => {
       </UIProvider>,
     );
 
-    fireEvent.press(screen.getByTestId('increase-quantity'));
+    fireEvent.press(
+      screen.getByTestId('item-' + cartItem.product_id + '-increase-quantity'),
+    );
 
     expect(updateSelectedQuantity).toBeCalledTimes(1);
     expect(updateSelectedQuantity).toBeCalledWith(cartItem._id, true);
@@ -79,13 +77,7 @@ describe('CartItemDetails', () => {
   it('decreases quantity correctly', () => {
     const updateSelectedQuantity = jest.fn();
 
-    const cartItem: CartItem = {
-      ...demoCartItems.cartItems[0],
-      product: {
-        ...demoProducts.products[0],
-      },
-      selectedQuantity: 10,
-    };
+    const cartItem: CartItem = demoCartItems.cartItems[0];
 
     render(
       <UIProvider>
@@ -95,21 +87,17 @@ describe('CartItemDetails', () => {
       </UIProvider>,
     );
 
-    fireEvent.press(screen.getByTestId('decrease-quantity'));
+    fireEvent.press(
+      screen.getByTestId('item-' + cartItem.product_id + '-decrease-quantity'),
+    );
 
     expect(updateSelectedQuantity).toBeCalledTimes(1);
     expect(updateSelectedQuantity).toBeCalledWith(cartItem._id, false);
   });
-  it('removes cart item correctly', () => {
-    const removeItemFromCart = jest.fn();
+  it('removes cart item correctly', async () => {
+    const removeItemFromCart = jest.fn(() => Promise.resolve(null));
 
-    const cartItem: CartItem = {
-      ...demoCartItems.cartItems[0],
-      product: {
-        ...demoProducts.products[0],
-      },
-      selectedQuantity: 10,
-    };
+    const cartItem: CartItem = demoCartItems.cartItems[0];
 
     render(
       <UIProvider>
@@ -119,9 +107,22 @@ describe('CartItemDetails', () => {
       </UIProvider>,
     );
 
-    fireEvent.press(screen.getByText('REMOVE'));
+    const removeBtn = screen.getByTestId(
+      'item-' + cartItem.product_id + '-remove',
+    );
 
-    expect(removeItemFromCart).toBeCalledTimes(1);
-    expect(removeItemFromCart).toBeCalledWith(cartItem._id, mockedRoute.name);
+    await act(async () => {
+      fireEvent.press(removeBtn);
+
+      await waitFor(() => {
+        expect(removeItemFromCart).toBeCalledTimes(1);
+        expect(removeItemFromCart).toBeCalledWith(
+          cartItem.product_id,
+          mockedRoute.name,
+        );
+      });
+
+      expect(removeBtn).not.toBeDisabled();
+    });
   });
 });

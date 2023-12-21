@@ -23,7 +23,7 @@ interface Props {
 
 const ProductDetails = ({product}: Props) => {
   const [isInCart, setIsInCart] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean | undefined>(true);
 
   const route = useRoute<RouteProp<RootStackParamList & RootTabParamList>>();
 
@@ -56,8 +56,8 @@ const ProductDetails = ({product}: Props) => {
   const onMount = useCallback(async () => {
     const productInCart: boolean = await inCart(product._id);
 
+    setLoading(undefined);
     setIsInCart(productInCart);
-    setLoading(false);
   }, [cartItems]);
 
   useEffect(() => {

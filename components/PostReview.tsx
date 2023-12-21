@@ -11,7 +11,7 @@ import {useCallback, useState} from 'react';
 
 interface Props {
   postReview: (description: string) => Promise<void>;
-  disabled?: boolean;
+  disabled?: boolean | undefined;
 }
 
 interface PostReviewFormData {
@@ -20,12 +20,12 @@ interface PostReviewFormData {
 
 const PostReview = ({postReview, disabled}: Props) => {
   const [formData, setData] = useState<PostReviewFormData>({});
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean | undefined >(undefined);
 
   const onSubmit = useCallback(async () => {
     setLoading(true);
     await postReview(formData.description as string);
-    setLoading(false);
+    setLoading(undefined);
   }, [formData]);
 
   return (

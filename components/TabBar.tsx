@@ -56,6 +56,7 @@ const TabBar = ({state, descriptors, navigation}: BottomTabBarProps) => {
               <TabBarIcon icon={icon} focused={isActive} />
               {isActive ? (
                 <Text
+                  testID={route.name + '-label'}
                   fontFamily="$heading"
                   fontWeight="$normal"
                   color="$primary700">
