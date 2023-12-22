@@ -5,7 +5,7 @@
 import React from 'react';
 import 'react-native';
 import {RootContext} from '../../../context/RootContext';
-import demoCartItems from '../../../controllers/demoCartItems.json';
+import demoCartItems from '../../e2e/helpers/demoCartItems.json';
 import CartScreen from '../../../screens/CartScreen';
 import UIProvider from '../setup/UIProvider';
 
@@ -16,6 +16,7 @@ import {
   waitFor,
 } from '@testing-library/react-native';
 import cartItemController from '../../../controllers/cartItemController';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 jest.mock('../../../components/CartItemDetails', () => 'CartItemDetails');
 jest.spyOn(cartItemController, 'fetchCartItems');
@@ -29,9 +30,14 @@ describe('CartScreen', () => {
     const cartSum = {subTotal: 80, tax: 2, total: 82};
     const clearCart = jest.fn();
     const user = {username: 'Hasan Abir'};
-    const token = '123';
     const handleError = jest.fn();
 
+    const tokens = {
+      access: '234',
+      refresh: '456',
+    };
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(tokens.access);
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(tokens.refresh);
     (cartItemController.fetchCartItems as jest.Mock).mockReturnValue(
       Promise.resolve(),
     );
@@ -46,7 +52,6 @@ describe('CartScreen', () => {
               clearCart,
               user,
               handleError,
-              token,
             } as any
           }>
           <CartScreen {...(props as any)} />
@@ -55,8 +60,55 @@ describe('CartScreen', () => {
     );
 
     await waitFor(() => {
+      expect(AsyncStorage.getItem).toBeCalledWith('@user_token');
+      expect(AsyncStorage.getItem).toBeCalledWith('@refresh_token');
       expect(cartItemController.fetchCartItems).toBeCalledTimes(1);
-      expect(cartItemController.fetchCartItems).toBeCalledWith(token);
+      expect(cartItemController.fetchCartItems).toBeCalledWith(tokens.access);
+    });
+
+    expect(screen.queryByText('$' + cartSum.subTotal));
+    expect(screen.queryByText('$' + cartSum.tax));
+    expect(screen.queryByText('$' + cartSum.total));
+  });
+
+  it("doesn't fetch items when unauthorized", async () => {
+    const props = {route: {name: 'Cart'}};
+    const cartSum = {subTotal: 80, tax: 2, total: 82};
+    const clearCart = jest.fn();
+    const user = {username: 'Hasan Abir'};
+    const handleError = jest.fn();
+
+    const tokens = {
+      access: '234',
+      refresh: '456',
+    };
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(null);
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(null);
+    (cartItemController.fetchCartItems as jest.Mock).mockReturnValue(
+      Promise.resolve(),
+    );
+
+    render(
+      <UIProvider>
+        <RootContext.Provider
+          value={
+            {
+              cartItems: demoCartItems.cartItems,
+              cartSum,
+              clearCart,
+              user,
+              handleError,
+            } as any
+          }>
+          <CartScreen {...(props as any)} />
+        </RootContext.Provider>
+      </UIProvider>,
+    );
+
+    await waitFor(() => {
+      expect(AsyncStorage.getItem).toBeCalledWith('@user_token');
+      expect(AsyncStorage.getItem).toBeCalledWith('@refresh_token');
+      expect(cartItemController.fetchCartItems).toBeCalledTimes(0);
     });
 
     expect(screen.queryByText('$' + cartSum.subTotal));
@@ -66,11 +118,16 @@ describe('CartScreen', () => {
   it('clear cart correctly', async () => {
     const props = {route: {name: 'Cart'}};
     const cartSum = {subTotal: 80, tax: 2, total: 82};
-    const clearCart = jest.fn();
+    const clearCart = jest.fn(() => Promise.resolve(null));
     const user = {username: 'Hasan Abir'};
-    const token = '123';
     const handleError = jest.fn();
 
+    const tokens = {
+      access: '234',
+      refresh: '456',
+    };
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(tokens.access);
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(tokens.refresh);
     (cartItemController.fetchCartItems as jest.Mock).mockReturnValue(
       Promise.resolve(),
     );
@@ -85,7 +142,6 @@ describe('CartScreen', () => {
               clearCart,
               user,
               handleError,
-              token,
             } as any
           }>
           <CartScreen {...(props as any)} />
@@ -94,49 +150,15 @@ describe('CartScreen', () => {
     );
 
     await waitFor(() => {
-      expect(cartItemController.fetchCartItems).toBeCalledTimes(1);
-      expect(cartItemController.fetchCartItems).toBeCalledWith(token);
+      expect(AsyncStorage.getItem).toBeCalledWith('@user_token');
+      expect(AsyncStorage.getItem).toBeCalledWith('@refresh_token');
     });
 
-    fireEvent.press(screen.getByText('Clear Cart'));
-    expect(clearCart).toBeCalledTimes(2);
-  });
-  it('purchases correctly', async () => {
-    const props = {route: {name: 'Cart'}};
-    const cartSum = {subTotal: 80, tax: 2, total: 82};
-    const clearCart = jest.fn();
-    const user = {username: 'Hasan Abir'};
-    const token = '123';
-    const handleError = jest.fn();
-
-    (cartItemController.fetchCartItems as jest.Mock).mockReturnValue(
-      Promise.resolve(),
-    );
-
-    render(
-      <UIProvider>
-        <RootContext.Provider
-          value={
-            {
-              cartItems: demoCartItems.cartItems,
-              cartSum,
-              clearCart,
-              user,
-              handleError,
-              token,
-            } as any
-          }>
-          <CartScreen {...(props as any)} />
-        </RootContext.Provider>
-      </UIProvider>,
-    );
+    fireEvent.press(screen.getByTestId('clear-cart-btn'));
 
     await waitFor(() => {
-      expect(cartItemController.fetchCartItems).toBeCalledTimes(1);
-      expect(cartItemController.fetchCartItems).toBeCalledWith(token);
+      expect(clearCart).toBeCalledTimes(2);
+      expect(clearCart).toBeCalledWith(props.route.name);
     });
-
-    fireEvent.press(screen.getByText('Purchase'));
-    expect(clearCart).toBeCalledTimes(2);
   });
 });

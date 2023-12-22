@@ -136,11 +136,7 @@ const ReviewsScreen = ({route, navigation}: Props) => {
           </Box>
         }
         keyExtractor={(item, index) => (item as Review)._id}
-        renderItem={({item}) => (
-          <Box testID="flat-list-item">
-            <PureUserReview review={item as Review} />
-          </Box>
-        )}
+        renderItem={({item}) => <PureUserReview review={item as Review} />}
       />
     </Box>
   );
