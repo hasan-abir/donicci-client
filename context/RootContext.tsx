@@ -53,7 +53,6 @@ interface Value {
     input: RegisterInput | LoginInput,
     screen: string,
   ) => Promise<boolean>;
-  attemptRefreshToken: () => Promise<string>;
   verifyCurrentUser: () => Promise<void>;
   logOutUser: () => Promise<void>;
   error: GlobalError | null;
@@ -80,10 +79,6 @@ export const RootContext = React.createContext<Value>({
   authenticateUser: () =>
     new Promise((resolve, reject) => {
       resolve(false);
-    }),
-  attemptRefreshToken: () =>
-    new Promise((resolve, reject) => {
-      resolve('');
     }),
   verifyCurrentUser: () =>
     new Promise((resolve, reject) => {
@@ -128,6 +123,17 @@ export const getTokens = async (): Promise<Tokens> => {
   const refresh = await AsyncStorage.getItem('@refresh_token');
 
   return {access, refresh};
+};
+
+export const attemptRefreshToken = async () => {
+  const tokens = await getTokens();
+
+  const authResponse = await userController.refreshToken(tokens.refresh);
+
+  await AsyncStorage.setItem('@user_token', authResponse.access_token);
+  await AsyncStorage.setItem('@refresh_token', authResponse.refresh_token);
+
+  return authResponse.access_token;
 };
 
 type Props = {
@@ -179,16 +185,7 @@ const RootContextProvider = ({children}: Props) => {
     }
   };
 
-  const attemptRefreshToken = async () => {
-    const tokens = await getTokens();
-
-    const authResponse = await userController.refreshToken(tokens.refresh);
-
-    await AsyncStorage.setItem('@user_token', authResponse.access_token);
-    await AsyncStorage.setItem('@refresh_token', authResponse.refresh_token);
-
-    return authResponse.access_token;
-  };
+  
 
   const verifyCurrentUser = async () => {
     const tokens = await getTokens();
@@ -390,7 +387,6 @@ const RootContextProvider = ({children}: Props) => {
         user,
         authenticating,
         authenticateUser,
-        attemptRefreshToken,
         verifyCurrentUser,
         logOutUser,
         error,

@@ -18,6 +18,7 @@ import RootContextProvider, {
   CartItem,
   ErrorType,
   RootContext,
+  attemptRefreshToken
 } from '../../../context/RootContext';
 import type {
   LoginInput,
@@ -303,7 +304,6 @@ describe('RootContext', () => {
 
   describe('refreshToken', () => {
     const RefreshTokenComponent = () => {
-      const {attemptRefreshToken} = useContext(RootContext);
       const initialRequest = async () => {
         await attemptRefreshToken();
       };

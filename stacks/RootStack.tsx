@@ -2,10 +2,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import RootTab from '../tabs/RootTab';
 
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
-import {useContext, useEffect} from 'react';
-import axiosInstance from '../axios/instance';
 import StackHeader from '../components/StackHeader';
-import {RootContext} from '../context/RootContext';
 import CategoryProductsScreen from '../screens/CategoryProductsScreen';
 import LoginScreen from '../screens/LoginScreen';
 import ProductDetailsScreen from '../screens/ProductDetailsScreen';
@@ -13,13 +10,10 @@ import RegisterScreen from '../screens/RegisterScreen';
 import SearchScreen from '../screens/SearchScreen';
 import ReviewsScreen from '../screens/ReviewsScreen';
 import {config} from '../config/gluestack-ui.config';
-import HomeScreen from '../screens/HomeScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 const RootStack = () => {
-  const {attemptRefreshToken} = useContext(RootContext);
-
   const navTheme = {
     ...DefaultTheme,
     // Change app background
@@ -28,37 +22,6 @@ const RootStack = () => {
       background: config.tokens.colors.coolGray100,
     },
   };
-
-  useEffect(() => {
-    axiosInstance.interceptors.response.use(
-      response => {
-        return response;
-      },
-      async error => {
-        const config = error?.config;
-
-        if (
-          error.response &&
-          error.response.status === 401 &&
-          config.url !== '/auth/login'
-        ) {
-          try {
-            const newToken = await attemptRefreshToken();
-            config.headers = {
-              Authorization: 'Bearer ' + newToken,
-            };
-
-            // Loop original request
-            return axiosInstance(config);
-          } catch (err) {
-            return Promise.reject(error);
-          }
-        }
-
-        return Promise.reject(error);
-      },
-    );
-  });
 
   return (
     <NavigationContainer theme={navTheme}>

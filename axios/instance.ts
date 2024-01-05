@@ -1,8 +1,47 @@
 import axios from 'axios';
 import {API_URL} from './config';
+import {attemptRefreshToken} from '../context/RootContext';
 
 const axiosInstance = axios.create();
 
 axiosInstance.defaults.baseURL = API_URL;
+
+axiosInstance.interceptors.response.use(
+  response => {
+    if (response.data.length) {
+      for (let i = 0; i < response.data.length; i++) {
+        if (response.data[i]._id && response.data[i]._id.$oid) {
+          response.data[i]._id = response.data[i]._id.$oid;
+        }
+      }
+    } else if (response.data && response.data._id && response.data._id.$oid) {
+      response.data._id = response.data._id.$oid;
+    }
+
+    return response;
+  },
+  async error => {
+    const config = error?.config;
+
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      config.url !== '/auth/login'
+    ) {
+      try {
+        const newToken = await attemptRefreshToken();
+        config.headers = {
+          Authorization: 'Bearer ' + newToken,
+        };
+
+        // Loop original request
+        return axiosInstance(config);
+      } catch (err) {
+        return Promise.reject(error);
+      }
+    }
+    return Promise.reject(error);
+  },
+);
 
 export default axiosInstance;
