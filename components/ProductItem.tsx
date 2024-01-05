@@ -87,7 +87,7 @@ const ProductItem = ({item}: Props) => {
         fontFamily="$heading"
         fontWeight="$normal"
         testID={'product-price-' + item._id}>
-        ${item.price}
+        ${item.price / 100}
       </Text>
     </Pressable>
   );

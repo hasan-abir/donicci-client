@@ -87,11 +87,11 @@ const CartScreen = ({route}: Props) => {
                   space="sm">
                   <HStack alignItems="center" justifyContent="space-between">
                     <Text>Sub Total</Text>
-                    <Text testID="subtotal">${cartSum.subTotal}</Text>
+                    <Text testID="subtotal">${cartSum.subTotal / 100}</Text>
                   </HStack>
                   <HStack alignItems="center" justifyContent="space-between">
                     <Text>Tax</Text>
-                    <Text testID="tax">${cartSum.tax}</Text>
+                    <Text testID="tax">${cartSum.tax / 100}</Text>
                   </HStack>
                   <Divider />
                   <HStack alignItems="center" justifyContent="space-between">
@@ -102,7 +102,7 @@ const CartScreen = ({route}: Props) => {
                       fontWeight="$normal"
                       color="$black"
                       testID="total">
-                      ${cartSum.total}
+                      ${cartSum.total / 100}
                     </Text>
                   </HStack>
                 </VStack>

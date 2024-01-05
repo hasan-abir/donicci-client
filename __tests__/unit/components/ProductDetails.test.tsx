@@ -55,7 +55,7 @@ describe('ProductDetails', () => {
     expect(screen.queryByTestId('title')).toHaveTextContent(product.title);
     expect(screen.queryByTestId('price')).toBeOnTheScreen();
     expect(screen.queryByTestId('price')).toHaveTextContent(
-      '$' + product.price,
+      '$' + (product.price / 100),
     );
     expect(screen.queryByTestId('description')).toBeOnTheScreen();
     expect(screen.queryByTestId('description')).toHaveTextContent(

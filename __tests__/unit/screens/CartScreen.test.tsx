@@ -66,9 +66,9 @@ describe('CartScreen', () => {
       expect(cartItemController.fetchCartItems).toBeCalledWith(tokens.access);
     });
 
-    expect(screen.queryByText('$' + cartSum.subTotal));
-    expect(screen.queryByText('$' + cartSum.tax));
-    expect(screen.queryByText('$' + cartSum.total));
+    expect(screen.queryByText('$' + cartSum.subTotal / 100));
+    expect(screen.queryByText('$' + cartSum.tax / 100));
+    expect(screen.queryByText('$' + cartSum.total / 100));
   });
 
   it("doesn't fetch items when unauthorized", async () => {
@@ -111,9 +111,9 @@ describe('CartScreen', () => {
       expect(cartItemController.fetchCartItems).toBeCalledTimes(0);
     });
 
-    expect(screen.queryByText('$' + cartSum.subTotal));
-    expect(screen.queryByText('$' + cartSum.tax));
-    expect(screen.queryByText('$' + cartSum.total));
+    expect(screen.queryByText('$' + cartSum.subTotal / 100));
+    expect(screen.queryByText('$' + cartSum.tax / 100));
+    expect(screen.queryByText('$' + cartSum.total / 100));
   });
   it('clear cart correctly', async () => {
     const props = {route: {name: 'Cart'}};

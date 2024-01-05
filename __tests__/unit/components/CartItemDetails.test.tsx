@@ -36,14 +36,13 @@ describe('CartItemDetails', () => {
     );
 
     expect(screen.queryByText(cartItem.product_title)).toBeOnTheScreen();
-    expect(screen.queryByText('$' + cartItem.product_price)).toBeOnTheScreen();
+    expect(
+      screen.queryByText('$' + cartItem.product_price / 100),
+    ).toBeOnTheScreen();
     expect(
       screen.queryByText(
         '$' +
-          Math.round(
-            cartItem.product_price * cartItem.selected_quantity * 100,
-          ) /
-            100,
+          Math.round(cartItem.product_price * cartItem.selected_quantity) / 100,
       ),
     ).toBeOnTheScreen();
     expect(

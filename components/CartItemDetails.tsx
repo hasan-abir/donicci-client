@@ -69,7 +69,7 @@ const CartItemDetails = ({item}: Props) => {
         <HStack space="xs" alignItems="center">
           <Text>Price</Text>
           <Text fontFamily="$heading" fontWeight="$normal" color="$black">
-            ${item.product_price}
+            ${item.product_price / 100}
           </Text>
         </HStack>
       </HStack>
@@ -81,7 +81,7 @@ const CartItemDetails = ({item}: Props) => {
           fontWeight="$normal"
           color="$black"
           testID={'item-' + item.product_id + '-total'}>
-          ${Math.round(item.product_price * item.selected_quantity * 100) / 100}
+          ${Math.round(item.product_price * item.selected_quantity) / 100}
         </Text>
       </HStack>
       <Button

@@ -74,7 +74,7 @@ const ProductDetails = ({product}: Props) => {
         mt="$6"
         mb="$3"
         testID="price">
-        ${product.price}
+        ${product.price / 100}
       </Text>
       <Text mb="$6" fontSize="$xl" testID="title">
         {product.title}

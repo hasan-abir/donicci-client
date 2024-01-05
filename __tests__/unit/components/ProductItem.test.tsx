@@ -42,7 +42,7 @@ describe('ProductItem', () => {
     ).toBeOnTheScreen();
     expect(
       screen.queryByTestId('product-price-' + product._id),
-    ).toHaveTextContent('$' + product.price);
+    ).toHaveTextContent('$' + (product.price / 100));
     expect(
       screen.queryByTestId('product-rating-' + product._id),
     ).toBeOnTheScreen();

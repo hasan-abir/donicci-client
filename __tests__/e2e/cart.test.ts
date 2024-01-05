@@ -219,40 +219,40 @@ describe('Cart screen', () => {
 
     await expect(firstProductTotal).toBeVisible();
     await expect(firstProductTotal).toHaveText(
-      '$' + firstProduct.price.toString(),
+      '$' + (firstProduct.price / 100).toString(),
     );
 
     await expect(secondProductTotal).toBeVisible();
     await expect(secondProductTotal).toHaveText(
-      '$' + secondProduct.price.toString(),
+      '$' + (secondProduct.price / 100).toString(),
     );
 
     await expect(subtotal).toBeVisible();
-    await expect(subtotal).toHaveText('$70');
+    await expect(subtotal).toHaveText('$69.98');
     await expect(tax).toBeVisible();
-    await expect(tax).toHaveText('$4');
+    await expect(tax).toHaveText('$3.5');
     await expect(total).toBeVisible();
-    await expect(total).toHaveText('$74');
+    await expect(total).toHaveText('$73.48');
 
     await expect(firstProductIncreaseQuantity).toBeVisible();
     await firstProductIncreaseQuantity.tap();
     await expect(firstProductTotal).toHaveText(
-      '$' + (firstProduct.price * 2).toString(),
+      '$' + ((firstProduct.price / 100) * 2).toString(),
     );
-    await expect(subtotal).toHaveText('$100');
+    await expect(subtotal).toHaveText('$99.97');
     await expect(tax).toHaveText('$5');
-    await expect(total).toHaveText('$105');
+    await expect(total).toHaveText('$104.97');
     await expect(firstProductDecreaseQuantity).toBeVisible();
     await firstProductDecreaseQuantity.tap();
     await expect(firstProductTotal).toHaveText(
-      '$' + firstProduct.price.toString(),
+      '$' + (firstProduct.price / 100).toString(),
     );
-    await expect(total).toHaveText('$74');
+    await expect(total).toHaveText('$73.48');
 
     await expect(firstProductRemove).toBeVisible();
     await firstProductRemove.tap();
     await expect(firstProductTotal).not.toBeVisible();
-    await expect(total).toHaveText('$42');
+    await expect(total).toHaveText('$41.99');
 
     await waitFor(clearCart)
       .toBeVisible()

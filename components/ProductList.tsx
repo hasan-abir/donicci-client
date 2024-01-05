@@ -75,7 +75,7 @@ const ProductList = ({categoryId, term, headerTitle}: Props) => {
           setEndOfDataList(true);
         }
       } catch (error: any) {
-        handleError(error, 'Bla', ErrorType.Fetch);
+        handleError(error, route.name, ErrorType.Fetch);
       } finally {
         setLoading(false);
       }

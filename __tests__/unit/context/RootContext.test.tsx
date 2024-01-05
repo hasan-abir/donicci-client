@@ -581,37 +581,51 @@ describe('RootContext', () => {
     };
 
     it('calculates and displays the total correctly', async () => {
+      const cartItems = [...demoCartItems.cartItems]
+
       render(
         <RootContextProvider>
-          <CalculateTheTotalsComponent cartItems={demoCartItems.cartItems} />
+          <CalculateTheTotalsComponent cartItems={cartItems} />
         </RootContextProvider>,
       );
+
+      const expectedSubTotal = Math.round(cartItems.map(item => item.product_price * item.selected_quantity).reduce((a, b) => a + b, 0))
+
+      const expectedTax = Math.round(expectedSubTotal * 0.05)
+      const expectedTotal = Math.round(expectedSubTotal + expectedTax)
 
       const subTotal = screen.getByTestId('sub-total');
       const tax = screen.getByTestId('tax');
       const total = screen.getByTestId('total');
 
-      expect(subTotal).toHaveTextContent('1879');
-      expect(tax).toHaveTextContent('94');
-      expect(total).toHaveTextContent('1973');
+      expect(subTotal).toHaveTextContent(expectedSubTotal.toString());
+      expect(tax).toHaveTextContent(expectedTax.toString());
+      expect(total).toHaveTextContent(expectedTotal.toString());
     });
 
     it('calculates and displays the total correctly with less items', async () => {
+      const cartItems = [...demoCartItems.cartItems.slice(0, 2)]
+      
       render(
         <RootContextProvider>
           <CalculateTheTotalsComponent
-            cartItems={demoCartItems.cartItems.slice(0, 2)}
+            cartItems={cartItems}
           />
         </RootContextProvider>,
       );
 
+      const expectedSubTotal = Math.round(cartItems.map(item => item.product_price * item.selected_quantity).reduce((a, b) => a + b, 0))
+
+      const expectedTax = Math.round(expectedSubTotal * 0.05)
+      const expectedTotal = Math.round(expectedSubTotal + expectedTax)
+
       const subTotal = screen.getByTestId('sub-total');
       const tax = screen.getByTestId('tax');
       const total = screen.getByTestId('total');
 
-      expect(subTotal).toHaveTextContent('170');
-      expect(tax).toHaveTextContent('9');
-      expect(total).toHaveTextContent('179');
+      expect(subTotal).toHaveTextContent(expectedSubTotal.toString());
+      expect(tax).toHaveTextContent(expectedTax.toString());
+      expect(total).toHaveTextContent(expectedTotal.toString());
     });
   });
 
@@ -683,9 +697,9 @@ describe('RootContext', () => {
         expect(AsyncStorage.getItem).toBeCalledWith('@refresh_token');
       });
 
-      expect(subTotal).toHaveTextContent('410');
-      expect(tax).toHaveTextContent('21');
-      expect(total).toHaveTextContent('431');
+      expect(subTotal).toHaveTextContent('40985');
+      expect(tax).toHaveTextContent('2049');
+      expect(total).toHaveTextContent('43034');
     });
 
     it('adds product, calculates, and displays the total correctly from api', async () => {
@@ -740,9 +754,9 @@ describe('RootContext', () => {
         );
       });
 
-      expect(subTotal).toHaveTextContent('410');
-      expect(tax).toHaveTextContent('21');
-      expect(total).toHaveTextContent('431');
+      expect(subTotal).toHaveTextContent('40985');
+      expect(tax).toHaveTextContent('2049');
+      expect(total).toHaveTextContent('43034');
     });
 
     it('displays error from api', async () => {
@@ -872,9 +886,9 @@ describe('RootContext', () => {
         expect(AsyncStorage.getItem).toBeCalledWith('@refresh_token');
       });
 
-      expect(subTotal).toHaveTextContent('90');
+      expect(subTotal).toHaveTextContent('8997');
       expect(tax).toHaveTextContent('5');
-      expect(total).toHaveTextContent('95');
+      expect(total).toHaveTextContent('9447');
     });
 
     it('removes product, calculates, and displays the total correctly from api', async () => {
@@ -926,9 +940,9 @@ describe('RootContext', () => {
         );
       });
 
-      expect(subTotal).toHaveTextContent('90');
+      expect(subTotal).toHaveTextContent('8997');
       expect(tax).toHaveTextContent('5');
-      expect(total).toHaveTextContent('95');
+      expect(total).toHaveTextContent('9447');
     });
 
     it('displays error from api', async () => {
@@ -1036,9 +1050,9 @@ describe('RootContext', () => {
       const button = screen.getByTestId('button');
       fireEvent.press(button);
 
-      expect(subTotal).toHaveTextContent('190');
-      expect(tax).toHaveTextContent('10');
-      expect(total).toHaveTextContent('200');
+      expect(subTotal).toHaveTextContent('18992');
+      expect(tax).toHaveTextContent('950');
+      expect(total).toHaveTextContent('19942');
     });
 
     it('removes quantity and calculates the totals properly', async () => {
@@ -1056,9 +1070,9 @@ describe('RootContext', () => {
       fireEvent.press(button);
       fireEvent.press(button);
 
-      expect(subTotal).toHaveTextContent('150');
-      expect(tax).toHaveTextContent('8');
-      expect(total).toHaveTextContent('158');
+      expect(subTotal).toHaveTextContent('14994');
+      expect(tax).toHaveTextContent('750');
+      expect(total).toHaveTextContent('15744');
     });
   });
 
