@@ -1,6 +1,7 @@
-import {Box, HStack, Image, Pressable} from '@gluestack-ui/themed';
+import {Box, HStack, Image, Pressable, Text} from '@gluestack-ui/themed';
 import {useEffect, useMemo, useState} from 'react';
 import {ImageType} from './ProductItem';
+import {Image as NativeImage} from 'react-native';
 
 type Props = {
   images: ImageType[];
@@ -18,18 +19,14 @@ const ImageGallery = ({images, alt}: Props) => {
   return (
     <Box>
       {selectedImage ? (
-        <Image
-          size="md"
-          w="$full"
-          resizeMode="contain"
-          h="$80"
-          borderRadius={20}
-          mb="$3"
-          backgroundColor="$secondary700"
-          source={{uri: selectedImage.url}}
-          alt={alt}
-          testID="gallery-image-main"
-        />
+        <Box bgColor="$primary700" borderRadius={20} overflow="hidden">
+          <NativeImage
+            style={{width: '100%', height: 360, resizeMode: 'contain'}}
+            source={{uri: selectedImage.url + '?tr=h-600'}}
+            alt={alt}
+            testID="gallery-image-main"
+          />
+        </Box>
       ) : null}
       <HStack space="xs" mt="$4" mb="$4" flexWrap="wrap">
         {images.map((image, index) => {
@@ -45,7 +42,11 @@ const ImageGallery = ({images, alt}: Props) => {
               borderRadius="$lg"
               overflow="hidden"
               onPress={() => setSelectedImage(image)}>
-              <Image size="sm" source={{uri: image.url}} alt={alt} />
+              <Image
+                size="sm"
+                source={{uri: image.url + '?tr=h-100'}}
+                alt={alt}
+              />
               {active ? (
                 <Box
                   position="absolute"

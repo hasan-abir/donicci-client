@@ -59,7 +59,7 @@ const ProductItem = ({item}: Props) => {
         mb="$3"
         backgroundColor="$secondary700"
         source={{
-          uri: item.images[0].url,
+          uri: item.images[0].url + '?tr=h-600',
         }}
         alt={item.title}
         testID={'product-image-' + item._id}

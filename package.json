@@ -12,9 +12,9 @@
     "start:mock": "react-native start --sourceExts mock.ts,js,json,ts,tsx"
   },
   "dependencies": {
-    "@gluestack-style/react": "^1.0.17",
-    "@gluestack-ui/config": "^1.0.3",
-    "@gluestack-ui/themed": "^1.0.17",
+    "@gluestack-style/react": "^1.0.31",
+    "@gluestack-ui/config": "^1.0.11",
+    "@gluestack-ui/themed": "^1.0.34",
     "@react-native-async-storage/async-storage": "^1.18.1",
     "@react-navigation/bottom-tabs": "^6.5.3",
     "@react-navigation/native": "^6.1.2",
