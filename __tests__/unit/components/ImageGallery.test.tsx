@@ -33,7 +33,7 @@ describe('ImageGallery', () => {
     fireEvent.press(screen.getByTestId('gallery-image-2'));
 
     expect(screen.getByTestId('gallery-image-main').props.source.uri).toBe(
-      product.images[1].url,
+      product.images[1].url + '?tr=h-600',
     );
   });
 });

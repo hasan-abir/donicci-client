@@ -36,7 +36,7 @@ const CartItemDetails = ({item}: Props) => {
         <Image
           size="sm"
           backgroundColor="$primary700"
-          source={{uri: item.product_image.url}}
+          source={{uri: item.product_image.url + '?tr=h-100'}}
           alt={item.product_title}
           borderRadius={100}
         />
