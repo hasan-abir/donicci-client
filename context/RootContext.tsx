@@ -185,8 +185,6 @@ const RootContextProvider = ({children}: Props) => {
     }
   };
 
-  
-
   const verifyCurrentUser = async () => {
     const tokens = await getTokens();
 
@@ -217,6 +215,7 @@ const RootContextProvider = ({children}: Props) => {
       await AsyncStorage.removeItem('@user_token');
       await AsyncStorage.removeItem('@refresh_token');
       setUser(null);
+      setCartItems([]);
       setAuthenticating(false);
     }
   };

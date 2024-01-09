@@ -156,6 +156,16 @@ describe('Cart screen', () => {
         .whileElement(flatlist)
         .scroll(50, 'down');
     }
+
+    const logoutBtn = element(by.id('logout-btn'));
+
+    await expect(logoutBtn).toBeVisible();
+
+    await logoutBtn.tap();
+
+    await cartBtn.tap();
+
+    await expect(element(by.id('no-items-text'))).toBeVisible();
   });
 
   it('should crud from cart with correct prices (without auth)', async () => {
