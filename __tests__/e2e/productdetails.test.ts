@@ -78,15 +78,15 @@ describe('ProductDetails screen', () => {
       .whileElement(scrollview)
       .scroll(50, 'down');
 
-    for (let i = 0; i < product.categories_list.length; i++) {
+    for (let i = 0; i < product.category_list.length; i++) {
       const category = element(
-        by.id('category-' + product.categories_list[i]._id),
+        by.id('category-' + product.category_list[i]._id),
       );
       await waitFor(category)
         .toBeVisible()
         .whileElement(scrollview)
         .scroll(50, 'down');
-      await expect(category).toHaveText(product.categories_list[i].name);
+      await expect(category).toHaveText(product.category_list[i].name);
     }
 
     const rating = element(by.id('rating'));

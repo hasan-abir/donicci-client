@@ -80,8 +80,8 @@ const ProductDetails = ({product}: Props) => {
         {product.title}
       </Text>
       <HStack space="sm" mb="$6" flexWrap="wrap">
-        {product.categories_list &&
-          product.categories_list.map(category => {
+        {product.category_list &&
+          product.category_list.map(category => {
             return (
               <Box
                 key={category._id}

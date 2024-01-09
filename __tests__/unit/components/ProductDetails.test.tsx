@@ -55,7 +55,7 @@ describe('ProductDetails', () => {
     expect(screen.queryByTestId('title')).toHaveTextContent(product.title);
     expect(screen.queryByTestId('price')).toBeOnTheScreen();
     expect(screen.queryByTestId('price')).toHaveTextContent(
-      '$' + (product.price / 100),
+      '$' + product.price / 100,
     );
     expect(screen.queryByTestId('description')).toBeOnTheScreen();
     expect(screen.queryByTestId('description')).toHaveTextContent(
@@ -68,14 +68,14 @@ describe('ProductDetails', () => {
       '1 of ' + product.quantity,
     );
 
-    if (product.categories_list) {
-      for (let i = 0; i < product.categories_list?.length; i++) {
+    if (product.category_list) {
+      for (let i = 0; i < product.category_list?.length; i++) {
         expect(
-          screen.queryByTestId('category-' + product.categories_list[i]._id),
+          screen.queryByTestId('category-' + product.category_list[i]._id),
         ).toBeOnTheScreen();
         expect(
-          screen.queryByTestId('category-' + product.categories_list[i]._id),
-        ).toHaveTextContent(product.categories_list[i].name);
+          screen.queryByTestId('category-' + product.category_list[i]._id),
+        ).toHaveTextContent(product.category_list[i].name);
       }
     }
   });

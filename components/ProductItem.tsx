@@ -32,7 +32,7 @@ export interface Product {
   price: number;
   user_rating: number;
   quantity?: number;
-  categories_list?: Category[];
+  category_list?: Category[];
   category_ids?: string[];
   updated_at: string;
   created_at: string;

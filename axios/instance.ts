@@ -16,6 +16,13 @@ axiosInstance.interceptors.response.use(
       }
     } else if (response.data && response.data._id && response.data._id.$oid) {
       response.data._id = response.data._id.$oid;
+
+      if (response.data.category_list) {
+        for (let i = 0; i < response.data.category_list.length; i++) {
+          response.data.category_list[i]._id =
+            response.data.category_list[i]._id.$oid;
+        }
+      }
     }
 
     return response;
