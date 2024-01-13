@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {API_URL} from './config';
 import {attemptRefreshToken} from '../context/RootContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const axiosInstance = axios.create();
 
@@ -48,6 +49,8 @@ axiosInstance.interceptors.response.use(
         // Loop original request
         return axiosInstance(config);
       } catch (err) {
+        await AsyncStorage.removeItem('@user_token');
+        await AsyncStorage.removeItem('@refresh_token');
         return Promise.reject(error);
       }
     }

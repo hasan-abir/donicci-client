@@ -135,6 +135,8 @@ describe('Cart screen', () => {
 
     await element(by.id('product-image-' + demoProducts.products[2]._id)).tap();
 
+    await expect(element(scrollview)).toBeVisible();
+
     await waitFor(removeFromCartBtn)
       .toBeVisible()
       .whileElement(scrollview)

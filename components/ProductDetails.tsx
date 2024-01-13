@@ -51,7 +51,7 @@ const ProductDetails = ({product}: Props) => {
   const removeFromCart = useCallback(async () => {
     setLoading(true);
     await removeItemFromCart(product._id, route.name);
-  }, []);
+  }, [cartItems]);
 
   const onMount = useCallback(async () => {
     const productInCart: boolean = await inCart(product._id);

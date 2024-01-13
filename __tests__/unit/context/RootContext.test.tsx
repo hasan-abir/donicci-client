@@ -18,7 +18,7 @@ import RootContextProvider, {
   CartItem,
   ErrorType,
   RootContext,
-  attemptRefreshToken
+  attemptRefreshToken,
 } from '../../../context/RootContext';
 import type {
   LoginInput,
@@ -226,6 +226,7 @@ describe('RootContext', () => {
       };
 
       (userController.getCurrentUser as jest.Mock).mockResolvedValue(response);
+      (cartItemController.fetchCartItems as jest.Mock).mockResolvedValue([]);
       (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(access_token);
       (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(refresh_token);
 
@@ -240,6 +241,7 @@ describe('RootContext', () => {
         expect(AsyncStorage.getItem).toBeCalledWith('@refresh_token');
 
         expect(userController.getCurrentUser).toBeCalledWith(access_token);
+        expect(cartItemController.fetchCartItems).toBeCalledWith(access_token);
       });
 
       expect(screen.queryByText('Hasan Abir')).toBeOnTheScreen();
@@ -581,7 +583,7 @@ describe('RootContext', () => {
     };
 
     it('calculates and displays the total correctly', async () => {
-      const cartItems = [...demoCartItems.cartItems]
+      const cartItems = [...demoCartItems.cartItems];
 
       render(
         <RootContextProvider>
@@ -589,10 +591,14 @@ describe('RootContext', () => {
         </RootContextProvider>,
       );
 
-      const expectedSubTotal = Math.round(cartItems.map(item => item.product_price * item.selected_quantity).reduce((a, b) => a + b, 0))
+      const expectedSubTotal = Math.round(
+        cartItems
+          .map(item => item.product_price * item.selected_quantity)
+          .reduce((a, b) => a + b, 0),
+      );
 
-      const expectedTax = Math.round(expectedSubTotal * 0.05)
-      const expectedTotal = Math.round(expectedSubTotal + expectedTax)
+      const expectedTax = Math.round(expectedSubTotal * 0.05);
+      const expectedTotal = Math.round(expectedSubTotal + expectedTax);
 
       const subTotal = screen.getByTestId('sub-total');
       const tax = screen.getByTestId('tax');
@@ -604,20 +610,22 @@ describe('RootContext', () => {
     });
 
     it('calculates and displays the total correctly with less items', async () => {
-      const cartItems = [...demoCartItems.cartItems.slice(0, 2)]
-      
+      const cartItems = [...demoCartItems.cartItems.slice(0, 2)];
+
       render(
         <RootContextProvider>
-          <CalculateTheTotalsComponent
-            cartItems={cartItems}
-          />
+          <CalculateTheTotalsComponent cartItems={cartItems} />
         </RootContextProvider>,
       );
 
-      const expectedSubTotal = Math.round(cartItems.map(item => item.product_price * item.selected_quantity).reduce((a, b) => a + b, 0))
+      const expectedSubTotal = Math.round(
+        cartItems
+          .map(item => item.product_price * item.selected_quantity)
+          .reduce((a, b) => a + b, 0),
+      );
 
-      const expectedTax = Math.round(expectedSubTotal * 0.05)
-      const expectedTotal = Math.round(expectedSubTotal + expectedTax)
+      const expectedTax = Math.round(expectedSubTotal * 0.05);
+      const expectedTotal = Math.round(expectedSubTotal + expectedTax);
 
       const subTotal = screen.getByTestId('sub-total');
       const tax = screen.getByTestId('tax');
@@ -711,6 +719,9 @@ describe('RootContext', () => {
       };
 
       (userController.getCurrentUser as jest.Mock).mockResolvedValue(response);
+      (cartItemController.fetchCartItems as jest.Mock).mockResolvedValue(
+        demoCartItems.cartItems,
+      );
       (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(access_token);
       (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(refresh_token);
 
@@ -733,6 +744,7 @@ describe('RootContext', () => {
         expect(AsyncStorage.getItem).toBeCalledWith('@refresh_token');
 
         expect(userController.getCurrentUser).toBeCalledWith(access_token);
+        expect(cartItemController.fetchCartItems).toBeCalledWith(access_token);
       });
 
       expect(screen.queryByText('Hasan Abir')).toBeOnTheScreen();
@@ -768,6 +780,9 @@ describe('RootContext', () => {
       };
 
       (userController.getCurrentUser as jest.Mock).mockResolvedValue(response);
+      (cartItemController.fetchCartItems as jest.Mock).mockResolvedValue(
+        demoCartItems.cartItems,
+      );
       (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(access_token);
       (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(refresh_token);
 
@@ -791,6 +806,7 @@ describe('RootContext', () => {
         expect(AsyncStorage.getItem).toBeCalledWith('@refresh_token');
 
         expect(userController.getCurrentUser).toBeCalledWith(access_token);
+        expect(cartItemController.fetchCartItems).toBeCalledWith(access_token);
       });
 
       expect(screen.queryByText('Hasan Abir')).toBeOnTheScreen();
@@ -900,6 +916,9 @@ describe('RootContext', () => {
       };
 
       (userController.getCurrentUser as jest.Mock).mockResolvedValue(response);
+      (cartItemController.fetchCartItems as jest.Mock).mockResolvedValue(
+        demoCartItems.cartItems,
+      );
       (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(access_token);
       (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(refresh_token);
 
@@ -920,6 +939,7 @@ describe('RootContext', () => {
         expect(AsyncStorage.getItem).toBeCalledWith('@refresh_token');
 
         expect(userController.getCurrentUser).toBeCalledWith(access_token);
+        expect(cartItemController.fetchCartItems).toBeCalledWith(access_token);
       });
 
       expect(screen.queryByText('Hasan Abir')).toBeOnTheScreen();
@@ -954,6 +974,10 @@ describe('RootContext', () => {
       };
 
       (userController.getCurrentUser as jest.Mock).mockResolvedValue(response);
+      (cartItemController.fetchCartItems as jest.Mock).mockResolvedValue(
+        demoCartItems.cartItems,
+      );
+
       (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(access_token);
       (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(refresh_token);
 
@@ -977,6 +1001,7 @@ describe('RootContext', () => {
         expect(AsyncStorage.getItem).toBeCalledWith('@refresh_token');
 
         expect(userController.getCurrentUser).toBeCalledWith(access_token);
+        expect(cartItemController.fetchCartItems).toBeCalledWith(access_token);
       });
 
       expect(screen.queryByText('Hasan Abir')).toBeOnTheScreen();
@@ -1143,6 +1168,9 @@ describe('RootContext', () => {
       };
 
       (userController.getCurrentUser as jest.Mock).mockResolvedValue(response);
+      (cartItemController.fetchCartItems as jest.Mock).mockResolvedValue(
+        demoCartItems.cartItems,
+      );
       (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(access_token);
       (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(refresh_token);
 
@@ -1165,6 +1193,7 @@ describe('RootContext', () => {
         expect(AsyncStorage.getItem).toBeCalledWith('@refresh_token');
 
         expect(userController.getCurrentUser).toBeCalledWith(access_token);
+        expect(cartItemController.fetchCartItems).toBeCalledWith(access_token);
       });
 
       expect(screen.queryByText('Hasan Abir')).toBeOnTheScreen();
@@ -1200,6 +1229,9 @@ describe('RootContext', () => {
       };
 
       (userController.getCurrentUser as jest.Mock).mockResolvedValue(response);
+      (cartItemController.fetchCartItems as jest.Mock).mockResolvedValue(
+        demoCartItems.cartItems,
+      );
       (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(access_token);
       (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(refresh_token);
 
@@ -1220,15 +1252,12 @@ describe('RootContext', () => {
         </RootContextProvider>,
       );
 
-      const subTotal = screen.getByTestId('sub-total');
-      const tax = screen.getByTestId('tax');
-      const total = screen.getByTestId('total');
-
       await waitFor(() => {
         expect(AsyncStorage.getItem).toBeCalledWith('@user_token');
         expect(AsyncStorage.getItem).toBeCalledWith('@refresh_token');
 
         expect(userController.getCurrentUser).toBeCalledWith(access_token);
+        expect(cartItemController.fetchCartItems).toBeCalledWith(access_token);
       });
 
       expect(screen.queryByText('Hasan Abir')).toBeOnTheScreen();

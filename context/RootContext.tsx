@@ -195,6 +195,13 @@ const RootContextProvider = ({children}: Props) => {
         const currentUser = await userController.getCurrentUser(tokens.access);
 
         setUser(currentUser);
+
+        const userItems = await cartItemController.fetchCartItems(
+          tokens.access,
+        );
+
+        setCartItems(userItems);
+        calculateTheTotals(userItems);
       } catch (err: any) {
         handleError(err, 'Products', ErrorType.Auth);
       }
@@ -279,12 +286,15 @@ const RootContextProvider = ({children}: Props) => {
     try {
       const tokens = await getTokens();
       let cartItem = null;
+
       if (user && tokens.access) {
         cartItem = await cartItemController.addCartItem(
           tokens.access,
           product._id,
           selectedQuantity,
         );
+
+        cartItem.product_id = product._id;
       } else {
         cartItem = {
           _id: uuidv4(),
@@ -307,6 +317,7 @@ const RootContextProvider = ({children}: Props) => {
   const removeItemFromCart = async (productId: string, screen: string) => {
     try {
       const cartItem = cartItems.find(item => item.product_id === productId);
+
       if (!cartItem) return;
 
       const tokens = await getTokens();
