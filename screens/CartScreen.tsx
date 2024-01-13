@@ -45,13 +45,12 @@ const CartScreen = ({route}: Props) => {
     if (user && tokens.access) {
       try {
         setLoading(true);
-        clearCart(route.name);
 
         const userItems = await cartItemController.fetchCartItems(
           tokens.access,
         );
 
-        setCartItems([...cartItems, ...userItems]);
+        setCartItems(userItems);
         calculateTheTotals(userItems);
       } catch (error: any) {
         handleError(error, route.name, ErrorType.Fetch);
@@ -67,14 +66,13 @@ const CartScreen = ({route}: Props) => {
   return (
     <Box flex={1}>
       <FlatList
-        py="$6"
         px="$6"
         data={cartItems}
         keyExtractor={item => (item as CartItem)._id}
         renderItem={({item}) => <PureCartItemDetails item={item as CartItem} />}
         testID="flat-list"
         ListFooterComponent={() => (
-          <Box justifyContent="center">
+          <Box justifyContent="center" my="$6">
             {loading ? (
               <Spinner color="$coolGray300" size="large" />
             ) : cartItems.length > 0 ? (

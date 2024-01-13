@@ -157,7 +157,7 @@ describe('CartScreen', () => {
     fireEvent.press(screen.getByTestId('clear-cart-btn'));
 
     await waitFor(() => {
-      expect(clearCart).toBeCalledTimes(2);
+      expect(clearCart).toBeCalledTimes(1);
       expect(clearCart).toBeCalledWith(props.route.name);
     });
   });

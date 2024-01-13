@@ -22,16 +22,17 @@ const CartItemDetails = ({item}: Props) => {
 
   const route = useRoute<RouteProp<RootTabParamList>>();
 
-  const {updateSelectedQuantity, removeItemFromCart} = useContext(RootContext);
+  const {updateSelectedQuantity, removeItemFromCart, cartItems} =
+    useContext(RootContext);
 
   const removeCartItem = useCallback(async () => {
     setLoading(true);
     await removeItemFromCart(item.product_id, route.name);
     setLoading(undefined);
-  }, []);
+  }, [cartItems]);
 
   return (
-    <Box backgroundColor="$white" mb="$4" p="$5" borderRadius="$lg">
+    <Box backgroundColor="$white" my="$4" p="$5" borderRadius="$lg">
       <HStack mb="$3" space="sm">
         <Image
           size="sm"

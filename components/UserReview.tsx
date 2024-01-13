@@ -3,7 +3,6 @@ import {Box, Text} from '@gluestack-ui/themed';
 export type Review = {
   _id: string;
   description: string;
-  product_id: string;
   user_id: string;
   author: string;
   created_at: string;

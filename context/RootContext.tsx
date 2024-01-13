@@ -314,9 +314,10 @@ const RootContextProvider = ({children}: Props) => {
       if (user && tokens.access) {
         await cartItemController.removeCartItem(tokens.access, cartItem._id);
       }
-      const updatedCartItems = cartItems.filter(
+      const updatedCartItems = [...cartItems].filter(
         item => item._id !== cartItem._id,
       );
+
       setCartItems(updatedCartItems);
       calculateTheTotals(updatedCartItems);
     } catch (err) {

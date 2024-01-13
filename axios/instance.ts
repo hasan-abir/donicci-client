@@ -12,6 +12,10 @@ axiosInstance.interceptors.response.use(
       for (let i = 0; i < response.data.length; i++) {
         if (response.data[i]._id && response.data[i]._id.$oid) {
           response.data[i]._id = response.data[i]._id.$oid;
+
+          if (response.data[i].product_id && response.data[i].product_id.$oid) {
+            response.data[i].product_id = response.data[i].product_id.$oid;
+          }
         }
       }
     } else if (response.data && response.data._id && response.data._id.$oid) {
