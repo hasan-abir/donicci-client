@@ -2,7 +2,7 @@ module.exports = {
   preset: 'react-native',
   setupFilesAfterEnv: ['@testing-library/jest-native/extend-expect'],
   transformIgnorePatterns: [
-    'node_modules/(?!(@react-native|react-native|react-native-vector-icons|@gluestack-ui|@expo|@legendapp|@react-navigation)/)',
+    'node_modules/(?!(@react-native|react-native|react-native-vector-icons|@gluestack-ui|react-native-splash-screen|@expo|@legendapp|@react-navigation)/)',
   ],
   modulePathIgnorePatterns: ['<rootDir>/__tests__/setup'],
   moduleNameMapper: {

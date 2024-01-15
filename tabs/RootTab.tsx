@@ -14,6 +14,7 @@ import HomeScreen from '../screens/HomeScreen';
 import TabBar from '../components/TabBar';
 import {RootContext} from '../context/RootContext';
 import {Box, Text, Spinner} from '@gluestack-ui/themed';
+import SplashScreen from 'react-native-splash-screen';
 
 interface Props extends StackScreenProps<RootStackParamList, 'Home'> {}
 
@@ -42,10 +43,15 @@ export const tabScreens: {
 };
 
 const RootTab = ({navigation, route}: Props) => {
-  const {verifyCurrentUser, authenticating} = useContext(RootContext);
+  const {verifyCurrentUser, authenticating, user} = useContext(RootContext);
+
+  const onMount = useCallback(async () => {
+    await verifyCurrentUser();
+    SplashScreen.hide();
+  }, [user]);
 
   useEffect(() => {
-    verifyCurrentUser();
+    onMount();
   }, []);
 
   if (authenticating) {
